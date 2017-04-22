@@ -5,8 +5,8 @@
   "main": "server/index.js",
   "scripts": {
     "build": "echo \"Error: no test specified\" && exit 1",
-    "watch": "./node_modules/.bin/webpack --config ./client/webpack.config.babel.js --ignore node_modules --ignore ./client",
-    "start": "nodemon ./server/index.js",
+    "watch": "./node_modules/.bin/webpack --config ./client/webpack.config.babel.js",
+    "start": "nodemon ./server/index.js --ignore node_modules --ignore ./client",
     "start:prod": "NODE_ENV=production && npm run start"
   },
   "repository": {
