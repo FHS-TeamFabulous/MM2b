@@ -1,0 +1,43 @@
+{
+  "name": "vorlesen-verbindet",
+  "version": "1.0.0",
+  "description": "Our MMP2b Project for the 4th term at FH-Salzburg",
+  "main": "server/index.js",
+  "scripts": {
+    "build": "echo \"Error: no test specified\" && exit 1",
+    "watch": "./node_modules/.bin/webpack --config ./client/webpack.config.babel.js --ignore node_modules --ignore ./client",
+    "start": "nodemon ./server/index.js",
+    "start:prod": "NODE_ENV=production && npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FHS-TeamFabulous/MMP2b.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FHS-TeamFabulous/MMP2b/issues"
+  },
+  "homepage": "https://github.com/FHS-TeamFabulous/MMP2b#readme",
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.0",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "node-sass": "^4.5.2",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.4",
+    "sass-loader": "^6.0.3",
+    "socket.io-client": "^1.7.3",
+    "webpack": "^2.4.1"
+  },
+  "dependencies": {
+    "config": "^1.25.1",
+    "express": "^4.15.2",
+    "socketio": "^1.0.0"
+  }
+}
