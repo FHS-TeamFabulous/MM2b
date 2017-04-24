@@ -10,15 +10,13 @@ module.exports = {
     context: path.resolve(__dirname),
 
     entry: [
-        'webpack-dev-server/client?http://localhost:3000',
-        'webpack/hot/only-dev-server',
+        'webpack-dev-server/client?http://127.0.0.1:3001',
+        // 'webpack/hot/only-dev-server',
         'react-hot-loader/patch',
         path.join(__dirname, 'app/main.js')
     ],
 
     devtool: 'source-map',
-
-    watch: true,
 
     module: {
         rules: [
@@ -64,7 +62,7 @@ module.exports = {
 
     devServer: {
         hot: true,
-        port: 3000,
+        port: 3001,
         contentBase: path.resolve(__dirname, 'dist'),
         publicPath: '/'
     },

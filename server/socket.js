@@ -3,17 +3,20 @@ var socketIO = require('socket.io'),
     crypto = require('crypto');
 
 module.exports = function (server, config) {
-    var io = socketIO.listen(server);
+    const io =socketIO(server);
 
-    io.sockets.on('connection', function (client) {
+    io.on('connection', function (client) {
         client.resources = {
             screen: false,
             video: true,
             audio: false
         };
 
+        console.log('client connected: ', client.id);
+
         // pass a message to another id
         client.on('message', function (details) {
+            console.log('message', details);
             if (!details) return;
 
             var otherClient = io.to(details.to);
@@ -36,7 +39,7 @@ module.exports = function (server, config) {
 
         function removeFeed(type) {
             if (client.room) {
-                io.sockets.in(client.room).emit('remove', {
+                io.in(client.room).emit('remove', {
                     id: client.id,
                     type: type
                 });

@@ -1,9 +1,9 @@
 {
     "http": {
         "port": 3000,
-        "rootPath": "../client"
+        "rootPath": "../client/dist"
     },
-		"rooms": {
+    "rooms": {
         "maxClients": 0
     },
     "stunservers": [

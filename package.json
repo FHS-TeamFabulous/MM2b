@@ -4,10 +4,10 @@
   "description": "Our MMP2b Project for the 4th term at FH-Salzburg",
   "main": "server/index.js",
   "scripts": {
-    "build": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config ./client/webpack.config.babel.js --progress --colors",
     "start:fe": "cp client/index.html client/dist/index.html && webpack-dev-server --config ./client/webpack.config.babel.js",
-    "watch": "webpack --config ./client/webpack.config.babel.js",
-    "start": "nodemon ./server/index.js --ignore node_modules --ignore ./client",
+    "watch": "webpack --config ./client/webpack.config.babel.js --watch --progress --colors",
+    "start": "npm run build && nodemon ./server/index.js --ignore node_modules --ignore ./client",
     "start:prod": "NODE_ENV=production && npm run start"
   },
   "repository": {
