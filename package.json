@@ -6,10 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config ./client/webpack.config.babel.js --progress --colors",
-    "start:fe": "cp client/index.html client/dist/index.html && webpack-dev-server --config ./client/webpack.config.babel.js",
+    "start": "cp client/index.html client/dist/index.html && webpack-dev-server --config ./client/webpack.config.babel.js",
     "watch": "webpack --config ./client/webpack.config.babel.js --watch --progress --colors",
-    "start": "npm run build && nodemon ./server/index.js --ignore node_modules --ignore ./client",
-    "start:prod": "NODE_ENV=production && npm run start"
+    "server": "npm run build && nodemon ./server/index.js --ignore node_modules --ignore ./client",
+    "server:prod": "NODE_ENV=production && npm run server"
   },
   "repository": {
     "type": "git",
