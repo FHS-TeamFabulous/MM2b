@@ -1,4 +1,4 @@
-# MMP2b
+# MMP2b [![Build Status](https://travis-ci.org/FHS-TeamFabulous/MMP2b.svg?branch=master)](https://travis-ci.org/FHS-TeamFabulous/MMP2b)
 
 ## License
 

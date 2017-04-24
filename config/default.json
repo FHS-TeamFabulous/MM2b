@@ -1,6 +1,21 @@
 {
     "http": {
         "port": 3000,
-        "rootPath": "../client"
-    }
+        "rootPath": "../client/dist"
+    },
+    "rooms": {
+        "maxClients": 0
+    },
+    "stunservers": [
+        {
+            "url": "stun:stun.l.google.com:19302"
+        }
+		],
+		"turnservers": [
+        {
+            "urls": ["turn:your.turn.servers.here"],
+            "secret": "turnserversharedsecret",
+            "expiry": 86400
+        }
+    ]
 }

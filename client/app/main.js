@@ -1,4 +1,3 @@
-import io from 'socket.io-client';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MainLayout from 'app/components/main-layout';
@@ -14,6 +13,12 @@ import turn from 'app/vendors/turn';
 
 const store = createStore(reducers);
 
+const root = document.getElementById('main');
+
+
+navigator.getUserMedia = navigator.getUserMedia ||
+    navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
 ReactDOM.render(
     <Provider store={ store }>
         <Router>
@@ -22,7 +27,16 @@ ReactDOM.render(
             </MainLayout>
         </Router>
     </Provider>,
-    document.getElementById('main')
+    root
 );
 
-io.connect();
+// Hot Module Replacement API
+if (module.hot) {
+    module.hot.accept('./components/main-layout', () => {
+        render(<MainLayout/>, root);
+    });
+}
+
+
+
+
