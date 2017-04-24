@@ -1,7 +1,10 @@
 {
+    "paths": {        
+        "client": "../client/dist",
+        "assets": "../assets/"
+    },
     "http": {
-        "port": 3000,
-        "rootPath": "../client/dist"
+        "port": 3000
     },
     "rooms": {
         "maxClients": 0
