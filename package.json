@@ -4,6 +4,7 @@
   "description": "Our MMP2b Project for the 4th term at FH-Salzburg",
   "main": "server/index.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config ./client/webpack.config.babel.js --progress --colors",
     "start:fe": "cp client/index.html client/dist/index.html && webpack-dev-server --config ./client/webpack.config.babel.js",
     "watch": "webpack --config ./client/webpack.config.babel.js --watch --progress --colors",
@@ -36,6 +37,8 @@
     "react-dom": "^15.5.4",
     "react-hot-loader": "^3.0.0-beta.6",
     "react-redux": "^5.0.4",
+    "react-router-dom": "^4.1.1",
+    "redux": "^3.6.0",
     "sass-loader": "^6.0.3",
     "socket.io-client": "^1.7.3",
     "webpack": "^2.4.1",
