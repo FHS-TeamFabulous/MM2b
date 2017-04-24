@@ -4,8 +4,8 @@
   "description": "Our MMP2b Project for the 4th term at FH-Salzburg",
   "main": "server/index.js",
   "scripts": {
-    "build": "echo \"Error: no test specified\" && exit 1",
-    "watch": "./node_modules/.bin/webpack --config ./client/webpack.config.babel.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --config ./client/webpack.config.babel.js",
     "start": "nodemon ./server/index.js --ignore node_modules --ignore ./client",
     "start:prod": "NODE_ENV=production && npm run start"
   },
@@ -34,6 +34,8 @@
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.4",
+    "react-router-dom": "^4.1.1",
+    "redux": "^3.6.0",
     "sass-loader": "^6.0.3",
     "socket.io-client": "^1.7.3",
     "webpack": "^2.4.1"
