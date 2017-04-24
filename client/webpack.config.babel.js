@@ -54,10 +54,9 @@ module.exports = {
     ],
     
     resolve: {
-        modules: [
-            path.resolve(__dirname, './app/modules'),
-            'node_modules',
-        ]
+        alias: {
+            app: path.resolve(__dirname, './app')
+        }
     },
 
     output: {
