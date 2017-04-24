@@ -1,9 +1,18 @@
-import io from 'socket.io-client';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { HelloWorldComponent } from 'components/hello-world';
+import { render} from 'react-dom';
+import { App } from './components/app/app';
 
 
-ReactDOM.render(<HelloWorldComponent />, document.getElementById('main'));
+const root = document.getElementById('main');
+render(<App />, root);
 
-io.connect();
+// Hot Module Replacement API
+if (module.hot) {
+    module.hot.accept('./components/app/app.js', () => {
+        render(App, root);
+    });
+}
+
+
+
+
