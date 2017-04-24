@@ -17,3 +17,7 @@ You have to open a new terminal window to also start the watch task by writing `
     npm run start           starts the node server
     npm run start:prod      starts the node server in production
 ```
+
+## Todos
+ - Add nodemon to devdependencies
+ - npm test for travis
