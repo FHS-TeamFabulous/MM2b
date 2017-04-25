@@ -10,7 +10,7 @@ export default function(props) {
                     { props.header }
                 </div>
             </Grid>
-            <Grid>
+            <Grid className={style.content}>
                 {props.children}
             </Grid>
         </div>

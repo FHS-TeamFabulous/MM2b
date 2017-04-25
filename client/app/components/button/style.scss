@@ -1,0 +1,26 @@
+.close-button {
+    position: fixed;
+    top: -12em;
+    right: -12em;
+    width: 20em;
+    height: 20em;
+    background-color: #00b0de;
+    border-radius: 100%;
+    &:hover {
+        border:none;
+        background-color: orange;
+    }
+}
+.button-book-item {
+    background-color: #00b0de;
+    color: white;
+    width: 70%;
+    border: none;
+    &:hover {
+        border:none;
+        background-color: orange;
+        color: white;
+    }
+}
+
+
