@@ -11,7 +11,7 @@ module.exports = {
 
     entry: [
         'webpack-dev-server/client?http://127.0.0.1:3001',
-        // 'webpack/hot/only-dev-server',
+        //'webpack/hot/only-dev-server',
         'react-hot-loader/patch',
         path.join(__dirname, 'app/main.js')
     ],
@@ -60,6 +60,10 @@ module.exports = {
         new webpack.NamedModulesPlugin()
     ],
 
+    externals: {
+        'config': JSON.stringify(require('config'))
+    },
+
     devServer: {
         hot: true,
         port: 3001,
@@ -69,10 +73,9 @@ module.exports = {
     },
 
     resolve: {
-        modules: [
-            path.resolve(__dirname, './app/modules'),
-            'node_modules',
-        ]
+        alias: {
+            app: path.resolve(__dirname, './app')
+        }
     },
 
     output: {

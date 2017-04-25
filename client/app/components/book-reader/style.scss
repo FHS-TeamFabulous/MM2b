@@ -1,0 +1,14 @@
+.container {
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.book {
+    transition: margin-left .25s linear;
+}
+
+.page {
+    img {
+        width: 100%;
+    }
+}
