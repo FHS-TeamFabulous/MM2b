@@ -42,15 +42,15 @@
     "sass-loader": "^6.0.3",
     "socket.io-client": "^1.7.3",
     "webpack": "^2.4.1",
-    "webpack-dev-server": "^2.4.4"
+    "webpack-dev-server": "^2.4.4",
+    "bootstrap": "^3.3.7",
+    "react-bootstrap": "^0.30.10"
   },
   "dependencies": {
-    "bootstrap": "^3.3.7",
     "config": "^1.25.1",
     "crypto": "0.0.3",
     "express": "^4.15.2",
     "node-uuid": "^1.4.8",
-    "react-bootstrap": "^0.30.10",
     "socketio": "^1.0.0"
   }
 }
