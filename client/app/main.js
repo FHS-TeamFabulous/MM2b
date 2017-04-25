@@ -2,8 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import MainLayout from 'app/components/main-layout';
-import HelloWorldComponent from 'app/components/hello-world';
+import ReaderLayout from 'app/components/reader-layout';
+//import HelloWorldComponent from './components/hello-world';
 import BookReaderComponent from 'app/components/book-reader';
+
 import Header from './components/header';
 import Library from './components/bibliothek';
 
@@ -30,6 +32,7 @@ ReactDOM.render(
         <Router>
             <MainLayout header={ header }>
                 <Route exact path="/" component={ Library }/>
+                <Route path="/playground" component={ReaderLayout}/>
             </MainLayout>
         </Router>
 
