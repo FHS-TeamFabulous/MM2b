@@ -1,31 +1,31 @@
-.bookItem{
+.book-item {
     float: left;
     margin-right: 20px;
     margin-top: 20px;
 }
-.itemWrapper{
+.item-wrapper {
     width: 200px;
     height: 300px;
     border: solid 3px;
     border-color: grey;
     padding: 10px;
 }
-.itemWrapper:hover{
+.item-wrapper:hover {
     border-color: #00b0de;
 }
-.bookItemCover{
+.book-item-cover {
     width: 100%;
     margin-bottom: 15px;
 }
-.buttonGroupWrapper{
+.button-group-wrapper {
     text-align: center;
 }
-.buttonBookItem{
+.button-book-item {
     background-color: #00b0de;
     color: white;
     width: 70%;
 }
-.buttonWrapper{
+.button-wrapper {
     margin-bottom: 10px;
 }
 

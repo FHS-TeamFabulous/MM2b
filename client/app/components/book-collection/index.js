@@ -1,10 +1,6 @@
-/**
- * Created by Maxi on 24.04.17.
- */
-
 import React from 'react';
 import style from './style.scss';
-import BookItem from './../book-item-in-collection';
+import BookItem from './../book-item';
 
 export default class BookCollection extends React.Component {
     render() {
