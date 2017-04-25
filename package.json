@@ -50,7 +50,10 @@
     "config": "^1.25.1",
     "cors": "^2.8.3",
     "crypto": "0.0.3",
+    "dir-to-json": "0.0.3",
+    "directory-tree": "^1.2.1",
     "express": "^4.15.2",
+    "image-size": "^0.5.1",
     "node-uuid": "^1.4.8",
     "socketio": "^1.0.0"
   }
