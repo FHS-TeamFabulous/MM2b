@@ -1,13 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import MainLayout from './components/main-layout';
-//import HelloWorldComponent from './components/hello-world';
+
+import MainLayout from 'app/components/main-layout';
+import HelloWorldComponent from 'app/components/hello-world';
+import BookReaderComponent from 'app/components/book-reader';
 import Header from './components/header';
 import Library from './components/bibliothek';
+
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import reducers from './reducers';
+import configureStore from 'app/configure-store';
+
+// move to app component
+import turn from 'app/vendors/turn';
+
+const store = configureStore();
 
 const store = createStore(reducers);
 const header = <Header/>;
