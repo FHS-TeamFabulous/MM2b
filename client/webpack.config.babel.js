@@ -60,6 +60,10 @@ module.exports = {
         new webpack.NamedModulesPlugin()
     ],
 
+    externals: {
+        'config': JSON.stringify(require('config'))
+    },
+
     devServer: {
         hot: true,
         port: 3001,

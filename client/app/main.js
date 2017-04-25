@@ -5,13 +5,12 @@ import HelloWorldComponent from 'app/components/hello-world';
 import BookReaderComponent from 'app/components/book-reader';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import reducers from 'app/reducers';
+import configureStore from 'app/configure-store';
 
 // move to app component
 import turn from 'app/vendors/turn';
 
-const store = createStore(reducers);
+const store = configureStore();
 
 const root = document.getElementById('main');
 

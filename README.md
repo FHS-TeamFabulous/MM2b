@@ -22,3 +22,4 @@ You have to open a new terminal window to also start the watch task by writing `
  - Add nodemon to devdependencies
  - npm test for travis
  - books.json metadata file
+ - handle client config (prod / dev)

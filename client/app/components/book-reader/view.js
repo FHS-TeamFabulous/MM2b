@@ -1,19 +1,31 @@
 import React from 'react';
+import config from 'config';
 import $ from 'jquery';
 import style from './style.scss';
 
 export default class BookReader extends React.Component {
-    shouldComponentUpdate() {
-        return false;
+    shouldComponentUpdate(nextProps) {
+        return this.enableUpdates;
+    }
+
+    componentWillMount() {
+        this.enableUpdates = true;
     }
 
     componentDidMount() {
         this.$node = $(this.refs.reader);
-        this.$node.turn({
-            width: this.props.width,
-            height: this.props.height,
-            autoCenter: true
-        });
+    }
+
+    componentDidUpdate(prevProps) {
+        if (!prevProps.ready && this.props.ready) {
+            this.$node.turn({
+                width: this.props.width,
+                height: this.props.height,
+                autoCenter: true
+            });
+
+            this.enableUpdates = false;
+        }
     }
 
     componentWillUnmount() {
@@ -28,20 +40,22 @@ export default class BookReader extends React.Component {
         return (
             <div className={ style.container } style={ containerStyle }>
                 <div ref="reader" className={ style.book }>  
-                    <div className={ style.page }>
-                        <img src="/assets/books/Foxy-Joxy-Plays-A-Trick/page-1.jpg"/>
-                    </div>
-                    <div className={ style.page }>
-                        <img src="/assets/books/Foxy-Joxy-Plays-A-Trick/page-2.jpg"/>
-                    </div>
-                    <div className={ style.page }>
-                        <img src="/assets/books/Foxy-Joxy-Plays-A-Trick/page-3.jpg"/>
-                    </div>
-                    <div className={ style.page }>
-                        <img src="/assets/books/Foxy-Joxy-Plays-A-Trick/page-4.jpg"/>
-                    </div>
+                    {
+                        this.props.pages.map(page => {
+                            return (
+                                <div key={ page.url } className={ style.page }>
+                                    <img src={ `${config.server.base}${page.url}` }/>
+                                </div>
+                            );
+                        })
+                    }
                 </div>
             </div>
         );
     }
 }
+
+BookReader.defaultProps = {
+    ready: false,
+    pages: []
+};
