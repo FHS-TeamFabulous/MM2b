@@ -1,7 +1,16 @@
 {
+    "paths": {        
+        "client": "../client/dist",
+        "assets": "../assets/"
+    },
     "http": {
-        "port": 3000,
-        "rootPath": "../client/dist"
+        "port": 3000
+    },
+    "server": {
+        "base": "http://localhost:3000/"
+    },
+    "api": {
+        "base": "http://localhost:3000/api"
     },
     "rooms": {
         "maxClients": 0
