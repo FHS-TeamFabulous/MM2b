@@ -6,7 +6,7 @@ import helloWorldReducer from './hello-world-reducer';
 
 export default combineReducers({
     helloWorldState: helloWorldReducer,
-    signaling: signalingReducer
+    signaling: signalingReducer,
     booksState: booksReducer,
 });
 

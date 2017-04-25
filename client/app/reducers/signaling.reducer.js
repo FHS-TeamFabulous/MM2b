@@ -1,5 +1,7 @@
 import { combineEpics } from 'redux-observable';
+/*
 import { offerEpic } from '../actions/signaling.actions';
+*/
 import { types } from '../actions/signaling.actions';
 
 const initialState = {
@@ -20,7 +22,7 @@ export const signalingReducer = (state = initialState, action) => {
 };
 
 export const signalingEpics = combineEpics(
-    offerEpic
+   /* offerEpic*/
 );
 
 

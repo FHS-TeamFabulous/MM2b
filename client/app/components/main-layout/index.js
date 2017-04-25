@@ -1,5 +1,5 @@
 import React from 'react';
-import VideoComponent from '../client/video';
+import VideoComponent from '../video/video';
 import {Grid} from 'react-bootstrap';
 import style from './style.scss';
 

@@ -7,11 +7,7 @@ class App extends Component {
         const server = this.props.server || 'http://localhost:3000';
         const name = prompt('login');
 
-        this.client = Client({
-            name
-        });
-        console.log(this.props.constraints);
-        this.client.signals$.subscribe(message => console.log('[App] signal: ', message));
+        /*this.client.signals$.subscribe(message => console.log('[App] signal: ', message));*/
     }
 
     render() {
@@ -26,7 +22,8 @@ class App extends Component {
 const mapStateToProps = state => {
     return {
         constraints: state.signaling.constraints,
-        connected: state.signaling.connected
+        connected: state.signaling.connected,
+        clients: state.signaling.clients
     }
 };
 

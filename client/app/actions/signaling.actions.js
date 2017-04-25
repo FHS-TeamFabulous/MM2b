@@ -1,11 +1,11 @@
 import {} from 'redux-observable';
 
 export const types = {
-    OFFER: '[client] OFFER',
-    ANSWER: '[client] ANSWER',
-    CANDIDATE: '[client] CANDIDATE',
-    LOGIN: '[client] LOGIN',
-    LOGOUT: '[client] LOGOUT'
+    OFFER: '[video] OFFER',
+    ANSWER: '[video] ANSWER',
+    CANDIDATE: '[video] CANDIDATE',
+    LOGIN: '[video] LOGIN',
+    LOGOUT: '[video] LOGOUT'
 };
 
 export function createOffer(name) {
@@ -53,9 +53,6 @@ export function createLogout(name) {
     }
 }
 
-export const offerEpic = action$ =>
-    action$.filter(action => action.type === types.OFFER)
-        .switchMap(action => {
-            createAnswer('test', 'testAnswer')
-        });
+/*export const offerEpic = action$ =>
+    action$.filter(action => action.type === types.OFFER);*/
 
