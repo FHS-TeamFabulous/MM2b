@@ -1,5 +1,4 @@
 language: node_js
 before_script:
-
-script:
-  
+  npm install -g jest-cli
+  npm install -g eslint
