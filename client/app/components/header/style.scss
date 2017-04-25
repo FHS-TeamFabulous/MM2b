@@ -1,0 +1,29 @@
+.content {
+    text-align: center;
+    background-color: blue;
+}
+.logo-wrapper {
+    float: left;
+    margin: 0px;
+    padding: 0px;
+}
+.logo {
+    width: 80%;
+    margin-top: 10px;
+}
+
+.nav-bar-wrapper {
+    float:right;
+    margin-top: 25px;
+}
+.nav-item:first-child {
+    margin-right: 10px;
+}
+.nav-item {
+    background-color: #00b0de;
+    border-radius: 5px;
+}
+
+.nav-item a {
+    color: white;
+}
