@@ -4,6 +4,7 @@
     right: -120px;
     width: 210px;
     height: 210px;
+
     background-color: #00b0de;
     border-radius: 100%;
 }
@@ -21,6 +22,50 @@
     }
 }
 
+
+.modal-close-button {
+    position: absolute;
+    top:-50px;
+    right: -50px;
+    width: 100px;
+    height: 100px;
+    background-color: #00b0de;
+    border-radius: 100%;
+
+    &:hover {
+        border:none;
+        background-color: orange;
+    }
+}
+
+.modal-login-button {
+    background-color: #00b0de;
+    color: white;
+    border: none;
+    text-align: center;
+    float: right;
+    &:hover {
+        border:none;
+        background-color: orange;
+        color: white;
+    }
+    margin-left: 15px;
+}
+
+.modal-cancel-button {
+    background-color: #00b0de;
+    color: white;
+    border: none;
+    text-align: center;
+    float: right;
+    &:hover {
+        border:none;
+        background-color: orange;
+        color: white;
+    }
+}
+
+
 :global .btn {
     border: 0;
 
@@ -31,4 +76,5 @@
         background-color: #e77929!important;
     }
 }
+
 
