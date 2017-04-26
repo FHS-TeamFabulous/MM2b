@@ -3,21 +3,18 @@ import ReactDOM from 'react-dom';
 
 import MainLayout from 'app/components/main-layout';
 import ReaderLayout from 'app/components/reader-layout';
-import Header from './components/header';
 import Library from './components/bibliothek';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import App from './components/app';
 import configureStore from 'app/configure-store';
-
-// move to app component
-import turn from 'app/vendors/turn';
-
-const store = configureStore();
+import 'rxjs';
+import Header from 'app/components/header';
 
 const header = <Header/>;
 
+const store = configureStore();
 const root = document.getElementById('main');
 
 ReactDOM.render(
@@ -40,6 +37,7 @@ if (module.hot) {
         render(<MainLayout/>, root);
     });
 }
+
 
 
 

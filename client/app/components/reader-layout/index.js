@@ -2,6 +2,8 @@ import React from 'react';
 import style from './style.scss';
 import CustomButton from './../button';
 import {Grid} from 'react-bootstrap';
+import BookReader from 'app/components/book-reader';
+import VideoCircle from 'app/components/video-circle';
 
 import FaClose from 'react-icons/lib/fa/close';
 
@@ -15,13 +17,14 @@ export default class ReaderLayout extends React.Component {
             <div className={style.readerLayoutWrapper}>
                 <Link to="/"><CustomButton type={"closeButton"} content={closeIcon}/></Link>
                 <Grid>
+                    <BookReader/>
                     <div>
                         <div className={style.videosWrapper}>
-                            <div className={style.videoTagWrapperLeft}>
-                                <video className={style.videoTagLeft} loop="" autoPlay src="https://easportsassets-a.akamaihd.net/pulse.content.easports.com/web/OnlineAssets/easports/2017/easports17-video-reel.mp4"/>
+                            <div className={style.videoTagWrapperLeft} >
+                                <VideoCircle />
                             </div>
                             <div className={style.videoTagWrapperRight}>
-                                <video className={style.videoTagRight} loop="" autoPlay src="https://easportsassets-a.akamaihd.net/pulse.content.easports.com/web/OnlineAssets/easports/2017/easports17-video-reel.mp4"/>
+                                <VideoCircle />
                             </div>
                         </div>
                     </div>
