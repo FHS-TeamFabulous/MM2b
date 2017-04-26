@@ -1,40 +1,33 @@
 .reader-layout-wrapper {
     position: fixed;
-    top:0;
+    top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: white;
+    padding-top: 80px;
+    overflow: hidden;
+    background-color: #eee;
 }
 
 .icon {
-    position: fixed;
-    right: 13px;
-    top: 13px;
-    font-size: 50px;
-    color: white;
+    position: absolute;
+    left: 35px;
+    bottom: 35px;
+    font-size: 40px;
+    color: #fff;
+}
+
+.video-tag-wrapper-left,
+.video-tag-wrapper-right {
+    position: absolute;
+    bottom: 50px;
+    z-index: 5;
 }
 
 .video-tag-wrapper-left {
-    position: absolute;
-    bottom: 0;
-    left:30px;
-}
-.video-tag-wrapper-right {
-    position: absolute;
-    bottom: 0;
-    right:30px;
-}
-.video-tag-left {
-    float: left;
-    width: 300px;
-    height: 200px;
-    border-radius: 50%;
+    left: 50px;
 }
 
-.video-tag-right {
-    float: right;
-    width: 300px;
-    height: 200px;
-    border-radius: 50%;
+.video-tag-wrapper-right {
+    right: 50px;
 }

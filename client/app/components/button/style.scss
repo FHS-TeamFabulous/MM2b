@@ -1,27 +1,27 @@
 .close-button {
     position: absolute;
-    top: -12em;
-    right: -12em;
-    width: 20em;
-    height: 20em;
+    top: -120px;
+    right: -120px;
+    width: 210px;
+    height: 210px;
+
     background-color: #00b0de;
     border-radius: 100%;
-    &:hover {
-        border:none;
-        background-color: orange;
-    }
 }
+
 .button-book-item {
     background-color: #00b0de;
     color: white;
     width: 70%;
     border: none;
+    
     &:hover {
         border:none;
         background-color: orange;
         color: white;
     }
 }
+
 
 .modal-close-button {
     position: absolute;
@@ -62,6 +62,18 @@
         border:none;
         background-color: orange;
         color: white;
+    }
+}
+
+
+:global .btn {
+    border: 0;
+
+    &:hover,
+    &:focus,
+    &:active {
+        color: #fff !important;
+        background-color: #e77929!important;
     }
 }
 
