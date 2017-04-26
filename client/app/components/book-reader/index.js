@@ -1,7 +1,10 @@
 import React from 'react';
 import BookReader from './view';
-import { fetchBooks } from 'app/actions/books-actions';
+import { fetchBooks, pageNext, pagePrev, setPage } from 'app/actions/books-actions';
 import { connect } from 'react-redux';
+import style from './style.scss';
+import AngleRightIcon from 'react-icons/lib/fa/angle-right';
+import AngleLeftIcon from 'react-icons/lib/fa/angle-left';
 
 // center inside a container
 // next/prev buttons
@@ -14,21 +17,53 @@ class BookReaderContainer extends React.Component {
         this.props.dispatch(fetchBooks());
     }
 
-    createPages() {
-
-    }
-
     render() {
+        const containerStyle = {
+            width: this.props.width
+        };
+
         return (
-            <BookReader 
-                ready={this.props.isDone}
-                width={this.props.width} 
-                height={this.props.height}
-                pages={this.props.pages}
-            />
+            <div style={ containerStyle } className={ style.container }>
+                {
+                    (this.props.currentPage > 1) &&
+                    <button onClick={this.pagePrevHandler.bind(this)} className={ style.btnPrev }>
+                        <AngleLeftIcon />
+                    </button>
+                }
+                <BookReader 
+                    ready={this.props.isDone}
+                    width={this.props.width} 
+                    height={this.props.height}
+                    pages={this.props.pages}
+                    currentPage={this.props.currentPage}
+                    setPage={this.setPageHandler.bind(this)}
+                />
+                {
+                    (this.props.currentPage < this.props.pages.length) &&
+                    <button onClick={this.pageNextHandler.bind(this)} className={ style.btnNext }>
+                        <AngleRightIcon />
+                    </button>
+                }
+            </div>
         );
     }
+
+    pageNextHandler() {
+        this.props.dispatch(pageNext());
+    }
+
+    pagePrevHandler() {
+        this.props.dispatch(pagePrev());
+    }
+
+    setPageHandler(page) {
+        this.props.dispatch(setPage(page));
+    }
 }
+
+BookReaderContainer.defaultProps = {
+    pages: []
+};
 
 function calcBookSize(pageWidth, pageHeight, windowWidth, windowHeight) {
     let bookWidth = pageWidth * 2;
@@ -37,19 +72,23 @@ function calcBookSize(pageWidth, pageHeight, windowWidth, windowHeight) {
     let bookVerticalMargin = 200;
     let bookHorizontalMargin = 200;
 
-    console.log('lel', pageWidth);
-
     if (bookHeight > (windowHeight - bookVerticalMargin)) {
         let overflow = bookHeight - (windowHeight - bookVerticalMargin);
         bookHeight = bookHeight - overflow;
         bookWidth = bookHeight * aspectRatio;
+    } 
+
+    if (bookWidth > (windowWidth - bookHorizontalMargin)) {
+        let overflow = bookWidth - (windowWidth - bookHorizontalMargin);
+        bookWidth = bookWidth - overflow;
+        bookHeight = bookWidth / aspectRatio;   
     }
 
     return { bookWidth, bookHeight };
 }
 
 function mapPropsToState(state) {
-    const selectedBook = state.booksState.books[state.booksState.selectedBook];
+    const selectedBook = state.booksState.books[state.booksState.selectedBookId];
     
     if (!selectedBook) return {};
 
@@ -65,7 +104,8 @@ function mapPropsToState(state) {
         isDone: state.booksState.isDone,
         width: bookWidth,
         height: bookHeight,
-        pages: selectedBook.pages
+        pages: selectedBook.pages,
+        currentPage: state.booksState.selectedBookPage
     }
 }
 

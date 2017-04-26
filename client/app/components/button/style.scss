@@ -1,14 +1,15 @@
 .close-button {
-    position: fixed;
-    top: -12em;
-    right: -12em;
-    width: 20em;
-    height: 20em;
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 200px;
+    height: 200px;
     background-color: #00b0de;
     border-radius: 100%;
+
     &:hover {
         border:none;
-        background-color: orange;
+        background-color: #e77929;
     }
 }
 .button-book-item {
@@ -16,6 +17,7 @@
     color: white;
     width: 70%;
     border: none;
+    
     &:hover {
         border:none;
         background-color: orange;

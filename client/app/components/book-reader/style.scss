@@ -1,14 +1,60 @@
 .container {
     margin: 0 auto;
-    overflow: hidden;
+    position: relative;
 }
 
 .book {
     transition: margin-left .25s linear;
+    position: relative;
+    z-index: 1;
+
+    :global .shadow {
+        box-shadow: 0 0 10px #999;
+    }
 }
 
 .page {
     img {
         width: 100%;
+    }
+}
+
+.btn-prev,
+.btn-next {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+    margin-top: -30px;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    color: #fff;
+    background-color: #00b0de;
+    border: 0;
+    font-size: 50px;
+
+    &:hover {
+        background-color: #e77929;
+    }
+
+    svg {
+        position: relative;
+        top: -14px;
+    }
+}
+
+.btn-next {
+    right: -30px;
+
+    svg {
+        left: 2px;
+    }
+}
+
+.btn-prev {
+    left: -30px;
+
+    svg {
+        right: 2px;
     }
 }
