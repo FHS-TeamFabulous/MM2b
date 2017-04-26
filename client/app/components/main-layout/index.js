@@ -1,5 +1,6 @@
 import React from 'react';
-import {Grid} from 'react-bootstrap';
+import { Grid } from 'react-bootstrap';
+import Header from 'app/components/header';
 import style from './style.scss';
 
 export default function(props) {
@@ -7,7 +8,7 @@ export default function(props) {
         <div>
             <Grid>
                 <div className={ style.head }>
-                    { props.header }
+                    <Header />
                 </div>
             </Grid>
             <Grid className={style.content}>
