@@ -15,14 +15,14 @@ const root = document.getElementById('main');
 
 ReactDOM.render(
     <Provider store={ store }>
-        <Router>
-            <App>
+        <App>
+            <Router>
                 <MainLayout>
                     <Route exact path="/" component={ Library }/>
                     <Route path="/playground" component={ReaderLayout}/>
                 </MainLayout>
-            </App>
-        </Router>
+            </Router>
+        </App>
     </Provider>,
     root
 );
