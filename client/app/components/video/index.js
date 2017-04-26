@@ -5,12 +5,9 @@ import { createOffer, createAnswer, createCandidate } from '../../actions/signal
 
 class VideoComponent extends Component {
 
-    connect() {
+    offer() {
         const name = prompt('connect to');
         this.props.dispatch(createOffer(name))
-    }
-
-    offer(name) {
     }
 
     render() {
@@ -26,7 +23,7 @@ class VideoComponent extends Component {
 const mapStateToProps = (state) => {
     return {
         clients: state.signaling.clients
-    }
+    };
 };
 
 export default connect(mapStateToProps)(VideoComponent);

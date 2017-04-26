@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { createLogin } from '../../actions/signaling.actions';
 
 class App extends Component {
 
     componentDidMount() {
-        const server = this.props.server || 'http://localhost:3000';
         const name = prompt('login');
-
-        /*this.client.signals$.subscribe(message => console.log('[App] signal: ', message));*/
+        this.props.dispatch(createLogin(name));
     }
 
     render() {
         return(
-            <div className="app">
+            <div>
                 {this.props.children}
             </div>
         )
@@ -23,7 +22,8 @@ const mapStateToProps = state => {
     return {
         constraints: state.signaling.constraints,
         connected: state.signaling.connected,
-        clients: state.signaling.clients
+        clients: state.signaling.clients,
+        user: state.signaling.user
     }
 };
 

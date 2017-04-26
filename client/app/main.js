@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import App from './components/app';
 import configureStore from 'app/configure-store';
+import 'rxjs';
 
 // move to app component
 import turn from 'app/vendors/turn';

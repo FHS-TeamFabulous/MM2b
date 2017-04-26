@@ -2,203 +2,194 @@ const socketIO = require('socket.io'),
     users = {};
 
 function sendTo(conn) {
-    return (message) => {
-        conn.emit('message', message);
-    };
-
+    return event => {
+        return message => {
+            conn.emit(event, message);
+        };
+    }
 }
 
 const connectionTypes = {
-    LOGIN: 'login',
-    LOGOUT: 'logout',
-    OFFER: 'offer',
-    ANSWER: 'answer',
-    CANDIDATE: 'candidate',
+    LOGIN: 'auth:login',
+    LOGOUT: 'auth:logout',
+    OFFER: 'signaling:offer',
+    ANSWER: 'signaling:answer',
+    CANDIDATE: 'signaling:candidate',
+    ERROR: 'signaling:error',
+    CLIENTS: 'clients',
+    INTERACTION: 'interaction'
 };
 
 module.exports = function (server) {
     const io =socketIO(server);
 
-    const extractData = message => {
-        let data;
-        try {
-            data = JSON.parse(message);
-        } catch (e) {
-            console.log('Invalid JSON message');
-            data = {};
-        }
-        return data;
-    };
-
-    /*const isValidMessage = (message, condition = true) => message.name && condition;
-    const isOfferMessage = message => isValidMessage(message, message.offer);
-    const isAnswerMessage = message => isValidMessage(message, message.answer);
-    const isCandidateMessage = message => isValidMessage(message, message.candidate);*/
-
     io.on('connection', connection => {
 
         console.log('connected: ' + connection.id);
         console.log('clients logged in: ', Object.keys(users));
+
         const clientSender = sendTo(connection);
+        const clientOfferSender = clientSender(connectionTypes.OFFER);
+        const clientAnswerSender = clientSender(connectionTypes.ANSWER);
+        const clientCandidateSender = clientSender(connectionTypes.CANDIDATE);
+        const clientLoginSender = clientSender(connectionTypes.LOGIN);
+        const clientLogoutSender = clientSender(connectionTypes.LOGOUT);
+        const clientErrorSender = clientSender(connectionTypes.ERROR);
+        const clientClientsSender = clientSender(connectionTypes.CLIENTS);
 
         clientSender({
             type: 'clients',
             clients: Object.keys(users)
         });
-        // pass a message to another id
-        connection.on('message', data => {
 
-            const handleLogin = data => {
-                const {
-                    name
-                } = data;
+        connection.on(connectionTypes.LOGIN, data => {
+            const {
+                name
+            } = data;
 
-                console.log(`User logging in ${name}`);
+            console.log(`User logging in ${name}`);
 
-                if (users[name]) {
-                    console.log(`${name} already logged in`);
-                    clientSender( {
-                        type: connectionTypes.LOGIN,
-                        success: false
-                    });
-                } else {
-                    connection.resources = {
-                        screen: false,
-                        video: true,
-                        audio: false
-                    };
-                    connection.name = name;
-                    users[name] = connection;
+            if (users[name]) {
+                console.log(`${name} already logged in`);
+                clientErrorSender( {
+                    success: false
+                });
+            } else {
+                connection.resources = {
+                    screen: false,
+                    video: true,
+                    audio: false
+                };
+                connection.name = name;
+                users[name] = connection;
 
-                    clientSender({
-                        type: connectionTypes.LOGIN,
-                        success: true,
-                        clients: Object.keys(users)
-                    });
-                }
-            };
-
-            const handleLogout = data => {
-                const {
-                    name
-                } = data;
-
-                console.log("Disconnecting from", name);
-
-                const conn = users[name];
-                conn.otherName = null;
-
-                delete users[name];
-
-                //notify the other user so he can disconnect his peer connection
-                if (conn != null) {
-                    clientSender({
-                        type: connectionTypes.LOGOUT,
-                        success: true
-                    });
-                } else {
-                    clientSender({
-                        type: connectionTypes.LOGOUT,
-                        success: false
-                    });
-                }
-            };
-
-            const handleOffer = data => {
-                const {
+                clientLoginSender({
                     name,
-                    offer
-                } = data;
+                    success: true
+                });
+                clientClientsSender({
+                    clients: Object.keys(users)
+                })
+            }
+        });
 
-                console.log("Sending offer to: ", name);
+        connection.on(connectionTypes.LOGOUT, data => {
+            const {
+                name
+            } = data;
 
-                //if UserB exists then send him offer details
-                const conn = users[name];
+            console.log("Disconnecting from", name);
 
-                if (conn != null) {
-                    //setting that UserA connected with UserB
-                    connection.otherName = name;
+            const conn = users[name];
+            conn.otherName = null;
 
-                    sendTo(conn)({
-                        type: connectionTypes.OFFER,
-                        offer,
-                        name: connection.name
-                    });
-                } else {
-                    clientSender({
-                        type: 'error',
-                        message: `[OFFER] Connection ${name} not found`
-                    })
-                }
+            delete users[name];
 
-            };
+            //notify the other user so he can disconnect his peer connection
+            if (conn != null) {
+                clientLogoutSender({
+                    name,
+                    success: true
+                });
+            } else {
+                clientErrorSender({
+                    success: false
+                });
+            }
+        });
 
-            const handleAnswer = data => {
-                const {
+        connection.on(connectionTypes.OFFER, data => {
+            const {
+                name,
+                offer
+            } = data;
+
+            console.log("Sending offer to: ", name);
+
+            //if UserB exists then send him offer details
+            const conn = users[name];
+
+            if (conn != null) {
+                //setting that UserA connected with UserB
+                connection.otherName = name;
+
+                sendTo(conn)(connectionTypes.OFFER)({
+                    offer,
+                    name: connection.name
+                });
+            } else {
+                console.log(`${name} is not yet connected`);
+                clientErrorSender({
+                    message: `[OFFER] Connection ${name} not found`
+                })
+            }
+
+        });
+
+        connection.on(connectionTypes.ANSWER, data => {
+            const {
+                name,
+                answer
+            } = data;
+
+            console.log("Sending answer to: ", data.name);
+
+            //for ex. UserB answers UserA
+            const conn = users[name];
+
+            if (conn != null) {
+                connection.otherName = name;
+                sendTo(conn)(connectionTypes.ANSWER)({
                     name,
                     answer
-                } = data;
+                });
+            } else {
+                clientErrorSender({
+                    message: `[ANSWER] Connection ${name} not found`
+                });
+            }
+        });
 
-                console.log("Sending answer to: ", data.name);
+        connection.on(connectionTypes.CANDIDATE, data => {
+            const {
+                name,
+                candidate
+            } = data;
 
-                //for ex. UserB answers UserA
-                const conn = users[name];
+            console.log("Sending candidate to:", data.name);
 
-                if (conn != null) {
-                    connection.otherName = name;
-                    sendTo(conn)({
-                        type: connectionTypes.ANSWER,
-                        answer
-                    });
-                } else {
-                    clientSender({
-                        type: 'error',
-                        message: `[ANSWER] Connection ${name} not found`
-                    });
-                }
-            };
+            const conn = users[name];
 
-            const handleCandidate = data => {
-                const {
+            if (conn != null) {
+                sendTo(conn)(connectionTypes.CANDIDATE)({
                     name,
                     candidate
-                } = data;
+                });
+            } else {
+                clientErrorSender({
+                    message: `[CANDIDATE] Connection ${name} not found`
+                });
+            }
+        });
 
-                console.log("Sending candidate to:", data.name);
+        // pass a message to another id
+        connection.on('interation', data => {
+            const {
+                name,
+            } = data;
 
-                const conn = users[name];
+            console.log("Sending interaction to: ", name);
 
-                if (conn != null) {
-                    sendTo(conn)({
-                        type: connectionTypes.CANDIDATE,
-                        candidate
-                    });
-                } else {
-                    clientSender({
-                        type: 'error',
-                        message: `[CANDIDATE] Connection ${name} not found`
-                    });
-                }
-            };
+            //if UserB exists then send him offer details
+            const conn = users[name];
 
-            switch (data.type) {
-                case connectionTypes.LOGIN:
-                    handleLogin(data);
-                    break;
-                case connectionTypes.LOGOUT:
-                    handleLogout(data);
-                    break;
-                case connectionTypes.OFFER:
-                    handleOffer(data);
-                    break;
-                case connectionTypes.ANSWER:
-                    handleAnswer(data);
-                    break;
-                case connectionTypes.CANDIDATE:
-                    handleCandidate(data);
-                    break;
-                default:
-                    clientSender({type: 'error', message: `Invalid message type (${data.type}`})
+            if (conn != null) {
+                sendTo(conn)(connectionTypes.INTERACTION)(data);
+            } else {
+                console.log(`${name} is not yet connected`);
+                clientErrorSender({
+                    message: `[INTERACTION] Connection ${name} not found`
+                })
             }
         });
 
@@ -208,11 +199,9 @@ module.exports = function (server) {
 
         connection.on('unshareScreen', function (type) {
             connection.resources.screen = false;
-            removeFeed('screen');
         });
 
         connection.on("disconnect", function() {
-
             console.log('disconnect');
             if(connection.name) {
                 console.log(`Disconnecting ${connection.name}`);
