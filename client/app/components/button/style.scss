@@ -1,5 +1,5 @@
 .close-button {
-    position: fixed;
+    position: absolute;
     top: -12em;
     right: -12em;
     width: 20em;
@@ -16,6 +16,48 @@
     color: white;
     width: 70%;
     border: none;
+    &:hover {
+        border:none;
+        background-color: orange;
+        color: white;
+    }
+}
+
+.modal-close-button {
+    position: absolute;
+    top:-50px;
+    right: -50px;
+    width: 100px;
+    height: 100px;
+    background-color: #00b0de;
+    border-radius: 100%;
+
+    &:hover {
+        border:none;
+        background-color: orange;
+    }
+}
+
+.modal-login-button {
+    background-color: #00b0de;
+    color: white;
+    border: none;
+    text-align: center;
+    float: right;
+    &:hover {
+        border:none;
+        background-color: orange;
+        color: white;
+    }
+    margin-left: 15px;
+}
+
+.modal-cancel-button {
+    background-color: #00b0de;
+    color: white;
+    border: none;
+    text-align: center;
+    float: right;
     &:hover {
         border:none;
         background-color: orange;
