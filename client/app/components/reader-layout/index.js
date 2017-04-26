@@ -4,14 +4,24 @@ import CustomButton from './../button';
 import {Grid} from 'react-bootstrap';
 import BookReader from 'app/components/book-reader';
 import VideoCircle from 'app/components/video-circle';
+import { connect } from 'react-redux';
 
 import FaClose from 'react-icons/lib/fa/close';
+import Communication from 'app/services/communication';
 
 const closeIcon = <FaClose className={style.icon}/>;
 
 import { Link } from 'react-router-dom';
 
-export default class ReaderLayout extends React.Component {
+class ReaderLayout extends React.Component {
+
+    componentDidMount() {
+        this.communication = Communication.connect({
+            localVideoEl: 'localVideo',
+            remoteVideosEl: 'remoteVideo'
+        }).then(() => console.log('local Video success'))
+    }
+
     render() {
         return (
             <div className={style.readerLayoutWrapper}>
@@ -23,10 +33,10 @@ export default class ReaderLayout extends React.Component {
                     <div>
                         <div className={style.videosWrapper}>
                             <div className={style.videoTagWrapperLeft} >
-                                <VideoCircle />
+                                <VideoCircle type="localVideo"/>
                             </div>
                             <div className={style.videoTagWrapperRight}>
-                                <VideoCircle />
+                                <VideoCircle type="remoteVideo" />
                             </div>
                         </div>
                     </div>
@@ -35,3 +45,12 @@ export default class ReaderLayout extends React.Component {
         );
     }
 }
+
+
+const mapStateToProps = (state) => {
+    return {
+        clients: state.signaling.clients
+    }
+};
+
+export default connect(mapStateToProps)(ReaderLayout);

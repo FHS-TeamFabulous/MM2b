@@ -1,8 +1,6 @@
 import React from 'react';
 import { Grid } from 'react-bootstrap';
 import Header from 'app/components/header';
-import VideoComponent from 'app/components/video/index';
-import {Grid} from 'react-bootstrap';
 import style from './style.scss';
 
 export default function MainLayout (props) {
@@ -16,7 +14,6 @@ export default function MainLayout (props) {
             <Grid className={style.content}>
                 {props.children}
             </Grid>
-            <VideoComponent/>
         </div>
     );
 }

@@ -18,7 +18,7 @@ ReactDOM.render(
     <Provider store={ store }>
         <Router>
             <App>
-                <MainLayout header={ header }>
+                <MainLayout>
                     <Route exact path="/" component={ Library }/>
                     <Route path="/playground" component={ReaderLayout}/>
                 </MainLayout>
