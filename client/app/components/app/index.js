@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { createLogin } from '../../actions/signaling.actions';
+import style from './style.scss';
 
 class App extends Component {
 
     componentDidMount() {
-        const name = prompt('login');
-        this.props.dispatch(createLogin(name));
+        // const name = prompt('login');
+        // this.props.dispatch(createLogin(name));
     }
 
     render() {

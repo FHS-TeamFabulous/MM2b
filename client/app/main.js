@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import MainLayout from 'app/components/main-layout';
 import ReaderLayout from 'app/components/reader-layout';
 import Library from './components/bibliothek';
@@ -16,14 +15,14 @@ const root = document.getElementById('main');
 
 ReactDOM.render(
     <Provider store={ store }>
-        <Router>
-            <App>
-                <MainLayout header={ header }>
+        <App>
+            <Router>
+                <MainLayout>
                     <Route exact path="/" component={ Library }/>
                     <Route path="/playground" component={ReaderLayout}/>
                 </MainLayout>
-            </App>
-        </Router>
+            </Router>
+        </App>
     </Provider>,
     root
 );
