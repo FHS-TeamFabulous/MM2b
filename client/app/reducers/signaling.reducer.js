@@ -1,6 +1,14 @@
 import { combineEpics } from 'redux-observable';
-import { loginEpic, logoutEpic, offerEpic } from '../actions/signaling.actions';
 import { types } from '../actions/signaling.actions';
+import {
+    loginEpic,
+    logoutEpic,
+    offerEpic,
+    /*answerEpic,
+    candidateEpic,
+    candidateReceivedEpic*/
+} from '../actions/signaling.actions';
+
 
 const initialState = {
     id: undefined,
@@ -8,10 +16,15 @@ const initialState = {
         video: true,
         audio: false
     },
+    video: {},
     description: {},
     clients: [],
     user: null,
-    connected: false,
+    connection: {
+        connected: false,
+        name: '',
+        offering: '',
+    },
     error: {}
 };
 
@@ -19,6 +32,21 @@ export const signalingReducer = (state = initialState, action) => {
     switch(action.type) {
         case types.LOGIN_SUCCESS:
             return Object.assign({}, state, { user: action.payload.name });
+        case types.OFFER_SENT:
+            return Object.assign({}, state, { connection: { offering: action.payload.name }});
+        case types.REMOTE_STREAM_ADDED:
+            return Object.assign({}, state,
+                {
+                    video: {
+                        stream: action.payload.stream,
+                        src: window.URL.createObjectURL(action.payload.stream)
+                    }
+                }
+            );
+        case types.CONNECTED:
+            return Object.assign({}, state, {
+                connected: true
+            });
         case types.CHANGE_DESCRIPTION:
             return Object.assign({}, state, { description: action.payload });
         case types.CLIENTS:
@@ -33,7 +61,10 @@ export const signalingReducer = (state = initialState, action) => {
 export const signalingEpics = combineEpics(
     loginEpic,
     logoutEpic,
-    offerEpic
+    offerEpic,
+    /*answerEpic,
+    candidateEpic,
+    candidateReceivedEpic*/
 );
 
 

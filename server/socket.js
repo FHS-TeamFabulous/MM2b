@@ -13,15 +13,21 @@ const connectionTypes = {
     LOGIN: 'auth:login',
     LOGOUT: 'auth:logout',
     OFFER: 'signaling:offer',
+    OFFER_RECEIVED: 'signaling:offerreceived',
     ANSWER: 'signaling:answer',
+    ANSWER_RECEIVED: 'signaling:answerreceived',
     CANDIDATE: 'signaling:candidate',
+    CANDIDATE_RECEIVED: 'signaling:candidatereceived',
     ERROR: 'signaling:error',
     CLIENTS: 'clients',
+    CLIENTS_RECEIVED: 'clientsreceived',
     INTERACTION: 'interaction'
 };
 
 module.exports = function (server) {
-    const io =socketIO(server);
+    const io = socketIO(server);
+    io.set('close timeout', 60);
+    io.set('heartbeat timeout', 60);
 
     io.on('connection', connection => {
 
@@ -37,7 +43,7 @@ module.exports = function (server) {
         const clientErrorSender = clientSender(connectionTypes.ERROR);
         const clientClientsSender = clientSender(connectionTypes.CLIENTS);
 
-        clientSender({
+        clientClientsSender({
             type: 'clients',
             clients: Object.keys(users)
         });
@@ -104,7 +110,7 @@ module.exports = function (server) {
                 offer
             } = data;
 
-            console.log("Sending offer to: ", name);
+            console.log(`Sending OFFER from ${connection.name} to ${name}`);
 
             //if UserB exists then send him offer details
             const conn = users[name];
@@ -113,9 +119,10 @@ module.exports = function (server) {
                 //setting that UserA connected with UserB
                 connection.otherName = name;
 
-                sendTo(conn)(connectionTypes.OFFER)({
+                sendTo(conn)(connectionTypes.OFFER_RECEIVED)({
+                    to: name,
                     offer,
-                    name: connection.name
+                    from: connection.name
                 });
             } else {
                 console.log(`${name} is not yet connected`);
@@ -132,16 +139,16 @@ module.exports = function (server) {
                 answer
             } = data;
 
-            console.log("Sending answer to: ", data.name);
-
             //for ex. UserB answers UserA
             const conn = users[name];
 
             if (conn != null) {
                 connection.otherName = name;
-                sendTo(conn)(connectionTypes.ANSWER)({
-                    name,
-                    answer
+                console.log(`Sending ANSWER from ${connection.name} to ${name}`);
+                sendTo(conn)(connectionTypes.ANSWER_RECEIVED)({
+                    to: name,
+                    answer,
+                    from: connection.name
                 });
             } else {
                 clientErrorSender({
@@ -150,20 +157,21 @@ module.exports = function (server) {
             }
         });
 
-        connection.on(connectionTypes.CANDIDATE, data => {
+        connection.on(connectionTypes.CANDIDATE_RECEIVED, data => {
             const {
                 name,
-                candidate
+                candidate,
             } = data;
 
-            console.log("Sending candidate to:", data.name);
+            console.log(`Sending CANDIDATE from ${connection.name} to ${name}`);
 
             const conn = users[name];
 
             if (conn != null) {
                 sendTo(conn)(connectionTypes.CANDIDATE)({
-                    name,
-                    candidate
+                    to: name,
+                    candidate,
+                    from: connection.name
                 });
             } else {
                 clientErrorSender({
@@ -184,7 +192,7 @@ module.exports = function (server) {
             const conn = users[name];
 
             if (conn != null) {
-                sendTo(conn)(connectionTypes.INTERACTION)(data);
+                sendTo(conn)(connectionTypes.INTERACTION)({ to: name, from: connection.name, data});
             } else {
                 console.log(`${name} is not yet connected`);
                 clientErrorSender({
@@ -209,10 +217,10 @@ module.exports = function (server) {
 
                 if(connection.otherName) {
                     console.log("Disconnecting from ", connection.otherName);
-                    var conn = users[connection.otherName];
-                    conn.otherName = null;
+                    const conn = users[connection.otherName];
 
                     if(conn != null) {
+                        conn.otherName = null;
                         sendTo(conn, {
                             type: "leave"
                         });

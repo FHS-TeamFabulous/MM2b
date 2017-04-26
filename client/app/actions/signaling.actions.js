@@ -1,5 +1,4 @@
 import { socketApi } from '../services/socket';
-import { Observable } from 'rxjs';
 
 
 export const types = {
@@ -9,8 +8,11 @@ export const types = {
     OFFER_RECEIVED: '[communication] OFFER RECEIVED',
     ANSWER: '[communication] ANSWER',
     ANSWER_SENT: '[communication] ANSWER SUCCESS',
+    ANSWER_RECEIVED: '[communication] ANSWER REVEIVED',
     CANDIDATE: '[communication] CANDIDATE',
     CANDIDATE_SENT: '[communication] CANDIDATE SENT',
+    CANDIDATE_RECEIVED: '[communication] CANDIDATE RECEIVED',
+    CANDIDATE_SET: '[communication] CANDIDATE SET',
     LOGIN: '[communication] LOGIN',
     LOGIN_SENT: '[communication] LOGIN SENT',
     LOGIN_SUCCESS: '[communication] LOGIN SUCCESS',
@@ -19,7 +21,10 @@ export const types = {
     LOGOUT_SUCCESS: '[communication] LOGOUT SUCCESS',
     CLIENTS: '[communication] CLIENTS',
     CONNECT: '[communication] CONNECT',
-    CONNECTED: '[communication] CONNECTED'
+    CONNECTED: '[communication] CONNECTED',
+    INTERACTION: '[communication] INTERACTION',
+    REMOTE_STREAM_ADDED: '[communication] REMOTE STREAM ADDED',
+    REMOTE_STREAM_REMOVED: '[communication] REMOTE STREAM REMOVED'
 };
 
 export function createClientsReceived(clients) {
@@ -38,9 +43,12 @@ export function createOffer(name) {
     };
 }
 
-export function createOfferSent() {
+export function createOfferSent(name) {
     return {
-        type: types.OFFER_SENT
+        type: types.OFFER_SENT,
+        payload: {
+            name
+        }
     };
 }
 
@@ -51,12 +59,19 @@ export function createOfferReceived(message) {
     };
 }
 
-export function createAnswered(name) {
+export function createAnswerSent(name) {
     return {
-        type: types.ANSWER,
+        type: types.ANSWER_SENT,
         payload: {
             name
         }
+    };
+}
+
+export function createAnswerReceived(data) {
+    return {
+        type: types.ANSWER_RECEIVED,
+        payload: data
     };
 }
 
@@ -72,6 +87,22 @@ export function createCandidate(name) {
 export function createCandidateSent() {
     return {
         type: types.CANDIDATE_SENT
+    };
+}
+
+export function createCandidateSet(candidate) {
+    return {
+        type: types.CANDIDATE_SET,
+        payload: {
+            candidate
+        }
+    }
+}
+
+export function createCandidateReceived(data) {
+    return {
+        type: types.CANDIDATE_RECEIVED,
+        payload: data
     };
 }
 
@@ -133,6 +164,43 @@ export function createChangeDescrition(description) {
     };
 }
 
+export function createConnected() {
+    return {
+        type: types.CONNECTED
+    };
+}
+
+export function createConnect(name) {
+    return {
+        type: types.CONNECT,
+        payload: {
+            name
+        }
+    };
+}
+
+export function createRemoteStreamAdded(stream) {
+    return {
+        type: types.REMOTE_STREAM_ADDED,
+        payload: {
+            stream
+        }
+    }
+}
+
+export function createRemoteStreamRemoved() {
+    return {
+        type: types.REMOTE_STREAM_REMOVED
+    }
+}
+
+export function createInteraction(data) {
+    return {
+        type: types.INTERACTION,
+        payload: data
+    }
+}
+
 export function createError(error) {
     return {
         type: types.ERROR,
@@ -158,16 +226,31 @@ export const logoutEpic = (action$, state) => action$
 export const offerEpic = (action$, state) => action$
     .filter(action => action.type === types.OFFER)
     .map(action => action.payload)
-    .map(message => {
-        socketApi.offer(message.name);
-    })
-    .mapTo(createOfferSent());
+    .switchMap(message => socketApi.sendOffer(message.name)
+        .then(() => createOfferSent(message.name))
+    );
 
-export const answerEpic = (action$, state) => action$
-    .filter(action => action.type === types.OFFERED)
+/*export const answerEpic = (action$, state) => action$
+    .filter(action => action.type === types.OFFER_RECEIVED)
     .map(action => action.payload)
-    .map(({name, offer}) => {
-        socketApi.answer(name, offer);
-        return name;
+    .switchMap(({name, offer}) => socketApi.sendAnswer(name, offer)
+        .then(() => createAnswerSent(name))
+    );
+
+export const candidateEpic = (action$, state) => action$
+    .filter(action => action.type === types.CANDIDATE)
+    .map(action => action.payload)
+    .map(data => {
+        console.log(state);
+        // socketApi.sendCandidate(data);
     })
-    .map(createAnswered);
+    .mapTo(createCandidateSent());
+
+export const candidateReceivedEpic = (action$, state) => action$
+    .filter(action => action.type === types.CANDIDATE_RECEIVED)
+    .map(action => action.payload)
+    .map(message => {
+        socketApi.addIceCandidate(message);
+        return message.candidate;
+    })
+    .map(createCandidateSet);*/
