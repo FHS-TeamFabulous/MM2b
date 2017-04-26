@@ -1,23 +1,19 @@
 .close-button {
     position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 200px;
-    height: 200px;
+    top: -120px;
+    right: -120px;
+    width: 210px;
+    height: 210px;
     background-color: #00b0de;
     border-radius: 100%;
-
-    &:hover {
-        border:none;
-        background-color: #e77929;
-    }
 }
+
 .button-book-item {
     background-color: #00b0de;
     color: white;
     width: 70%;
     border: none;
-    
+
     &:hover {
         border:none;
         background-color: orange;
@@ -25,4 +21,56 @@
     }
 }
 
+.modal-close-button {
+    position: absolute;
+    top:-50px;
+    right: -50px;
+    width: 100px;
+    height: 100px;
+    background-color: #00b0de;
+    border-radius: 100%;
+
+    &:hover {
+        border:none;
+        background-color: orange;
+    }
+}
+
+.modal-login-button {
+    background-color: #00b0de;
+    color: white;
+    border: none;
+    text-align: center;
+    float: right;
+    &:hover {
+        border:none;
+        background-color: orange;
+        color: white;
+    }
+    margin-left: 15px;
+}
+
+.modal-cancel-button {
+    background-color: #00b0de;
+    color: white;
+    border: none;
+    text-align: center;
+    float: right;
+    &:hover {
+        border:none;
+        background-color: orange;
+        color: white;
+    }
+}
+
+:global .btn {
+    border: 0;
+
+    &:hover,
+    &:focus,
+    &:active {
+        color: #fff !important;
+        background-color: #e77929!important;
+    }
+}
 

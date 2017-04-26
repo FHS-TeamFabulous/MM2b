@@ -1,0 +1,40 @@
+import React from 'react';
+import style from './style.scss';
+import CustomButton from './../button';
+import {Modal} from 'react-bootstrap';
+import {closeModal} from './../../actions/modal-actions';
+import { connect } from 'react-redux';
+import Select from 'react-select';
+import SelectItem from './../select-item';
+
+
+
+var options = [
+    { value: 'one', label: <SelectItem username={"one"}/> },
+    { value: 'two', label: <SelectItem username={"two"}/> }
+];
+
+class InviteModalContentComponente extends React.Component {
+    render() {
+        return (
+            <div>
+                <Modal.Body className={style.bodyContent}>
+                    <p className={style.loginModalParagraph}>Wählen sie einen User aus mit dem Sie lesen wollen!</p>
+                    <div className={style.selectWrapper}>
+                        <Select name="form-field-name" options={options}/>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className={style.footerContent}>
+                    <CustomButton clickHandler={this.closeModal.bind(this)} type={"modalCancelButton"} content={"Cancel"}/>
+                </Modal.Footer>
+            </div>
+        );
+    }
+
+    closeModal() {
+        this.props.dispatch(closeModal());
+    }
+}
+
+export default connect()(InviteModalContentComponente);
+

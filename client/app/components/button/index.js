@@ -7,7 +7,7 @@ export default class CustomButton extends React.Component {
     render() {
         return (
             <div>
-                <Button className={style[this.props.properties.className]}>{this.props.properties.icon}{this.props.properties.text}</Button>
+                <Button onClick={this.props.clickHandler} className={style[this.props.type]}>{this.props.content}</Button>
             </div>
         );
     }

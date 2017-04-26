@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import MainLayout from 'app/components/main-layout';
 import ReaderLayout from 'app/components/reader-layout';
 import Library from './components/bibliothek';
@@ -10,20 +9,23 @@ import { Provider } from 'react-redux';
 import App from './components/app';
 import configureStore from 'app/configure-store';
 import 'rxjs';
+import Header from 'app/components/header';
+
+const header = <Header/>;
 
 const store = configureStore();
 const root = document.getElementById('main');
 
 ReactDOM.render(
     <Provider store={ store }>
-        <Router>
-            <App>
+        <App>
+            <Router>
                 <MainLayout>
                     <Route exact path="/" component={ Library }/>
                     <Route path="/playground" component={ReaderLayout}/>
                 </MainLayout>
-            </App>
-        </Router>
+            </Router>
+        </App>
     </Provider>,
     root
 );

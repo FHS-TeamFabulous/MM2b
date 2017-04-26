@@ -25,9 +25,7 @@ class ReaderLayout extends React.Component {
     render() {
         return (
             <div className={style.readerLayoutWrapper}>
-                <Link to="/">
-                    <CustomButton properties={{className:"closeButton", icon:closeIcon}}/>
-                </Link>
+                <Link to="/"><CustomButton type={"closeButton"} content={closeIcon}/></Link>
                 <Grid>
                     <BookReader/>
                     <div>

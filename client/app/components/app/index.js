@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {  } from 'app/actions/signaling.actions';
+import { createLogin } from 'app/actions/signaling.actions';
 
 class App extends Component {
 
-    onComponentDidMount() {
-        this.props.dispatch()
-    }
-
     render() {
         return(
-            <div className="app">
+            <div>
                 {this.props.children}
             </div>
         )

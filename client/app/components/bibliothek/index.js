@@ -1,6 +1,7 @@
 import React from 'react';
 import style from './style.scss';
 import BookCollection from './../book-collection';
+import CustomModal from './../custom-modal';
 
 let books = {1: {bookTitle: "Trödltrudls Klippklapptraum - Tyrolia", ageOf: 6},
              2: {bookTitle: "Nixe Nane - Sind Flussnixen gefährlich?", ageOf: 7},
@@ -18,6 +19,7 @@ export default class Library extends React.Component {
     render() {
         return (
             <div className={style.content}>
+                <CustomModal />
                 <h1 className={style.titleHeader}>Viele schöne Bücher, Märchen und Kindergeschichten zum Vorlesen</h1>
                 <h3 className={style.paragraphHeader} >Unsere Bücher</h3>
                 <p>Hier finden Sie unsere wachsendes Angebot an tollen Büchern, Märchen und Gute-Nacht
@@ -33,6 +35,7 @@ export default class Library extends React.Component {
                 <BookCollection array={cat3}/>
 
                 <BookCollection array={cat4}/>
+
 
             </div>
         );
