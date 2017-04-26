@@ -15,7 +15,6 @@ export default function MainLayout (props) {
             <Grid className={style.content}>
                 {props.children}
             </Grid>
-            <VideoComponent/>
         </div>
     );
 }

@@ -36,7 +36,6 @@ export default class Library extends React.Component {
 
                 <BookCollection array={cat4}/>
 
-
             </div>
         );
     }
