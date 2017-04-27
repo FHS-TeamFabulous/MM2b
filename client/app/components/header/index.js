@@ -10,10 +10,10 @@ export default class Header extends React.Component {
                     <img className={style.logo} alt="vorlesen-verbindet-logo" src="/assets/images/vorlesen-verbindet_logo.jpg"/>
                 </div>
                 <div className={style.navBarWrapper}>
-                    <Nav bsStyle="pills">
-                        <NavItem className={style.navItem} eventKey={1} href="#">Home</NavItem>
-                        <NavItem className={style.navItem} eventKey={2} href="#">Bibliothek</NavItem>
-                    </Nav>
+                    <ul className="nav nav-pills">
+                        <li>Home</li>
+                        <li>Bibliothek</li>
+                    </ul>
                 </div>
             </div>
         );

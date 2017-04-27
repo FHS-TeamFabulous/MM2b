@@ -4,3 +4,15 @@
     outline: none!important;
     box-sizing: border-box;
 }
+
+:global .container {
+    width: 960px;
+}
+
+:global .pull-left {
+    float: left;
+}
+
+:global .pull-right {
+    float: right;
+}

@@ -5,13 +5,11 @@ import {Modal} from 'react-bootstrap';
 import {closeModal} from './../../actions/modal-actions';
 import { connect } from 'react-redux';
 import Select from 'react-select';
-import SelectItem from './../select-item';
-
-
+import SelectItem from 'app/components/select-item';
 
 var options = [
-    { value: 'one', label: <SelectItem username={"one"}/> },
-    { value: 'two', label: <SelectItem username={"two"}/> }
+    { value: 'one', label: "hallo" },
+    { value: 'two', label: "hall2" }
 ];
 
 class InviteModalContentComponente extends React.Component {
@@ -25,7 +23,9 @@ class InviteModalContentComponente extends React.Component {
                     </div>
                 </Modal.Body>
                 <Modal.Footer className={style.footerContent}>
-                    <CustomButton clickHandler={this.closeModal.bind(this)} type={"modalCancelButton"} content={"Cancel"}/>
+                    <CustomButton onClick={this.closeModal.bind(this)} className={"defaultBtn"}>
+                        Cancel
+                    </CustomButton>
                 </Modal.Footer>
             </div>
         );
@@ -34,6 +34,11 @@ class InviteModalContentComponente extends React.Component {
     closeModal() {
         this.props.dispatch(closeModal());
     }
+}
+
+function cleanInput(inputValue) {
+    // Strip all non-number characters from the input
+    return inputValue.replace(/[^0-9]/g, "");
 }
 
 export default connect()(InviteModalContentComponente);

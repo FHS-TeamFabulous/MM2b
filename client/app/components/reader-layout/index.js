@@ -1,7 +1,6 @@
 import React from 'react';
 import style from './style.scss';
 import CustomButton from './../button';
-import {Grid} from 'react-bootstrap';
 import BookReader from 'app/components/book-reader';
 import VideoCircle from 'app/components/video-circle';
 import { connect } from 'react-redux';
@@ -12,6 +11,7 @@ import * as actions from 'app/actions/communication-actions';
 
 const closeIcon = <FaClose className={style.icon}/>;
 
+import { closeBook } from 'app/actions/books-actions';
 import { Link } from 'react-router-dom';
 
 class ReaderLayout extends React.Component {
@@ -40,9 +40,13 @@ class ReaderLayout extends React.Component {
     render() {
         return (
             <div className={style.readerLayoutWrapper}>
-                <Link to="/"><CustomButton type={"closeButton"} content={closeIcon}/></Link>
-                <Grid>
-                    <BookReader/>
+                <Link to="/">
+                    <CustomButton onClick={this.closeHandler.bind(this)} className="closeButton">
+                        <FaClose className={style.icon}/>
+                    </CustomButton>
+                </Link>
+                <div>
+                    <BookReader bookId={this.props.match.params.id} />
                     <div>
                         <div className={style.videosWrapper}>
                             <div className={style.videoTagWrapperLeft} >
@@ -53,17 +57,14 @@ class ReaderLayout extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <CustomButton clickHandler={this.connect.bind(this)} content="Connect"/>
-                    <CustomButton clickHandler={this.interact.bind(this)} content="Interact"/>
-                </Grid>
+                </div>
             </div>
         );
     }
+
+    closeHandler() {
+        this.props.dispatch(closeBook());
+    }
 }
 
-
-const mapStateToProps = (state) => {
-    return {}
-};
-
-export default connect(mapStateToProps)(ReaderLayout);
+export default connect()(ReaderLayout);
