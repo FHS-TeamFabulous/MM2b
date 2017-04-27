@@ -18,6 +18,10 @@ app.use(cors());
 app.use('/api/', apiRoutes);
 app.use('/assets/', express.static(assetsPath));
 
+app.get('/', function(req, res) {
+    res.sendFile('./index.html');
+});
+
 http.listen(process.env.PORT || config.get('http.port'));
 
 socket(http, config);

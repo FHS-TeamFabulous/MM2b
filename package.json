@@ -6,7 +6,7 @@
   "scripts": {
     "heroku-preinstall": "NODE_ENV=development",
     "test": "jest",
-    "build": "webpack --config ./client/webpack.config.babel.js --progress --colors",
+    "build": "webpack --config ./client/webpack.config.babel.js --progress --colors && cp -R client/assets client/dist/ && cp client/index.html client/dist/index.html",
     "start": "cp -R client/assets client/dist/ && cp client/index.html client/dist/index.html && webpack-dev-server --config ./client/webpack.config.babel.js",
     "watch": "webpack --config ./client/webpack.config.babel.js --watch --progress --colors",
     "server": "npm run build && nodemon ./server/index.js --ignore node_modules --ignore ./client",
