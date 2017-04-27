@@ -4,12 +4,13 @@
   "description": "Our MMP2b Project for the 4th term at FH-Salzburg",
   "main": "server/index.js",
   "scripts": {
+    "heroku-preinstall": "NODE_ENV=development",
     "test": "jest",
     "build": "webpack --config ./client/webpack.config.babel.js --progress --colors",
     "start": "cp -R client/assets client/dist/ && cp client/index.html client/dist/index.html && webpack-dev-server --config ./client/webpack.config.babel.js",
     "watch": "webpack --config ./client/webpack.config.babel.js --watch --progress --colors",
     "server": "npm run build && nodemon ./server/index.js --ignore node_modules --ignore ./client",
-    "server:prod": "NODE_ENV=development && npm run build && ./server/index.js --ignore node_modules --ignore ./client"
+    "server:prod": "npm run build && ./server/index.js --ignore node_modules --ignore ./client"
   },
   "repository": {
     "type": "git",
