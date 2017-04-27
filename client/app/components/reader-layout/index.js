@@ -1,10 +1,9 @@
 import React from 'react';
 import style from './style.scss';
-import CustomButton from './../button';
 import BookReader from 'app/components/book-reader';
 import VideoCircle from 'app/components/video-circle';
 import { connect } from 'react-redux';
-
+import CustomButton from 'app/components/button';
 import FaClose from 'react-icons/lib/fa/close';
 import Communication from 'app/services/communication';
 import * as actions from 'app/actions/communication-actions';
@@ -64,6 +63,7 @@ class ReaderLayout extends React.Component {
                             </div>
                         </div>
                     </div>
+                    <CustomButton onClick={this.connect.bind(this)}>Connect</CustomButton>
                 </div>
             </ReactCSSTransitionGroup>
         );
