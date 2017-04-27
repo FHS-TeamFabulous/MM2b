@@ -1,27 +1,183 @@
 const socketIO = require('socket.io'),
     uuid = require('uuid'),
-    crypto = require('crypto'),
-    users = {
-        1: {
-            name: 'christoph'
-        },
-        2: {
-            name: 'erfan'
-        },
-        3: {
-            name: 'markus'
-        }
-    };
+    crypto = require('crypto');
 
 module.exports = function (server, config) {
-    const io = socketIO.listen(server);
-
-    io.sockets.on('connection', function (client) {
-        client.resources = {
+    const io = socketIO.listen(server),
+        users = {},
+        defaultResources = {
             screen: false,
             video: true,
-            audio: false
+            audio: false,
         };
+
+    io.sockets.on('connection', function (client) {
+        console.log('connected: ' + client.id);
+        client.resources = defaultResources;
+
+        const findUserByName = name => {
+            return Object.keys(users)
+                .find(id => users[id] && users[id].name === name);
+        };
+
+        const getUser = () => {
+            return users[client.id];
+        };
+
+        const updateUserId = user => {
+            delete users[user.id];
+            user.id = client.id;
+            users[user.id] = user;
+        };
+
+        const loginUser = name => {
+            const user = users[client.id];
+            const oldUser = findUserByName(name);
+            if (oldUser && oldUser.connection !== client) {
+                console.log(`Found user with name ${name} and changed id from ${oldUser.id} to ${client.id}`);
+                updateUserId(oldUser);
+                oldUser.loggedIn = true;
+            } else {
+                user.name = name;
+                user.loggedIn = true;
+                console.log(`User ${user.name} logged in.`);
+            }
+        };
+
+        const isLoggedIn = () => {
+            const user = users[client.id];
+            return user && user.isLoggedIn && user.name;
+        };
+
+        const addUser = () => {
+            users[client.id] = {
+                id: client.id,
+                name: '',
+                loggedIn: false,
+                connection: client,
+                room: null
+            };
+            console.log(`Added connection ${client.id} to users.`);
+        };
+
+        const logoutUser = () => {
+            const user = users[client.id];
+
+            console.log(`Logging out user ${user.name}`);
+            user.loggedIn = false;
+        };
+
+        const removeUser = () => {
+            delete  users[client.id];
+        };
+
+        const getClients = (loggedIn) => {
+            return Object.keys(users).filter(id => {
+                if (loggedIn) {
+                    return users[id] && users[id].name !== client.name && users[id].loggedIn;
+                } else {
+                    return users[id];
+                }
+            }).map(id => {
+                return {
+                    id: id,
+                    name: users[id].name
+                }
+            })
+        };
+
+        const clientsInRoom = name => {
+            if (name) {
+                const test = Object.keys(users).filter(id => users[id].room).map(id => users[id]);
+                console.log(test);
+                const clients = Object.keys(users).filter(id => users[id].room === name)
+                    .map(id => {
+                        return users[id];
+                    });
+                console.log('clients in room ' + name, clients);
+                return clients;
+            }
+            return [];
+        };
+
+        const describeRoom = name => {
+
+            /*var adapter = io.nsps['/'].adapter;
+            var clients = adapter.rooms[name] || {};
+            var result = {
+                clients: {}
+            };
+            Object.keys(clients).forEach(function (id) {
+                result.clients[id] = adapter.nsp.connected[id].resources;
+            });
+            return result;*/
+
+            const clients = clientsInRoom(name);
+            console.log('all clients: ', clients);
+
+            const result = {
+                clients: clients.reduce((acc, c) => {
+                    if (c.id) {
+                        acc[c.id] = c.connection.resources || defaultResources;
+                    }
+                    return acc;
+                }, {})
+            };
+            console.log('RoomDescription: ', result);
+            return result;
+        };
+
+        addUser();
+
+        console.log('Clients logged in: ', getClients(true));
+
+        client.on('login', data => {
+            const { name } = data;
+            const user = getUser();
+            const clients = getClients(true);
+
+            if (isLoggedIn()) {
+                client.emit('login_success', { name });
+                client.emit('clients_success', { clients });
+            } else {
+                loginUser(name);
+                client.emit('login_success', { name });
+                client.emit('clients_success', { clients });
+            }
+        });
+
+        client.on('logout', ({name}) => {
+            const user = getUser();
+            if (user && user.name === name) {
+                logoutUser();
+                console.log(`User ${name} logged out.`);
+                client.emit('logout_success', { name });
+            }
+        });
+
+        client.on('clients', ({loggedIn}) => {
+            const clients = getClients(loggedIn);
+            console.log('sending clients: ', clients);
+            client.emit('clients_success', { clients });
+        });
+
+        client.on('invite', ({name}) => {
+            console.log(`${client.name}(${client.id}) invites ${name} for a session.`);
+
+            if (!data) return;
+
+            const otherClient = io.to(name);
+            if (!otherClient) return;
+
+            otherClient.emit('invitation', {
+                from: client.name,
+                to: name
+            });
+        });
+
+        client.on('invitation_accept', ({from, to}) => {
+            client.emit('invite_accepted', { from, to })
+        });
 
         // pass a message to another id
         client.on('message', function (details) {
@@ -46,13 +202,8 @@ module.exports = function (server, config) {
         client.on('join', join);
 
         client.on('interaction', function (data) {
-            if (!data) return;
-
-            const otherClient = io.to(data.to);
-            if (!otherClient) return;
-
-            data.from = client.id;
-            otherClient.emit('interaction', data);
+            console.log(`${users[client.id]} interacts with all users in room ${client.room}.`, data);
+            io.sockets.in(client.room).emit('interaction_received', data);
         });
 
 
@@ -69,7 +220,36 @@ module.exports = function (server, config) {
             }
         }
 
+        function joinUser(userName, cb) {
+            client.join('test');
+            safeCb(cb)(null, userName + 'joined test room');
+            /*const user = findUserByName(userName);
+
+            if (user) {
+                const { room, name, connection } = user;
+                removeFeed();
+                if (room) {
+                    console.log(`Client ${client.name} joining room ${room} from user ${name}`);
+                    client.join('test');
+                    safeCb(cb)(null, describeRoom(user.room));
+                    client.room = user.room;
+                } else {
+                    const roomId = uuid();
+                    console.log(`Client ${client.name} joining room ${roomId}`);
+                    client.room = roomId;
+                    client.join('test');
+                    safeCb(cb)(null, describeRoom(roomId));
+                    console.log(`Inviting user ${name} to room ${roomId}`);
+                    user.connection && user.connection.emit('invitation_received', { room: roomId, from: client.name });
+                    console.log('user connection', user.connection);
+                }
+            } else {
+                console.log(`User ${userName} not found`);
+            }*/
+        }
+
         function join(name, cb) {
+            name = 'test';
             // sanity check
             if (typeof name !== 'string') return;
             // check if maximum number of clients reached
@@ -78,23 +258,30 @@ module.exports = function (server, config) {
                 safeCb(cb)('full');
                 return;
             }
+
             // leave any existing rooms
             removeFeed();
             safeCb(cb)(null, describeRoom(name));
+            const user = getUser();
+            console.log(`Client ${user.name} joining room ${name}`);
             client.join(name);
-            client.room = name;
+            user.room = name;
         }
 
         // we don't want to pass "leave" directly because the
         // event type string of "socket end" gets passed too.
         client.on('disconnect', function () {
+            logoutUser(users[client.id]);
             removeFeed();
+            console.log(`disconnected ${client.id}`);
+            client.disconnect();
         });
         client.on('leave', function () {
             removeFeed();
         });
 
         client.on('create', function (name, cb) {
+            console.log('creating ' + name);
             if (arguments.length == 2) {
                 cb = (typeof cb == 'function') ? cb : function () {};
                 name = name || uuid();
@@ -103,7 +290,7 @@ module.exports = function (server, config) {
                 name = uuid();
             }
             // check if exists
-            var room = io.nsps['/'].adapter.rooms[name];
+            const room = io.nsps['/'].adapter.rooms[name];
             if (room && room.length) {
                 safeCb(cb)('taken');
             } else {
@@ -126,7 +313,7 @@ module.exports = function (server, config) {
 
         // create shared secret nonces for TURN authentication
         // the process is described in draft-uberti-behave-turn-rest
-        var credentials = [];
+        const credentials = [];
         // allow selectively vending turn credentials based on origin.
         var origin = client.handshake.headers.origin;
         if (!config.turnorigins || config.turnorigins.indexOf(origin) !== -1) {
@@ -144,24 +331,6 @@ module.exports = function (server, config) {
         }
         client.emit('turnservers', credentials);
     });
-
-
-    function describeRoom(name) {
-        const adapter = io.nsps['/'].adapter;
-        const clients = adapter.rooms[name] || {};
-        const result = {
-            clients: {}
-        };
-        Object.keys(clients).forEach(function (id) {
-            result.clients[id] = adapter.nsp.connected[id].resources;
-        });
-        return result;
-    }
-
-    function clientsInRoom(name) {
-        return io.sockets.clients(name).length;
-    }
-
 };
 
 function safeCb(cb) {

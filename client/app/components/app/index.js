@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { createLogin } from 'app/actions/signaling.actions';
 
 class App extends Component {
 
@@ -14,11 +13,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-    return {
-        constraints: state.signaling.constraints,
-        connected: state.signaling.connected,
-        clients: state.signaling.clients
-    }
+    return {}
 };
 
 export default connect(mapStateToProps)(App);

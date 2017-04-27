@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 
 import FaClose from 'react-icons/lib/fa/close';
 import Communication from 'app/services/communication';
+import * as actions from 'app/actions/communication-actions';
 
 const closeIcon = <FaClose className={style.icon}/>;
 
@@ -16,10 +17,24 @@ import { Link } from 'react-router-dom';
 class ReaderLayout extends React.Component {
 
     componentDidMount() {
+        const login = prompt('login');
+        this.props.dispatch(actions.createLogin(login));
+
         this.communication = Communication.connect({
-            localVideoEl: 'localVideo',
-            remoteVideosEl: 'remoteVideo'
-        }).then(() => console.log('local Video success'))
+            localVid: 'local_container',
+            remotesContainer: 'remote_container',
+            remoteVidElement: VideoCircle
+        });
+    }
+
+    connect() {
+        const name = prompt('name');
+        this.props.dispatch(actions.createConnection(name));
+    }
+
+    interact(event) {
+        console.log('interaction event: ', event);
+        this.props.dispatch(actions.createInteraction({ test: 'testdata'}))
     }
 
     render() {
@@ -31,13 +46,15 @@ class ReaderLayout extends React.Component {
                     <div>
                         <div className={style.videosWrapper}>
                             <div className={style.videoTagWrapperLeft} >
-                                <VideoCircle type="localVideo"/>
+                                <VideoCircle type="local"/>
                             </div>
                             <div className={style.videoTagWrapperRight}>
-                                <VideoCircle type="remoteVideo" />
+                                <VideoCircle type="remote"/>
                             </div>
                         </div>
                     </div>
+                    <CustomButton clickHandler={this.connect.bind(this)} content="Connect"/>
+                    <CustomButton clickHandler={this.interact.bind(this)} content="Interact"/>
                 </Grid>
             </div>
         );
@@ -46,9 +63,7 @@ class ReaderLayout extends React.Component {
 
 
 const mapStateToProps = (state) => {
-    return {
-        clients: state.signaling.clients
-    }
+    return {}
 };
 
 export default connect(mapStateToProps)(ReaderLayout);

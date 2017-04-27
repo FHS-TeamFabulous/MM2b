@@ -3,9 +3,10 @@ import { createEpicMiddleware } from 'redux-observable';
 import thunkMiddleware from 'redux-thunk';
 import reducers, { rootEpic } from 'app/reducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import Communication from 'app/services/communication';
 
 export default (preloadedState) => {
-    return createStore(
+    const store = createStore(
         reducers,
         preloadedState,
         composeWithDevTools(
@@ -13,4 +14,7 @@ export default (preloadedState) => {
         )
     );
 
+    Communication.addEventListeners(store.dispatch, store.getState);
+
+    return store;
 };

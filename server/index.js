@@ -20,6 +20,6 @@ app.use('/assets/', express.static(assetsPath));
 
 http.listen(process.env.PORT || config.get('http.port'));
 
-socket(http);
+socket(http, config);
 
 console.log('Server listening on port: ', process.env.PORT || config.get('http.port'));
