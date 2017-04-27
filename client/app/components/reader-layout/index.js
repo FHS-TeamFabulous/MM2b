@@ -7,16 +7,20 @@ import { connect } from 'react-redux';
 import FaClose from 'react-icons/lib/fa/close';
 import { closeBook } from 'app/actions/books-actions';
 import { Link } from 'react-router-dom';
+import CustomModal from 'app/components/custom-modal';
+import {Modal} from 'react-bootstrap';
+import {openCloseModal, closeModal} from 'app/actions/modal-actions';
+
 
 class ReaderLayout extends React.Component {
     render() {
         return (
             <div className={style.readerLayoutWrapper}>
-                <Link to="/">
-                    <CustomButton onClick={this.closeHandler.bind(this)} className="closeButton">
-                        <FaClose className={style.icon}/>
-                    </CustomButton>
-                </Link>
+                <CustomModal/>
+                <CustomButton onClick={this.openModal.bind(this)} className="closeButton">
+                    <FaClose className={style.icon}/>
+                </CustomButton>
+
                 <div>
                     <BookReader bookId={this.props.match.params.id} />
                     <div>
@@ -37,6 +41,21 @@ class ReaderLayout extends React.Component {
     closeHandler() {
         this.props.dispatch(closeBook());
     }
+
+    closeModal() {
+        this.props.dispatch(closeModal());
+    }
+    openModal() {
+        this.props.dispatch(openCloseModal());
+    }
 }
 
-export default connect()(ReaderLayout);
+function mapStateToProps(state) {
+
+    return {
+        show: state.modalState.show,
+        modalType: state.modalState.modalType
+    }
+}
+
+export default connect(mapStateToProps)(ReaderLayout);

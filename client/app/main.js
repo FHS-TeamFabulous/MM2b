@@ -9,9 +9,6 @@ import { Provider } from 'react-redux';
 import App from './components/app';
 import configureStore from 'app/configure-store';
 import 'rxjs';
-import Header from 'app/components/header';
-
-const header = <Header/>;
 
 const store = configureStore();
 const root = document.getElementById('main');
@@ -19,9 +16,9 @@ const root = document.getElementById('main');
 ReactDOM.render(
     <Provider store={ store }>
         <App>
-            <CustomModal />
             <Router>
                 <MainLayout>
+                    <CustomModal/>
                     <Route path="/" component={ Library } />
                     <Route path="/books/:id" component={ ReaderLayout } />
                 </MainLayout>

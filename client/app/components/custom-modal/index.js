@@ -10,6 +10,7 @@ import FaClose from 'react-icons/lib/fa/close';
 
 import LoginModalContent from 'app/components/login-modal-content';
 import InviteModalContent from 'app/components/invite-modal-content';
+import CloseModalContent from 'app/components/close-modal-content';
 
 class CustomModal extends React.Component {
     render() {
@@ -26,7 +27,7 @@ class CustomModal extends React.Component {
                             </CustomButton>
                         </Modal.Header>
                     </div>
-                    {this.displayModal(this.props.loggingStatus)}
+                    {this.displayModal(this.props.modalType)}
                 </Modal>
             </div>
         );
@@ -36,12 +37,14 @@ class CustomModal extends React.Component {
         this.props.dispatch(closeModal());
     }
 
-    displayModal(loggingStatus) {
-        switch (loggingStatus) {
-            case false:
+    displayModal(modalType) {
+        switch (modalType) {
+            case "loginModal":
                 return <LoginModalContent/>;
-            case true:
+            case "inviteModal":
                 return <InviteModalContent/>;
+            case "closeModal":
+                return <CloseModalContent/>;
         }
     }
 }
@@ -50,9 +53,9 @@ function mapStateToProps(state) {
     return {
         show: state.modalState.show,
         user: state.authState.username,
-        loggingStatus: state.authState.isLoggedIn
+        loggingStatus: state.authState.isLoggedIn,
+        modalType: state.modalState.modalType
     }
 }
 
 export default connect(mapStateToProps)(CustomModal);
-
