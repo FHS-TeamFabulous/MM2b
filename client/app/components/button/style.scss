@@ -69,12 +69,17 @@
     background-color: #00b0de;
     color: #fff;
     border-radius: 5px;
+    &[disabled] {
+        &:hover {
+            background-color: #00b0de;
+        }
+    }
 }
 
 .container {
     button {
         border: 0;
-        
+
         &:hover {
             background-color: #e77929;
         }
