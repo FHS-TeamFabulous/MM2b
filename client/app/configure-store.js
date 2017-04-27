@@ -3,11 +3,10 @@ import { createEpicMiddleware } from 'redux-observable';
 import thunkMiddleware from 'redux-thunk';
 import reducers, { rootEpic } from 'app/reducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
-
-import addSocketListener from './services/socket';
+import Communication from 'app/services/communication';
 
 export default (preloadedState) => {
-    const store =  createStore(
+    const store = createStore(
         reducers,
         preloadedState,
         composeWithDevTools(
@@ -15,7 +14,7 @@ export default (preloadedState) => {
         )
     );
 
-    addSocketListener(store.dispatch, store.getState);
+    Communication.addEventListeners(store.dispatch, store.getState);
 
     return store;
 };
