@@ -13,7 +13,7 @@ const clientPath = path.join(__dirname, config.get('paths.client'));
 const assetsPath = path.join(__dirname, config.get('paths.assets'));
 
 // middleware
-app.use(express.static(clientPath)); // set the root path to our video folder
+app.use(express.static(clientPath)); // set the root path to our client folder
 app.use(cors());
 app.use('/api/', apiRoutes);
 app.use('/assets/', express.static(assetsPath));
