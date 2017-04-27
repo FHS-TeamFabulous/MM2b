@@ -38,7 +38,7 @@ class InviteModalContentComponente extends React.Component {
 
 function cleanInput(inputValue) {
     // Strip all non-number characters from the input
-    return inputValue.replace(/[^0-9]/g, "");
+    return inputValue.replace(/[^0-9]/g, '');
 }
 
 export default connect()(InviteModalContentComponente);
