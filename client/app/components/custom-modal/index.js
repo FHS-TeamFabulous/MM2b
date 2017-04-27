@@ -4,15 +4,12 @@ import CustomButton from './../button';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {Modal} from 'react-bootstrap';
-import {closeModal} from './../../actions/modal-actions';
+import {closeModal} from 'app/actions/modal-actions';
 
 import FaClose from 'react-icons/lib/fa/close';
 
-import LoginModalContent from './../login-modal-content';
-import InviteModalContent from './../invite-modal-content';
-
-const closeIcon = <FaClose className={style.icon}/>;
-
+import LoginModalContent from 'app/components/login-modal-content';
+import InviteModalContent from 'app/components/invite-modal-content';
 
 class CustomModal extends React.Component {
     render() {
@@ -24,7 +21,9 @@ class CustomModal extends React.Component {
                             <div className={style.modalLogoWrapper}>
                                 <img className={style.logo} alt="vorlesen-verbindet-logo" src="/assets/images/vorlesen-verbindet_logo.jpg"/>
                             </div>
-                            <CustomButton clickHandler={this.closeModal.bind(this)} type={"modalCloseButton"} content={closeIcon}/>
+                            <CustomButton onClick={this.closeModal.bind(this)} className={"modalCloseButton"}>
+                                <FaClose className={style.icon}/>
+                            </CustomButton>
                         </Modal.Header>
                     </div>
                     {this.displayModal(this.props.loggingStatus)}
@@ -32,9 +31,11 @@ class CustomModal extends React.Component {
             </div>
         );
     }
+
     closeModal() {
         this.props.dispatch(closeModal());
     }
+
     displayModal(loggingStatus) {
         switch (loggingStatus) {
             case false:

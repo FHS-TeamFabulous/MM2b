@@ -14,15 +14,16 @@ export default class BookReader extends React.Component {
     }
 
     componentDidMount() {
-        this.$node = $(this.refs.reader);
-        this.$node.bind('turned', (event, page) => {
+        this.$flipbook = $(this.refs.reader);
+
+        this.$flipbook.bind('turned', (event, page) => {
             this.props.setPage(page);
         });
     }
 
-    componentDidUpdate(prevProps) {
-        if (!prevProps.ready && this.props.ready) {
-            this.$node.turn({
+    componentDidUpdate() {
+        if (this.props.ready && !this.bookPluginStarted) {
+            this.$flipbook.turn({
                 width: this.props.width,
                 height: this.props.height,
                 autoCenter: true
@@ -34,17 +35,17 @@ export default class BookReader extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.currentPage !== nextProps.currentPage && this.bookPluginStarted) {
-            this.$node.turn('page', nextProps.currentPage);
+            this.$flipbook.turn('page', nextProps.currentPage);
         }
     }
 
     componentWillUnmount() {
-        this.$node.turn('destroy');
+        this.$flipbook.turn('destroy');
     }
 
     render() {
         return (
-            <div>
+            <div ref="zoomViewPort">
                 <div ref="reader" className={ style.book }>  
                     {
                         this.props.pages.map(page => {

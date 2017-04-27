@@ -4,6 +4,7 @@ const types = {
     REQUEST: 'REQUEST_BOOK',
     RECEIVE: 'RECEIVE_BOOK',
     SELECT_BOOK: 'SELECT_BOOK',
+    CLOSE_BOOK: 'CLOSE_BOOK',
     PAGE_NEXT: 'PAGE_NEXT',
     PAGE_PREV: 'PAGE_PREV',
     PAGE_SET: 'PAGE_SET'
@@ -32,10 +33,36 @@ function fetchBooks() {
     };
 }
 
+function shouldFetchBooks(state) {
+    const booksState = state.booksState;
+    
+    if (booksState.isFetching) {
+        return false;
+    } else if (!Object.keys(booksState.books).length) {
+        return true;
+    }
+}
+
+function fetchBooksIfNeeded() {
+    return (dispatch, getState) => {
+        if (shouldFetchBooks(getState())) {
+            return dispatch(fetchBooks());
+        } else {
+            return Promise.resolve();
+        }
+    };
+}
+
 function selectBook(id) {
     return {
         type: types.SELECT_BOOK,
         id: id
+    };
+}
+
+function closeBook() {
+    return {
+        type: types.CLOSE_BOOK
     };
 }
 
@@ -70,4 +97,12 @@ function pagePrev() {
     };
 }
 
-export { types, fetchBooks, pageNext, pagePrev, setPage };
+export { 
+    types, 
+    fetchBooksIfNeeded, 
+    pageNext, 
+    pagePrev, 
+    setPage, 
+    selectBook,
+    closeBook,
+};

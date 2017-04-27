@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import MainLayout from 'app/components/main-layout';
 import ReaderLayout from 'app/components/reader-layout';
-import Library from './components/bibliothek';
-
+import Library from 'app/components/library';
+import CustomModal from 'app/components/custom-modal';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import App from './components/app';
@@ -19,10 +19,11 @@ const root = document.getElementById('main');
 ReactDOM.render(
     <Provider store={ store }>
         <App>
+            <CustomModal />
             <Router>
                 <MainLayout>
-                    <Route exact path="/" component={ Library }/>
-                    <Route path="/playground" component={ReaderLayout}/>
+                    <Route path="/" component={ Library } />
+                    <Route path="/books/:id" component={ ReaderLayout } />
                 </MainLayout>
             </Router>
         </App>
