@@ -78,7 +78,7 @@ function calcBookSize(pageWidth, pageHeight, windowWidth, windowHeight) {
     let bookWidth = pageWidth * 2;
     let bookHeight = pageHeight;
     let aspectRatio = bookWidth / bookHeight;
-    let bookVerticalMargin = 200;
+    let bookVerticalMargin = 100;
     let bookHorizontalMargin = 200;
 
     if (bookHeight > (windowHeight - bookVerticalMargin)) {

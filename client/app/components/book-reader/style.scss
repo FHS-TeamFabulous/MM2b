@@ -29,17 +29,13 @@
     width: 60px;
     height: 60px;
     color: #fff;
-    background-color: #00b0de;
-    border: 0;
+    background-color: #e77929;
+    border: 3px solid #fff;
     font-size: 50px;
-
-    &:hover {
-        background-color: #e77929;
-    }
 
     svg {
         position: relative;
-        top: -14px;
+        top: -17px;
     }
 }
 
@@ -47,7 +43,7 @@
     right: -30px;
 
     svg {
-        left: 2px;
+        left: 0;
     }
 }
 
@@ -55,6 +51,6 @@
     left: -30px;
 
     svg {
-        right: 2px;
+        right: 5px;
     }
 }

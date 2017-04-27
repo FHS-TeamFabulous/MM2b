@@ -1,6 +1,7 @@
 import React from 'react';
 import style from './style.scss';
-import {Nav, NavItem} from 'react-bootstrap';
+import { Nav, NavItem } from 'react-bootstrap';
+import { NavLink } from 'react-router-dom';
 
 export default class Header extends React.Component {
     render() {
@@ -11,8 +12,12 @@ export default class Header extends React.Component {
                 </div>
                 <div className={style.navBarWrapper}>
                     <ul className="nav nav-pills">
-                        <li>Home</li>
-                        <li>Bibliothek</li>
+                        <li>
+                            <a target="_blank" href="http://vorlesen-verbindet.com">Home</a>
+                        </li>
+                        <li>
+                            <NavLink to="/" activeClassName={style.navActive}>Bibliothek</NavLink>
+                        </li>
                     </ul>
                 </div>
             </div>
