@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 import Select from 'react-select';
 import SelectItem from './../select-item';
 
-
-
 var options = [
     { value: 'one', label: "hallo" },
     { value: 'two', label: "hall2" }
 ];
+
+let selected = "";
 
 class InviteModalContentComponente extends React.Component {
     render() {
@@ -21,7 +21,7 @@ class InviteModalContentComponente extends React.Component {
                 <Modal.Body className={style.bodyContent}>
                     <p className={style.loginModalParagraph}>Wählen sie einen User aus mit dem Sie lesen wollen!</p>
                     <div className={style.selectWrapper}>
-                        <Select name="form-field-name" options={options}/>
+                        <Select value="one" name="form-field-name" options={options}/>
                     </div>
                 </Modal.Body>
                 <Modal.Footer className={style.footerContent}>
@@ -36,10 +36,6 @@ class InviteModalContentComponente extends React.Component {
     }
 }
 
-function cleanInput(inputValue) {
-    // Strip all non-number characters from the input
-    return inputValue.replace(/[^0-9]/g, "");
-}
 
 export default connect()(InviteModalContentComponente);
 
