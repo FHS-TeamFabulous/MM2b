@@ -8,7 +8,6 @@ function logIn(username) {
         payload: {
             user: username
         }
-
     }
 }
 

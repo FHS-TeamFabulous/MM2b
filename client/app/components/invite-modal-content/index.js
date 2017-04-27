@@ -17,6 +17,7 @@ var options = [
 
 class InviteModalContentComponente extends React.Component {
     render() {
+        console.log(this.props.clients);
         //console.log(this.props.selectedItemValue);
         /*const options = this.props.clients.map((client) =>{
             return {
@@ -58,10 +59,11 @@ class InviteModalContentComponente extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
 
+function mapStateToProps(state) {
     return {
-        selectedItemValue: state.modalState.selectedItem
+        selectedItemValue: state.modalState.selectedItem,
+        clients: state.communication.clients
     }
 }
 
