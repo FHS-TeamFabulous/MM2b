@@ -59,14 +59,12 @@ class InviteModalContentComponente extends React.Component {
     }
 }
 
-
 function mapStateToProps(state) {
     return {
         selectedItemValue: state.modalState.selectedItem,
         clients: state.communication.clients
     }
 }
-
 
 export default connect(mapStateToProps)(InviteModalContentComponente);
 

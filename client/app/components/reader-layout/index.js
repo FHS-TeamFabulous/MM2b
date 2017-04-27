@@ -9,7 +9,14 @@ import FaClose from 'react-icons/lib/fa/close';
 import Communication from 'app/services/communication';
 import * as actions from 'app/actions/communication-actions';
 
+
+const closeIcon = <FaClose className={style.icon}/>;
+
+import { closeBook } from 'app/actions/books-actions';
+import { Link } from 'react-router-dom';
+
 import {openCloseModal, closeModal} from 'app/actions/modal-actions';
+
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 class ReaderLayout extends React.Component {
