@@ -101,17 +101,6 @@ module.exports = function (server, config) {
         };
 
         const describeRoom = name => {
-
-            /*var adapter = io.nsps['/'].adapter;
-            var clients = adapter.rooms[name] || {};
-            var result = {
-                clients: {}
-            };
-            Object.keys(clients).forEach(function (id) {
-                result.clients[id] = adapter.nsp.connected[id].resources;
-            });
-            return result;*/
-
             const clients = clientsInRoom(name);
             console.log('all clients: ', clients);
 
