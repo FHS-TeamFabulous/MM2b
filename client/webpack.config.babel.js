@@ -79,6 +79,7 @@ module.exports = {
     },
 
     output: {
+        publicPath: '/assets/',
         filename: 'js/main.js',
         path: path.resolve(__dirname, 'dist'),
     },

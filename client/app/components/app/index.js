@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { createLogin } from '../../actions/signaling.actions';
-import style from './style.scss';
 
 class App extends Component {
-
-    componentDidMount() {
-        // const name = prompt('login');
-        // this.props.dispatch(createLogin(name));
-    }
 
     render() {
         return(
@@ -20,12 +13,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-    return {
-        constraints: state.signaling.constraints,
-        connected: state.signaling.connected,
-        clients: state.signaling.clients,
-        user: state.signaling.user
-    }
+    return {}
 };
 
 export default connect(mapStateToProps)(App);

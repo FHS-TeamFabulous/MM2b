@@ -1,11 +1,13 @@
 import React from 'react';
 import style from './style.scss';
-import CustomButton from './../button';
+import CustomButton from 'app/components/button';
 import { Link } from 'react-router-dom';
 import BookIcon from 'react-icons/lib/fa/book';
 import GroupIcon from 'react-icons/lib/fa/group';
 import config from 'config';
+
 import {openLoginModal, openInviteModal} from './../../actions/modal-actions'
+
 import { connect } from 'react-redux';
 
 
