@@ -2,7 +2,7 @@ import React from 'react';
 import style from './style.scss';
 import CustomButton from './../button';
 import {Modal} from 'react-bootstrap';
-import {closeModal, selectItem} from './../../actions/modal-actions';
+import {closeModal, selectItem, enableButton, disableButton} from './../../actions/modal-actions';
 import { connect } from 'react-redux';
 import Select from 'react-select';
 import Avatar from 'app/components/avatar';
@@ -17,6 +17,7 @@ var options = [
 
 class InviteModalContentComponente extends React.Component {
     render() {
+        //console.log(this.props.availabilityOfButton);
         //console.log(this.props.selectedItemValue);
         /*const options = this.props.clients.map((client) =>{
             return {
@@ -34,9 +35,16 @@ class InviteModalContentComponente extends React.Component {
                     <Avatar />
                 </Modal.Body>
                 <Modal.Footer className={style.footerContent}>
-                    <CustomButton onClick={this.closeModal.bind(this)} className={"defaultBtn"}>
-                        Cancel
-                    </CustomButton>
+                    <div className="pull-right">
+                        <CustomButton className={"defaultBtn"} availability={this.props.availabilityOfButton}>
+                            Verbinden
+                        </CustomButton>
+                    </div>
+                    <div className="pull-right">
+                        <CustomButton onClick={this.closeModal.bind(this)} className={"defaultBtn"}>
+                            Abbrechen
+                        </CustomButton>
+                    </div>
                 </Modal.Footer>
             </div>
         );
@@ -46,10 +54,12 @@ class InviteModalContentComponente extends React.Component {
         //console.log(value.value);
         if(selectedObject !== null)
         {
+            this.props.dispatch(enableButton());
             this.props.dispatch(selectItem(selectedObject.value));
         }
         else {
             this.props.dispatch(selectItem(0));
+            this.props.dispatch(disableButton());
         }
     }
 
@@ -58,11 +68,11 @@ class InviteModalContentComponente extends React.Component {
     }
 }
 
-
 function mapStateToProps(state) {
-
     return {
-        selectedItemValue: state.modalState.selectedItem
+        selectedItemValue: state.modalState.selectedItem,
+        clients: state.communication.clients,
+        availabilityOfButton: state.modalState.availabilityOfButton
     }
 }
 

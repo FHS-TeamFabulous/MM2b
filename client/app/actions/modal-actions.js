@@ -3,7 +3,9 @@ const types = {
     INVITE: 'OPEN_INVITE_MODAL',
     CLOSE: 'CLOSE_MODAL',
     SELECT: 'SELECT_ITEM',
-    CLOSEMODAL: 'CLOSE_MODAL_TYPE'
+    CLOSEMODAL: 'CLOSE_MODAL_TYPE',
+    AVAILABILITYBUTTONFALSE: 'AVAILABILITY_OF_BUTTON_FALSE',
+    AVAILABILITYBUTTONTRUE: 'AVAILABILITY_OF_BUTTON_TRUE'
 };
 
 function openLoginModal() {
@@ -39,4 +41,15 @@ function openCloseModal() {
     }
 }
 
-export { types, openLoginModal, openInviteModal, closeModal, selectItem, openCloseModal };
+function disableButton() {
+    return {
+        type: types.AVAILABILITYBUTTONFALSE
+    }
+}
+function enableButton() {
+    return {
+        type: types.AVAILABILITYBUTTONTRUE
+    }
+}
+
+export { types, openLoginModal, openInviteModal, closeModal, selectItem, openCloseModal, disableButton, enableButton };

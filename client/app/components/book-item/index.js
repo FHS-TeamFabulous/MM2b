@@ -6,8 +6,7 @@ import BookIcon from 'react-icons/lib/fa/book';
 import GroupIcon from 'react-icons/lib/fa/group';
 import config from 'config';
 
-import {openLoginModal, openInviteModal} from './../../actions/modal-actions'
-
+import {openLoginModal, openInviteModal} from './../../actions/modal-actions';
 import { connect } from 'react-redux';
 
 

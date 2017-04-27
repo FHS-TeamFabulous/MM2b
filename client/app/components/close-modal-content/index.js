@@ -6,6 +6,7 @@ import {closeModal} from './../../actions/modal-actions';
 import {logIn} from './../../actions/auth-actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { closeBook } from 'app/actions/books-actions';
 
 
 class CloseModalContentComponente extends React.Component {
@@ -35,6 +36,7 @@ class CloseModalContentComponente extends React.Component {
 
     closeModal() {
         this.props.dispatch(closeModal());
+        this.props.dispatch(closeBook());
     }
 }
 

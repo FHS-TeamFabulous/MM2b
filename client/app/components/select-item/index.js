@@ -5,7 +5,7 @@ export default class SelectItem extends React.Component {
     render() {
         return (
             <div >
-                <img className={style.image} src="/assets/images/1.jpg"/><span>{this.props.username}</span>
+                <img className={style.image} src="/assets/images/oma.jpg"/><span>{this.props.username}</span>
             </div>
         );
     }

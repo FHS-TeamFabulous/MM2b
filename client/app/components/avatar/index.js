@@ -18,8 +18,7 @@ class Avatar extends React.Component {
             return <h4>Bitte wählen sie einen User aus!</h4>;
         }
         else {
-            //<div><img src="/assets/images/1.jpg"/><p>{this.props.clients.name}</p></div>
-            return <h2>{this.props.selectedItemValue}</h2>
+            return <div className={style.avatarWrapper}><img className={style.avatarImage} src="/assets/images/oma.jpg"/><p className={style.avatarName}>{this.props.selectedItemValue} Oma 3rfan</p></div>
         }
     }
 }
@@ -31,5 +30,6 @@ function mapStateToProps(state) {
     }
 }
 
+//<h2>{this.props.selectedItemValue}</h2>
 export default connect(mapStateToProps)(Avatar);
 

@@ -3,7 +3,8 @@ import { types } from 'app/actions/modal-actions';
 const initialState = {
     show: false,
     selectedItem: 0,
-    modalType: ""
+    modalType: "",
+    availabilityOfButton: true
 };
 
 function modalReducer(state = initialState, action) {
@@ -31,6 +32,14 @@ function modalReducer(state = initialState, action) {
         case types.SELECT:
             return Object.assign({}, state, {
                 selectedItem: action.payload.itemValue
+            });
+        case types.AVAILABILITYBUTTONFALSE:
+            return Object.assign({}, state, {
+                availabilityOfButton: true
+            });
+        case types.AVAILABILITYBUTTONTRUE:
+            return Object.assign({}, state, {
+                availabilityOfButton: false
             });
     }
 
