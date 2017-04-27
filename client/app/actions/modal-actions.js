@@ -1,11 +1,20 @@
 const types = {
-    OPEN: 'OPEN_MODAL',
-    CLOSE: 'CLOSE_MODAL'
+    LOGIN: 'OPEN_LOGIN_MODAL',
+    INVITE: 'OPEN_INVITE_MODAL',
+    CLOSE: 'CLOSE_MODAL',
+    SELECT: 'SELECT_ITEM',
+    CLOSEMODAL: 'CLOSE_MODAL_TYPE'
 };
 
-function openModal() {
+function openLoginModal() {
     return {
-        type: types.OPEN
+        type: types.LOGIN
+    }
+}
+
+function openInviteModal() {
+    return {
+        type: types.INVITE
     }
 }
 
@@ -15,4 +24,19 @@ function closeModal() {
     }
 }
 
-export { types, openModal, closeModal };
+function selectItem(value) {
+    return {
+        type: types.SELECT,
+        payload: {
+            itemValue: value
+        }
+    }
+}
+
+function openCloseModal() {
+    return {
+        type: types.CLOSEMODAL
+    }
+}
+
+export { types, openLoginModal, openInviteModal, closeModal, selectItem, openCloseModal };

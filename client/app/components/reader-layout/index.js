@@ -13,7 +13,11 @@ const closeIcon = <FaClose className={style.icon}/>;
 
 import { closeBook } from 'app/actions/books-actions';
 import { Link } from 'react-router-dom';
+
+import {openCloseModal, closeModal} from 'app/actions/modal-actions';
+
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+
 
 class ReaderLayout extends React.Component {
 
@@ -51,11 +55,9 @@ class ReaderLayout extends React.Component {
                 transitionLeave={false}
             >
                 <div className={style.readerLayoutWrapper}>
-                    <Link to="/">
-                        <CustomButton onClick={this.closeHandler.bind(this)} className="closeButton">
-                            <FaClose className={style.icon}/>
-                        </CustomButton>
-                    </Link>
+                    <CustomButton onClick={this.openModal.bind(this)} className="closeButton">
+                        <FaClose className={style.icon}/>
+                    </CustomButton>
                     <BookReader bookId={this.props.match.params.id} />
                     <div>
                         <div className={style.videosWrapper}>
@@ -75,6 +77,21 @@ class ReaderLayout extends React.Component {
     closeHandler() {
         this.props.dispatch(closeBook());
     }
+
+    closeModal() {
+        this.props.dispatch(closeModal());
+    }
+    openModal() {
+        this.props.dispatch(openCloseModal());
+    }
 }
 
-export default connect()(ReaderLayout);
+function mapStateToProps(state) {
+
+    return {
+        show: state.modalState.show,
+        modalType: state.modalState.modalType
+    }
+}
+
+export default connect(mapStateToProps)(ReaderLayout);
