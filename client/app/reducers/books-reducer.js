@@ -4,15 +4,15 @@ const initialState = {
     isDone: false,
     isFetching: false,
     books: {},
-    selectedBookId: 'Foxy-Joxy-Plays-A-Trick',
+    selectedBookId: null,
     selectedBookPage: 1
 };
 
 function tryPageNext(currentPage, pagesCount) {
     currentPage = currentPage + 2;
 
-    if (currentPage > pagesCount) {
-        currentPage = pagesCount;
+    if (currentPage > pagesCount - 1) {
+        currentPage = pagesCount - 1;
     }
 
     return currentPage;
@@ -49,6 +49,12 @@ function booksReducer(state = initialState, action) {
         case types.SELECT_BOOK:
             return Object.assign({}, state, {
                 selectedBookId: action.id 
+            });
+
+        case types.CLOSE_BOOK:
+            return Object.assign({}, state, {
+                selectedBookId: null,
+                selectedBookPage: 1
             });
 
         case types.PAGE_NEXT:

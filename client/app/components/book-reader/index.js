@@ -1,6 +1,12 @@
 import React from 'react';
 import BookReader from './view';
-import { fetchBooks, pageNext, pagePrev, setPage } from 'app/actions/books-actions';
+import { 
+    fetchBooksIfNeeded, 
+    pageNext, 
+    pagePrev, 
+    setPage, 
+    selectBook 
+} from 'app/actions/books-actions';
 import { connect } from 'react-redux';
 import style from './style.scss';
 import AngleRightIcon from 'react-icons/lib/fa/angle-right';
@@ -13,8 +19,11 @@ import AngleLeftIcon from 'react-icons/lib/fa/angle-left';
 // keyboard control
 // preload images -> model / store
 class BookReaderContainer extends React.Component {
-    componentDidMount() {
-        this.props.dispatch(fetchBooks());
+    componentWillMount() {
+        const bookId = this.props.bookId;
+
+        this.props.dispatch(fetchBooksIfNeeded())
+            .then(() => this.props.dispatch(selectBook(bookId)));
     }
 
     render() {
@@ -39,7 +48,7 @@ class BookReaderContainer extends React.Component {
                     setPage={this.setPageHandler.bind(this)}
                 />
                 {
-                    (this.props.currentPage < this.props.pages.length) &&
+                    (this.props.currentPage < this.props.pages.length - 1) &&
                     <button onClick={this.pageNextHandler.bind(this)} className={ style.btnNext }>
                         <AngleRightIcon />
                     </button>

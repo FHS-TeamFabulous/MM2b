@@ -16,19 +16,24 @@
     
     &:hover {
         border:none;
-        background-color: orange;
+        background-color: #e77929;
         color: white;
     }
 }
 
-:global .btn {
-    border: 0;
-
-    &:hover,
-    &:focus,
-    &:active {
-        color: #fff !important;
-        background-color: #e77929!important;
-    }
+.default-btn {
+    padding: 10px 15px;
+    background-color: #00b0de;
+    color: #fff;
+    border-radius: 5px;
 }
 
+.container {
+    button {
+        border: 0;
+        
+        &:hover {
+            background-color: #e77929;
+        }
+    }
+}

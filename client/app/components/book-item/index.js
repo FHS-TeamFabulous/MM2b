@@ -2,20 +2,41 @@ import React from 'react';
 import style from './style.scss';
 import CustomButton from './../button';
 import { Link } from 'react-router-dom';
+import BookIcon from 'react-icons/lib/fa/book';
+import GroupIcon from 'react-icons/lib/fa/group';
+import config from 'config';
 
 
 export default class BookItem extends React.Component {
     render() {
+        const coverUrl = this.props.item.pages[0].url;
+
         return (
             <div className={style.bookItem}>
                 <div className={style.itemWrapper}>
-                    <img className={style.bookItemCover} alt={this.props.item.bookTitle} src="/assets/images/Foxy-Joxy-plays-a-trick_bookdash_01.jpg"/>
+                    <div className={style.coverContainer}>
+                        <img 
+                            className={style.bookItemCover} 
+                            alt={this.props.item.title} 
+                            src={`${config.server.base}${coverUrl}`}
+                        />
+                    </div>
                     <div className={style.buttonGroupWrapper}>
                         <div className={style.buttonWrapper}>
-                            <Link to="/playground" ><CustomButton properties={{className:"buttonBookItem", text:"Lesen"}}/></Link>
+                            <Link to={`/books/${this.props.item.id}`}>
+                                <CustomButton className={"defaultBtn"}>
+                                    <BookIcon />
+                                    Lesen
+                                </CustomButton>
+                            </Link>
                         </div>
-                        <div>
-                            <Link to="/playground" ><CustomButton properties={{className:"buttonBookItem", text:"Vorlesen"}}/></Link>
+                        <div className={style.buttonWrapper}>
+                            <Link to={`/books/${this.props.item.id}`}>
+                                <CustomButton className={"defaultBtn"}>
+                                    <GroupIcon />
+                                    Vorlesen
+                                </CustomButton>
+                            </Link>
                         </div>
                     </div>
                 </div>

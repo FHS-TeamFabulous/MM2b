@@ -1,25 +1,24 @@
 import React from 'react';
 import style from './style.scss';
 import CustomButton from './../button';
-import {Grid} from 'react-bootstrap';
 import BookReader from 'app/components/book-reader';
 import VideoCircle from 'app/components/video-circle';
-
+import { connect } from 'react-redux';
 import FaClose from 'react-icons/lib/fa/close';
-
-const closeIcon = <FaClose className={style.icon}/>;
-
+import { closeBook } from 'app/actions/books-actions';
 import { Link } from 'react-router-dom';
 
-export default class ReaderLayout extends React.Component {
+class ReaderLayout extends React.Component {
     render() {
         return (
             <div className={style.readerLayoutWrapper}>
                 <Link to="/">
-                    <CustomButton properties={{className:"closeButton", icon:closeIcon}}/>
+                    <CustomButton onClick={this.closeHandler.bind(this)} className="closeButton">
+                        <FaClose className={style.icon}/>
+                    </CustomButton>
                 </Link>
-                <Grid>
-                    <BookReader/>
+                <div>
+                    <BookReader bookId={this.props.match.params.id}/>
                     <div>
                         <div className={style.videosWrapper}>
                             <div className={style.videoTagWrapperLeft} >
@@ -30,8 +29,14 @@ export default class ReaderLayout extends React.Component {
                             </div>
                         </div>
                     </div>
-                </Grid>
+                </div>
             </div>
         );
     }
+
+    closeHandler() {
+        this.props.dispatch(closeBook());
+    }
 }
+
+export default connect()(ReaderLayout);
