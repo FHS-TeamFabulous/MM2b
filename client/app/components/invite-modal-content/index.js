@@ -6,37 +6,34 @@ import {closeModal, selectItem, enableButton, disableButton} from './../../actio
 import { connect } from 'react-redux';
 import Select from 'react-select';
 import Avatar from 'app/components/avatar';
-
+import { createConnection } from 'app/actions/communication-actions';
 
 import SelectItem from 'app/components/select-item';
 
-var options = [
-    { value: 1, label: <SelectItem username={"blub"}/> },
-    { value: 2, label: <SelectItem username={"blub2"}/> }
-];
-
 class InviteModalContentComponente extends React.Component {
+
     render() {
-        //console.log(this.props.availabilityOfButton);
-        //console.log(this.props.selectedItemValue);
-        /*const options = this.props.clients.map((client) =>{
-            return {
-                value: client.id,
-                label: <SelectItem username={client.name}/>
-            }
-        });*/
         return (
             <div>
                 <Modal.Body className={style.bodyContent}>
                     <p className={style.loginModalParagraph}>Wählen sie einen User aus mit dem Sie lesen wollen!</p>
                     <div className={style.selectWrapper}>
-                        <Select value={this.props.selectedItemValue} name="form-field-name" options={options} onChange={this.changeItem.bind(this)}/>
+                        <Select
+                            value={this.props.selectedItemValue}
+                            name="form-field-name"
+                            options={this.props.clients.map(client => {
+                                return {
+                                    value: client.id,
+                                    label: <SelectItem username={client.name}/>
+                                };
+                            })}
+                            onChange={this.changeItem.bind(this)}/>
                     </div>
                     <Avatar />
                 </Modal.Body>
                 <Modal.Footer className={style.footerContent}>
                     <div className="pull-right">
-                        <CustomButton className={"defaultBtn"} availability={this.props.availabilityOfButton}>
+                        <CustomButton className={"defaultBtn"} availability={this.props.availabilityOfButton} onClick={this.connect.bind(this)}>
                             Verbinden
                         </CustomButton>
                     </div>
@@ -66,13 +63,23 @@ class InviteModalContentComponente extends React.Component {
     closeModal() {
         this.props.dispatch(closeModal());
     }
+
+    connect() {
+        const client = this.props.clients.find(client => client.id === this.props.selectedItemValue);
+        if (client) {
+            this.props.dispatch(createConnection(client.name));
+        }
+    }
 }
 
 function mapStateToProps(state) {
+    const selectedBook = state.booksState.books[state.booksState.selectedBookId];
     return {
         selectedItemValue: state.modalState.selectedItem,
         clients: state.communication.clients,
-        availabilityOfButton: state.modalState.availabilityOfButton
+        availabilityOfButton: state.modalState.availabilityOfButton,
+        books: state.booksState.books,
+        selectedBook
     }
 }
 

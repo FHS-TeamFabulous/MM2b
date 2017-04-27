@@ -27,6 +27,15 @@ export const connectEpic = (action$, state) => action$
         }
     );
 
+export const connectOnInvitation = (actions$, state) => actions$
+    .filter(action => action.type === actions.types.INVITATION_ACCEPTED)
+    .map(action => action.payload)
+    .switchMap(({name}) => {
+            return Communication.joinRoom(name)
+                .then(() => actions.createConnection())
+        }
+    );
+
 export const interactEpic = (action$, state) => action$
     .filter(action => action.type === actions.types.INTERACTION)
     .map(action => action.payload)

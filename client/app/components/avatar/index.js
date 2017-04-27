@@ -4,21 +4,28 @@ import style from './style.scss';
 import { connect }  from 'react-redux';
 
 class Avatar extends React.Component {
+
+    getClientData() {
+        const idx = this.props.clients.find(client => client.id === this.props.selectedItemValue);
+        if (idx) {
+            return this.props.clients[idx].name;
+        }
+    }
+
     render() {
         return (
             <div>
-                {this.displayContent()}
+                {this.displayContent.bind(this)}
             </div>
         );
     }
-    //{this.displayContent(this.props.selectedItemValue+1)}
     displayContent() {
         if(this.props.selectedItemValue === 0)
         {
             return <h4>Bitte wählen sie einen User aus!</h4>;
         }
         else {
-            return <div className={style.avatarWrapper}><img className={style.avatarImage} src="/assets/images/oma.jpg"/><p className={style.avatarName}>{this.props.selectedItemValue} Oma 3rfan</p></div>
+            return <div className={style.avatarWrapper}><img className={style.avatarImage} src="/assets/images/oma.jpg"/><p className={style.avatarName}>{getClientData()}</p></div>
         }
     }
 }
@@ -26,7 +33,8 @@ class Avatar extends React.Component {
 function mapStateToProps(state) {
 
     return {
-        selectedItemValue: state.modalState.selectedItem
+        selectedItemValue: state.modalState.selectedItem,
+        clients: state.communication.clients
     }
 }
 
