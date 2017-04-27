@@ -10,8 +10,8 @@ import SelectItem from './../select-item';
 
 
 var options = [
-    { value: 'one', label: <SelectItem username={"one"}/> },
-    { value: 'two', label: <SelectItem username={"two"}/> }
+    { value: 'one', label: "hallo" },
+    { value: 'two', label: "hall2" }
 ];
 
 class InviteModalContentComponente extends React.Component {
@@ -34,6 +34,11 @@ class InviteModalContentComponente extends React.Component {
     closeModal() {
         this.props.dispatch(closeModal());
     }
+}
+
+function cleanInput(inputValue) {
+    // Strip all non-number characters from the input
+    return inputValue.replace(/[^0-9]/g, "");
 }
 
 export default connect()(InviteModalContentComponente);
