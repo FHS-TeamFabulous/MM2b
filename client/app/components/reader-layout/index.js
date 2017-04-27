@@ -8,9 +8,6 @@ import { connect } from 'react-redux';
 import FaClose from 'react-icons/lib/fa/close';
 import Communication from 'app/services/communication';
 import * as actions from 'app/actions/communication-actions';
-
-const closeIcon = <FaClose className={style.icon}/>;
-
 import { closeBook } from 'app/actions/books-actions';
 import { Link } from 'react-router-dom';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
