@@ -18,10 +18,10 @@ class ReaderLayout extends React.Component {
                     </CustomButton>
                 </Link>
                 <div>
-                    <BookReader bookId={this.props.match.params.id}/>
+                    <BookReader bookId={this.props.match.params.id} />
                     <div>
                         <div className={style.videosWrapper}>
-                            <div className={style.videoTagWrapperLeft} >
+                            <div className={style.videoTagWrapperLeft}>
                                 <VideoCircle />
                             </div>
                             <div className={style.videoTagWrapperRight}>
