@@ -73,7 +73,7 @@ module.exports = function (server, config) {
         const removeUser = () => {
             const user = getUser();
             if (user) {
-                const { id, name } = user;
+                const {id, name} = user;
                 console.log(`Removed user ${name}`);
                 delete  users[id];
             }
@@ -130,29 +130,29 @@ module.exports = function (server, config) {
         console.log('Clients logged in: ', getClients(true));
 
         client.on('login', data => {
-            const { name } = data;
+            const {name} = data;
 
             if (!name) {
-                client.emit('login_failed', { message: 'no username'});
+                client.emit('login_failed', {message: 'no username'});
             }
 
             const user = getUser();
             const clients = getClients(true);
-            
+
             if (isLoggedIn()) {
                 const allClients = getClients();
                 const loggedInClients = getClients(true);
                 console.log(`${user.name} is already logged in.`);
                 console.log('Clients: ', allClients);
-                client.emit('login_success', { name });
-                client.emit('clients_success', { clients: loggedInClients });
+                client.emit('login_success', {name});
+                client.emit('clients_success', {clients: loggedInClients});
             } else {
                 loginUser(name);
                 const allClients = getClients();
                 const loggedInClients = getClients(true);
                 console.log('Clients: ', allClients);
-                client.emit('login_success', { name });
-                client.emit('clients_success', { clients: loggedInClients });
+                client.emit('login_success', {name});
+                client.emit('clients_success', {clients: loggedInClients});
             }
         });
 
@@ -161,38 +161,41 @@ module.exports = function (server, config) {
             if (user && user.name === name) {
                 logoutUser();
                 console.log(`User ${name} logged out.`);
-                client.emit('logout_success', { name });
+                client.emit('logout_success', {name});
             }
         });
 
         client.on('clients', ({loggedIn}) => {
             const clients = getClients(loggedIn);
             console.log('sending clients: ', clients);
-            client.emit('clients_success', { clients });
+            client.emit('clients_success', {clients});
         });
 
-        client.on('invite', ({name}) => {
-            console.log(`${client.name}(${client.id}) invites ${name} for a session.`);
+        client.on('invite', ({name, bookId}) => {
+            const user = getUser();
+            console.log(`${user.name}(${user.id}) invites ${name} for a session to read book with id ${bookId}.`);
 
-            const otherClient = io.to(name);
+            const otherClient = findUserByName(name);
             if (!otherClient) return;
 
-            otherClient.emit('invitation', {
+            console.log(`Found other client ${otherClient.name}, emitting invite`);
+
+            otherClient.connection && otherClient.connection.emit('invitation_received', {
                 from: client.name,
-                to: name
+                bookId
             });
         });
 
-        client.on('invitation_accept', ({ name }) => {
+        client.on('invitation_accept', ({name, bookId}) => {
             const fromUser = getUser();
             const toUser = findUserByName(name);
-            toUser.connection.emit('invite_accepted', { name })
+            toUser && toUser.connection.emit('invite_accepted', {name: fromUser.name, bookId})
         });
 
-        client.on('invitation_decline', ({ name }) => {
+        client.on('invitation_decline', ({name, bookId}) => {
             const fromUser = getUser();
             const toUser = findUserByName(name);
-            toUser.connection.emit('invite_declined', { name });
+            toUser && toUser.connection.emit('invite_declined', {name: fromUser.name, bookId});
         });
 
         // pass a message to another id
@@ -219,7 +222,7 @@ module.exports = function (server, config) {
 
         client.on('interaction', function (data) {
             const user = getUser();
-            const { name, room } = users;
+            const {name, room} = users;
             if (room) {
                 data.from = name;
                 console.log(`${name} interacts with all users in room ${room}.`, data);
@@ -244,7 +247,9 @@ module.exports = function (server, config) {
             }
         }
 
-        function joinUser(userName, cb) {
+        function joinUser(invite, cb) {
+            const userName = invite.name;
+            const bookId = invite.bookId;
             const otherUser = findUserByName(userName);
 
             if (otherUser) {
@@ -265,7 +270,11 @@ module.exports = function (server, config) {
                     safeCb(cb)(null, describeRoom(roomId));
                     client.join(roomId);
                     console.log(`Inviting user ${otherUser.name} (${otherUser.id}) to room ${roomId}`);
-                    otherUser.connection && otherUser.connection.emit('invitation_received', { room: roomId, from: user.name });
+                    otherUser.connection && otherUser.connection.emit('invitation_received', {
+                        room: roomId,
+                        from: user.name,
+                        bookId
+                    });
                 }
             } else {
                 console.log(`User ${userName} not found`);
@@ -308,7 +317,8 @@ module.exports = function (server, config) {
         client.on('create', function (name, cb) {
             console.log('creating ' + name);
             if (arguments.length == 2) {
-                cb = (typeof cb == 'function') ? cb : function () {};
+                cb = (typeof cb == 'function') ? cb : function () {
+                };
                 name = name || uuid();
             } else {
                 cb = name;
@@ -362,6 +372,7 @@ function safeCb(cb) {
     if (typeof cb === 'function') {
         return cb;
     } else {
-        return function () {};
+        return function () {
+        };
     }
 }
