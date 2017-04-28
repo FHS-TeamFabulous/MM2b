@@ -72,9 +72,9 @@ function Communication() {
         webrtc.disconnect();
     };
 
-    const joinRoom = name => {
+    const joinRoom = (name, bookId) => {
         return new Promise((resolve, reject) => {
-            webrtc.joinRoom(name, (err, roomDescription) => {
+            webrtc.joinRoom({name, bookId}, (err, roomDescription) => {
                 if (err) {
                     reject(err);
                 }

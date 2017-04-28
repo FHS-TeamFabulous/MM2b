@@ -9,6 +9,7 @@ import Select from 'react-select';
 import Avatar from 'app/components/avatar';
 import { createConnection } from 'app/actions/communication-actions';
 import SelectItem from 'app/components/select-item';
+import { Redirect } from 'react-router-dom';
 
 class InviteModalContentComponente extends React.Component {
 
@@ -38,6 +39,7 @@ class InviteModalContentComponente extends React.Component {
                         <CustomButton onClick={this.submit.bind(this)} className={"defaultBtn"} availability={this.props.availabilityOfButton || this.props.isInviting}>
                             { (this.props.isInviting) ? 'Verbinde...' : 'Verbinden'}
                         </CustomButton>
+                        { this.props.isInviting && this.redirect() }
                     </div>
                     <div className="pull-right">
                         <CustomButton onClick={this.closeModal.bind(this)} className={"defaultBtn"}>
@@ -59,13 +61,21 @@ class InviteModalContentComponente extends React.Component {
         }
     }
 
+    redirect() {
+        this.closeModal();
+
+        return (
+            <Redirect to={`/books/${this.props.bookId}`} push />
+        );
+    }
+
     closeModal() {
         this.props.dispatch(closeModal());
         this.props.dispatch(actions.createCancelInvite(this.props.selectedItemValue.name));
     }
 
     submit() {
-        this.props.dispatch(actions.createInvite(this.props.selectedItemValue.name));
+        this.props.dispatch(actions.createInvite(this.props.selectedItemValue.name, this.props.bookId));
     }
 }
 

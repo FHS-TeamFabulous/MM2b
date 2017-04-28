@@ -13,7 +13,9 @@ class LoginModalContentComponente extends React.Component {
         return (
             <div>
                 <Modal.Body className={style.bodyContent}>
-                    <p className={style.loginModalParagraph}>Bitte geben Sie einen Usernamen ein um Jemanden vorlesen zu können:</p>
+                    <p className={style.loginModalParagraph}>
+                        Bitte geben Sie einen Usernamen ein um Jemanden vorlesen zu können:
+                    </p>
                     <div className={style.formWrapper}>
                         <label>Username:</label>
                         <div className={style.inputWrapper}>
@@ -27,11 +29,6 @@ class LoginModalContentComponente extends React.Component {
                             Login
                         </CustomButton>
                     </div>
-                    <div className="pull-right">
-                        <CustomButton onClick={this.closeModal.bind(this)} className={'defaultBtn'}>
-                            Cancel
-                        </CustomButton>
-                    </div>
                 </Modal.Footer>
             </div>
         );
@@ -39,11 +36,12 @@ class LoginModalContentComponente extends React.Component {
 
     logIn() {
         let username = document.getElementById('username').value;
-        console.log(username);
+        
         this.props.dispatch(logIn(username));
         this.props.dispatch(actions.createLogin(username));
         this.props.dispatch(disableButton());
-        this.props.dispatch(openInviteModal());
+
+        this.closeModal();
     }
 
     closeModal() {

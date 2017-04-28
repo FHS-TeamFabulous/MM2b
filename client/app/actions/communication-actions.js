@@ -110,11 +110,12 @@ export function createConnection(name) {
     };
 }
 
-export function createInvite(name) {
+export function createInvite(name, bookId) {
     return {
         type: types.INVITE,
         payload: {
-            name
+            name,
+            bookId
         }
     };
 }
