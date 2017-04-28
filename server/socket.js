@@ -181,7 +181,7 @@ module.exports = function (server, config) {
             console.log(`Found other client ${otherClient.name}, emitting invite`);
 
             otherClient.connection && otherClient.connection.emit('invitation_received', {
-                from: client.name,
+                from: user.name,
                 bookId
             });
         });

@@ -140,11 +140,11 @@ export function createInviteSent(name) {
     };
 }
 
-export function createInviteReceived(from, bookId) {
+export function createInviteReceived(name, bookId) {
     return {
         type: types.INVITE_RECEIVED,
         payload: {
-            from,
+            name,
             bookId
         }
     };

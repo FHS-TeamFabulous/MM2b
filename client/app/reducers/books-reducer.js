@@ -1,4 +1,5 @@
 import { types } from 'app/actions/books-actions';
+import { types as communicationTypes } from 'app/actions/communication-actions';
 
 const initialState = {
     isDone: false,
@@ -73,6 +74,11 @@ function booksReducer(state = initialState, action) {
         case types.PAGE_SET:
             return Object.assign({}, state, {
                 selectedBookPage: action.page
+            });
+
+        case communicationTypes.INVITE_RECEIVED:
+            return Object.assign({}, state, {
+                selectedBookId: action.payload.bookId
             });
     }
 

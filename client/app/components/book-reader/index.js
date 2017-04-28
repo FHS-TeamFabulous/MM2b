@@ -31,8 +31,6 @@ class BookReaderContainer extends React.Component {
             width: this.props.width
         };
 
-
-        console.log(this.props.isDone);
         return (
             <div style={ containerStyle } className={ style.container }>
                 {

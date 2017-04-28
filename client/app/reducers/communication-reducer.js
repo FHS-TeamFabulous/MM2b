@@ -6,7 +6,6 @@ import {
     logoutEpic,
     connectEpic,
     inviteEpic,
-    connectOnAcceptedInvitation,
     declineInvitationEpic,
     acceptInvitationEpic,
     interactEpic
@@ -18,7 +17,10 @@ const initialState = {
     clients: [],
     connected: false,
     isInviting: false,
-    hasPendingInvite: false
+    hasPendingInvite: { 
+        name: null,
+        bookId: null
+    }
 };
 
 export const communicationReducer = (state = initialState, action) => {
@@ -29,6 +31,8 @@ export const communicationReducer = (state = initialState, action) => {
             return Object.assign({}, state, { isInviting: true });
         case types.CANCEL_INVITE:
             return Object.assign({}, state, { isInviting: false });
+        case types.INVITE_RECEIVED: 
+            return Object.assign({}, state, { hasPendingInvite: action.payload });
         default:
             return state;
     }
@@ -50,7 +54,6 @@ export const communicationEpics = combineEpics(
     logoutEpic,
     connectEpic,
     inviteEpic,
-    connectOnAcceptedInvitation,
     declineInvitationEpic,
     acceptInvitationEpic,
     interactEpic
