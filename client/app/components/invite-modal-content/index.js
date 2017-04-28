@@ -74,11 +74,11 @@ class InviteModalContentComponente extends React.Component {
 
     closeModal() {
         this.props.dispatch(closeModal());
-        this.props.dispatch(actions.createCancelInvite(this.props.selectedItemValue.name, this.props.bookId));
+        this.props.dispatch(actions.cancelInvite(this.props.selectedItemValue.name, this.props.bookId));
     }
 
     submit() {
-        this.props.dispatch(actions.createInvite(this.props.selectedItemValue.name, this.props.bookId));
+        this.props.dispatch(actions.invite(this.props.selectedItemValue.name, this.props.bookId));
     }
 }
 

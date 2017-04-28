@@ -1,43 +1,24 @@
 const socketIO = require('socket.io'),
     uuid = require('uuid'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    Users = require('./users'),
+    User = require('./user');
 
 module.exports = function (server, config) {
     const io = socketIO.listen(server),
-        users = {},
-        defaultResources = {
-            screen: false,
-            video: true,
-            audio: true,
-        };
+        users = new Users();
 
-    io.sockets.on('connection', function (client) {
+    io.on('connection', function (client) {
         console.log('connected: ' + client.id);
-        client.resources = defaultResources;
-
-        const findUserByName = name => {
-            const id = Object.keys(users)
-                .find(id => users[id] && users[id].name === name);
-            return id && users[id];
-        };
-
-        const getUser = () => {
-            return users[client.id];
-        };
-
-        const updateUserId = user => {
-            delete users[user.id];
-            user.id = client.id;
-            users[user.id] = user;
-        };
+        const user = new User(client.id);
 
         const loginUser = name => {
-            const user = users[client.id];
-            const oldUser = findUserByName(name);
-            if (oldUser && oldUser.connection !== client) {
-                console.log(`Found user with name ${name} and changed id from ${oldUser.id} to ${client.id}`);
-                updateUserId(oldUser);
-                oldUser.loggedIn = true;
+            const user = users.findById(client.id);
+            const oldUser = users.findByName(name);
+
+            if (oldUser && oldUser.id !== user.id) {
+                console.log(`Found user with name ${name} and changed id from ${oldUser.id} to ${user.id}`);
+                users.updateUserId(oldUser.id, user.id).loggedIn = true;
             } else {
                 user.name = name;
                 user.loggedIn = true;
@@ -46,65 +27,33 @@ module.exports = function (server, config) {
         };
 
         const isLoggedIn = () => {
-            const user = users[client.id];
-            return user && user.isLoggedIn && user.name;
+            const user = users.findById(client.id);
+            return user && user.name && user.isLoggedIn;
         };
 
-        const addUser = () => {
-            users[client.id] = {
-                id: client.id,
-                name: '',
-                loggedIn: false,
-                connection: client,
-                room: null
-            };
-            console.log(`Added connection ${client.id} to users.`);
-        };
-
-        const logoutUser = () => {
-            const user = getUser();
-
+        const logoutUser = user => {
             if (user) {
                 console.log(`Logging out user ${user.name}`);
                 user.loggedIn = false;
             }
         };
 
-        const removeUser = () => {
-            const user = getUser();
-            if (user) {
-                const {id, name} = user;
-                console.log(`Removed user ${name}`);
-                delete  users[id];
-            }
-        };
-
         const getClients = (loggedIn) => {
-            const user = getUser();
-            return Object.keys(users).filter(id => {
-                const u = users[id];
-                if (loggedIn) {
-                    return u && u.name !== user.name && u.loggedIn;
-                } else {
-                    return u;
-                }
-            }).map(id => {
-                return {
-                    id: id,
-                    name: users[id].name
-                }
-            })
+            const user = users.findById(client.id);
+
+            return users.getUsers()
+                .filter(client => {
+                    if (loggedIn) {
+                        return client && client.name !== user.name && client.loggedIn;
+                    }
+
+                    return client;
+                });
         };
 
         const clientsInRoom = name => {
-            if (name) {
-                const clients = Object.keys(users).filter(id => users[id].room === name)
-                    .map(id => {
-                        return users[id];
-                    });
-                return clients;
-            }
-            return [];
+            return users.getUsers()
+                .filter(user => user.room === name);
         };
 
         const describeRoom = name => {
@@ -112,12 +61,7 @@ module.exports = function (server, config) {
             const result = {
                 clients: clients.reduce((acc, c) => {
                     if (c.id) {
-                        acc[c.id] = c.connection.resources || defaultResources;
-                        acc[c.id].data = {
-                            name: c.name,
-                            room: c.room,
-                            id: c.id
-                        };
+                        acc[c.id] = c.resources;
                     }
                     return acc;
                 }, {})
@@ -125,7 +69,7 @@ module.exports = function (server, config) {
             return result;
         };
 
-        addUser();
+        users.add(new User(client.id));
 
         console.log('Clients logged in: ', getClients(true));
 
@@ -136,66 +80,59 @@ module.exports = function (server, config) {
                 client.emit('login_failed', {message: 'no username'});
             }
 
-            const user = getUser();
-            const clients = getClients(true);
+            const user = users.findById(client.id);
 
             if (isLoggedIn()) {
-                const allClients = getClients();
-                const loggedInClients = getClients(true);
                 console.log(`${user.name} is already logged in.`);
-                console.log('Clients: ', allClients);
+                console.log('Clients: ', getClients());
                 client.emit('login_success', {name});
-                client.emit('clients_success', {clients: loggedInClients});
+                client.emit('clients_success', {clients: getClients(true)});
             } else {
                 loginUser(name);
-                const allClients = getClients();
-                const loggedInClients = getClients(true);
-                console.log('Clients: ', allClients);
+                console.log('Clients: ', getClients());
                 client.emit('login_success', {name});
-                client.emit('clients_success', {clients: loggedInClients});
+                client.emit('clients_success', {clients: getClients(true)});
             }
         });
 
         client.on('logout', ({name}) => {
-            const user = getUser();
+            const user = users.findById(client.id);
             if (user && user.name === name) {
-                logoutUser();
+                logoutUser(user);
                 console.log(`User ${name} logged out.`);
                 client.emit('logout_success', {name});
             }
         });
 
         client.on('clients', ({loggedIn}) => {
-            const clients = getClients(loggedIn);
-            console.log('sending clients: ', clients);
-            client.emit('clients_success', {clients});
+            client.emit('clients_success', {clients: getClients(loggedIn)});
         });
 
         client.on('invite', ({name, bookId}) => {
-            const user = getUser();
+            const user = users.findById(client.id);
             console.log(`${user.name}(${user.id}) invites ${name} for a session to read book with id ${bookId}.`);
 
-            const otherClient = findUserByName(name);
+            const otherClient = users.findByName(name);
             if (!otherClient) return;
 
             console.log(`Found other client ${otherClient.name}, emitting invite`);
 
-            otherClient.connection && otherClient.connection.emit('invitation_received', {
-                from: user.name,
+            io.to(otherClient.id).emit('invitation_received', {
+                name: user.name,
                 bookId
             });
         });
 
         client.on('invitation_accept', ({name, bookId}) => {
-            const fromUser = getUser();
-            const toUser = findUserByName(name);
-            toUser && toUser.connection.emit('invite_accepted', {name: fromUser.name, bookId})
+            const fromUser = users.findById(client.id);
+            const toUser = users.findByName(name);
+            toUser && io.to(toUser.id).emit('invite_accepted', {name: fromUser.name, bookId})
         });
 
         client.on('invitation_decline', ({name, bookId}) => {
-            const fromUser = getUser();
-            const toUser = findUserByName(name);
-            toUser && toUser.connection.emit('invite_declined', {name: fromUser.name, bookId});
+            const fromUser = users.findById(client.id);
+            const toUser = users.findByName(name);
+            toUser && io.to(toUser.id).emit('invite_declined', {name: fromUser.name, bookId});
         });
 
         // pass a message to another id
@@ -221,12 +158,11 @@ module.exports = function (server, config) {
         client.on('join', joinUser);
 
         client.on('interaction', function (data) {
-            const user = getUser();
-            const {name, room} = users;
+            const {name, room} = users.findById(client.id);
             if (room) {
                 data.from = name;
                 console.log(`${name} interacts with all users in room ${room}.`, data);
-                io.sockets.in(room).emit('interaction_received', data);
+                io.broadcast.in(room).emit('interaction_received', data);
             } else {
                 console.log(`${name} is in no room yet`);
             }
@@ -234,9 +170,9 @@ module.exports = function (server, config) {
 
 
         function removeFeed(type) {
-            const user = getUser();
+            const user = users.findById(client.id);
             if (user && user.room) {
-                io.sockets.in(user.room).emit('remove', {
+                io.in(user.room).emit('remove', {
                     id: user.id,
                     type: type
                 });
@@ -247,19 +183,17 @@ module.exports = function (server, config) {
             }
         }
 
-        function joinUser(invite, cb) {
-            const userName = invite.name;
-            const bookId = invite.bookId;
-            const otherUser = findUserByName(userName);
+        function joinUser({name, bookId}, cb) {
+            const otherUser = users.findByName(name);
 
             if (otherUser) {
-                const user = getUser();
+                const user = users.findById(client.id);
 
                 console.log(`Found user ${otherUser.name}`);
                 removeFeed();
                 if (otherUser.room) {
-                    console.log(`${otherUser.name} is already in room ${otherUser.room}, following`);
-                    console.log(`User ${user.name} joining room ${otherUser.room} from user ${otherUser.name}`);
+                    console.log(`${otherUser.name} is already in room ${otherUser.room}.`);
+                    console.log(`User ${user.name} joining user ${otherUser.name} in room ${otherUser.room}.`);
                     safeCb(cb)(null, describeRoom(otherUser.room));
                     client.join(otherUser.room);
                     user.room = otherUser.room;
@@ -270,68 +204,33 @@ module.exports = function (server, config) {
                     safeCb(cb)(null, describeRoom(roomId));
                     client.join(roomId);
                     console.log(`Inviting user ${otherUser.name} (${otherUser.id}) to room ${roomId}`);
-                    otherUser.connection && otherUser.connection.emit('invitation_received', {
+                    io.to(otherUser.id).emit('invitation_received', {
                         room: roomId,
-                        from: user.name,
+                        name: user.name,
                         bookId
                     });
                 }
             } else {
-                console.log(`User ${userName} not found`);
+                console.log(`User ${name} not found`);
             }
-        }
-
-        function join(name, cb) {
-            name = 'test';
-            // sanity check
-            if (typeof name !== 'string') return;
-            // check if maximum number of clients reached
-            if (config.rooms && config.rooms.maxClients > 0 &&
-                clientsInRoom(name) >= config.rooms.maxClients) {
-                safeCb(cb)('full');
-                return;
-            }
-
-            // leave any existing rooms
-            removeFeed();
-            safeCb(cb)(null, describeRoom(name));
-            const user = getUser();
-            console.log(`Client ${user.name} joining room ${name}`);
-            client.join(name);
-            user.room = name;
         }
 
         // we don't want to pass "leave" directly because the
         // event type string of "socket end" gets passed too.
         client.on('disconnect', function () {
-            logoutUser();
-            removeFeed();
-            console.log(`disconnected ${client.id}`);
-            removeUser();
-            client.disconnect();
-        });
-        client.on('leave', function () {
-            removeFeed();
+            const user = users.findById(client.id);
+            if (user) {
+                logoutUser(user);
+                removeFeed();
+                console.log(`disconnected ${client.id}`);
+                users.removeUser(user.id);
+            }
         });
 
-        client.on('create', function (name, cb) {
-            console.log('creating ' + name);
-            if (arguments.length == 2) {
-                cb = (typeof cb == 'function') ? cb : function () {
-                };
-                name = name || uuid();
-            } else {
-                cb = name;
-                name = uuid();
-            }
-            // check if exists
-            const room = io.nsps['/'].adapter.rooms[name];
-            if (room && room.length) {
-                safeCb(cb)('taken');
-            } else {
-                join(name);
-                safeCb(cb)(null, name);
-            }
+        client.on('leave', function () {
+            const user = users.findById(client.id);
+            user.room = null;
+            removeFeed();
         });
 
         // support for logging full webrtc traces to stdout
@@ -350,7 +249,7 @@ module.exports = function (server, config) {
         // the process is described in draft-uberti-behave-turn-rest
         const credentials = [];
         // allow selectively vending turn credentials based on origin.
-        var origin = client.handshake.headers.origin;
+        const origin = client.handshake.headers.origin;
         if (!config.turnorigins || config.turnorigins.indexOf(origin) !== -1) {
             config.turnservers.forEach(function (server) {
                 const hmac = crypto.createHmac('sha1', server.secret);

@@ -34,7 +34,7 @@ class ReceiveInviteModalComponent extends React.Component {
     }
 
     acceptInvite() {
-        this.props.dispatch(actions.createInvitationAccepted(this.props.hasPendingInvite.name))
+        this.props.dispatch(actions.acceptInvitation(this.props.hasPendingInvite.name, this.props.hasPendingInvite.bookId));
         this.closeModal();
     }
 
