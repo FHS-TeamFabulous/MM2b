@@ -5,7 +5,7 @@ class Avatar extends React.Component {
     render() {
         return (
             <div>
-                {this.displayContent.bind(this)}
+                {this.displayContent()}
             </div>
         );
     }

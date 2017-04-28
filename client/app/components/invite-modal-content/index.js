@@ -52,7 +52,7 @@ class InviteModalContentComponente extends React.Component {
     changeItem(selectedObject) {
         if (selectedObject !== null) {
             this.props.dispatch(enableButton());
-            this.props.dispatch(selectItem(selectedObject[0].value));
+            this.props.dispatch(selectItem(selectedObject.value));
         } else {
             this.props.dispatch(selectItem());
             this.props.dispatch(disableButton());
