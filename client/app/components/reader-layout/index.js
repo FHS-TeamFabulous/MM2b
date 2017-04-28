@@ -20,6 +20,11 @@ class ReaderLayout extends React.Component {
             remotesContainer: 'remote_container',
             remoteVidElement: VideoCircle
         });
+
+        if (this.props.hasPendingInvite) {
+            const { name, bookId } = this.props.hasPendingInvite;
+            Communication.joinRoom(name, bookId);
+        }
     }
 
     componentWillUnmount() {
@@ -61,7 +66,7 @@ class ReaderLayout extends React.Component {
     closeModal() {
         this.props.dispatch(closeModal());
     }
-    
+
     openModal() {
         this.props.dispatch(openCloseModal());
     }
@@ -71,7 +76,8 @@ function mapStateToProps(state) {
 
     return {
         show: state.modalState.show,
-        modalType: state.modalState.modalType
+        modalType: state.modalState.modalType,
+        hasPendingInvite: state.communication.hasPendingInvite
     }
 }
 

@@ -4,7 +4,6 @@ import CustomButton from './../button';
 import {Modal} from 'react-bootstrap';
 import {closeModal, openInviteModal, disableButton} from './../../actions/modal-actions';
 import { connect } from 'react-redux';
-import { logIn } from 'app/actions/auth-actions';
 import * as actions from 'app/actions/communication-actions';
 import { Link } from 'react-router-dom';
 
@@ -14,11 +13,11 @@ class ReceiveInviteModalComponent extends React.Component {
         return (
             <div>
                 <Modal.Body className={style.bodyContent}>
-                    <h3 className={style.inviteText}>this.props.clients[0].name möchte sie zum gemeinsamen Buch lesen einladen</h3>
+                    <h3 className={style.inviteText}>{this.props.hasPendingInvite.name} möchte sie zum gemeinsamen Buch lesen einladen</h3>
                 </Modal.Body>
                 <Modal.Footer className={style.footerContent}>
                     <div className="pull-right">
-                        <Link to={`/books/${this.props.bookId}`}>
+                        <Link to={`/books/${this.props.hasPendingInvite.bookId}`}>
                             <CustomButton onClick={this.acceptInvite.bind(this)} className={'defaultBtn'}>
                                 Akzeptieren
                             </CustomButton>
@@ -34,17 +33,8 @@ class ReceiveInviteModalComponent extends React.Component {
         );
     }
 
-    /*logIn() {
-        let username = document.getElementById('username').value;
-        console.log(username);
-        this.props.dispatch(logIn(username));
-        this.props.dispatch(actions.createLogin(username));
-        this.props.dispatch(disableButton());
-        this.props.dispatch(openInviteModal());
-    }*/
-
     acceptInvite() {
-        this.props.dispatch(actions.createInvitationAccepted(this.props.clients.name))
+        this.props.dispatch(actions.createInvitationAccepted(this.props.hasPendingInvite.name))
         this.closeModal();
     }
 
@@ -55,8 +45,7 @@ class ReceiveInviteModalComponent extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        clients: state.communication.clients,
-        bookId: state.booksState.selectedBookId
+        hasPendingInvite: state.communication.hasPendingInvite
     }
 }
 
