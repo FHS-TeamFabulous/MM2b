@@ -5,6 +5,7 @@ import {
     loginEpic,
     logoutEpic,
     connectEpic,
+    connectOnInvitation,
     interactEpic
 } from 'app/epics/communication-epics';
 
@@ -28,6 +29,7 @@ export const communicationEpics = combineEpics(
     loginEpic,
     logoutEpic,
     connectEpic,
+    connectOnInvitation,
     interactEpic
 );
 

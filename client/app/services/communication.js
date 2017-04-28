@@ -27,9 +27,11 @@ SocketIoConnection.prototype.disconnect = function () {
 
 function Communication() {
     let webrtc;
-    const socket = io(config.server.base || 'http://localhost:3000');
+    const server = config.server.base || 'http://localhost:3000';
+    const socket = io(server);
+    let sessionId;
 
-    const connect= ({ localVid, remotesContainer }) => {
+    const connect = ({ localVid, remotesContainer }) => {
         webrtc = new SimpleWebRTC({
             localVideoEl: localVid,
             remoteVideosEl: remotesContainer,
@@ -38,7 +40,8 @@ function Communication() {
         });
 
         return new Promise(resolve => {
-            webrtc.on('connectionReady', function (sessionId) {
+            webrtc.on('connectionReady', function (id) {
+                sessionId = id;
                 // config callbacks
                 /*console.log('connection ready');*/
 
@@ -65,19 +68,25 @@ function Communication() {
         });
     };
 
+    const disconnect = () => {
+        webrtc.disconnect();
+    };
 
     const joinRoom = name => {
         return new Promise((resolve, reject) => {
-            console.log('[webrtc] attempting to joinRoom ' + name);
-            webrtc.joinRoom(name);
-            /*, (err, roomDescription) => {
-                console.log('RoomDescription: ', roomDescription);
+            webrtc.joinRoom(name, (err, roomDescription) => {
                 if (err) {
                     reject(err);
-                }*/
-                resolve();
-            /*});*/
+                }
+                webrtc.roomName = roomDescription;
+                resolve(roomDescription);
+            });
         });
+    };
+
+    const leaveRoom = () => {
+        webrtc.leaveRoom();
+        webrtc.webrtc.stopLocalMedia();
     };
 
     const login = name => {
@@ -96,6 +105,14 @@ function Communication() {
         socket.emit('invite', ({name}));
     };
 
+    const acceptInvite = name => {
+        socket.emit('invitation_accept', ({name}))
+    };
+
+    const declineInvite = name => {
+        socket.emit('invitation_declined', ({name}))
+    };
+
     const interact = data => {
         socket.emit('interaction', data);
     };
@@ -109,12 +126,26 @@ function Communication() {
             dispatch(actions.createLogoutSuccess(name));
         });
 
+        socket.on('login_failed', ({message}) => {
+            dispatch(actions.createLoginFailed(message));
+        });
+
         socket.on('clients_success', ({clients}) => {
             dispatch(actions.createClientsReceived(clients));
         });
 
         socket.on('invitation_received', ({ from, room }) => {
             console.log(`${from} sent invitation to ${room}`);
+            dispatch(actions.createInviteReceived(from, room));
+
+            const accept = confirm(`Accept invitatoin from ${from}`);
+
+            if (accept) {
+                dispatch(actions.createInvitationAccepted(from));
+            } else {
+                dispatch(actions.createInvitationDeclined(from));
+            }
+
         });
 
         socket.on('invite_accepted', ({name}) => {
@@ -126,13 +157,16 @@ function Communication() {
         });
 
         socket.on('interaction_received', data => {
+            console.log('interaction received: ', data);
             dispatch(actions.createInteractionReceived(data));
         });
     };
 
     return {
         connect,
+        disconnect,
         joinRoom,
+        leaveRoom,
         login,
         logout,
         loadClients,

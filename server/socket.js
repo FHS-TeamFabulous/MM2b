@@ -8,7 +8,7 @@ module.exports = function (server, config) {
         defaultResources = {
             screen: false,
             video: true,
-            audio: false,
+            audio: true,
         };
 
     io.sockets.on('connection', function (client) {
@@ -16,8 +16,9 @@ module.exports = function (server, config) {
         client.resources = defaultResources;
 
         const findUserByName = name => {
-            return Object.keys(users)
+            const id = Object.keys(users)
                 .find(id => users[id] && users[id].name === name);
+            return id && users[id];
         };
 
         const getUser = () => {
@@ -61,22 +62,31 @@ module.exports = function (server, config) {
         };
 
         const logoutUser = () => {
-            const user = users[client.id];
+            const user = getUser();
 
-            console.log(`Logging out user ${user.name}`);
-            user.loggedIn = false;
+            if (user) {
+                console.log(`Logging out user ${user.name}`);
+                user.loggedIn = false;
+            }
         };
 
         const removeUser = () => {
-            delete  users[client.id];
+            const user = getUser();
+            if (user) {
+                const { id, name } = user;
+                console.log(`Removed user ${name}`);
+                delete  users[id];
+            }
         };
 
         const getClients = (loggedIn) => {
+            const user = getUser();
             return Object.keys(users).filter(id => {
+                const u = users[id];
                 if (loggedIn) {
-                    return users[id] && users[id].name !== client.name && users[id].loggedIn;
+                    return u && u.name !== user.name && u.loggedIn;
                 } else {
-                    return users[id];
+                    return u;
                 }
             }).map(id => {
                 return {
@@ -88,13 +98,10 @@ module.exports = function (server, config) {
 
         const clientsInRoom = name => {
             if (name) {
-                const test = Object.keys(users).filter(id => users[id].room).map(id => users[id]);
-                console.log(test);
                 const clients = Object.keys(users).filter(id => users[id].room === name)
                     .map(id => {
                         return users[id];
                     });
-                console.log('clients in room ' + name, clients);
                 return clients;
             }
             return [];
@@ -102,17 +109,19 @@ module.exports = function (server, config) {
 
         const describeRoom = name => {
             const clients = clientsInRoom(name);
-            console.log('all clients: ', clients);
-
             const result = {
                 clients: clients.reduce((acc, c) => {
                     if (c.id) {
                         acc[c.id] = c.connection.resources || defaultResources;
+                        acc[c.id].data = {
+                            name: c.name,
+                            room: c.room,
+                            id: c.id
+                        };
                     }
                     return acc;
                 }, {})
             };
-            console.log('RoomDescription: ', result);
             return result;
         };
 
@@ -122,16 +131,27 @@ module.exports = function (server, config) {
 
         client.on('login', data => {
             const { name } = data;
+
+            if (!name) {
+                client.emit('login_failed', { message: 'no username'});
+            }
+
             const user = getUser();
-            const clients = getClients(true);
 
             if (isLoggedIn()) {
+                const allClients = getClients();
+                const loggedInClients = getClients(true);
+                console.log(`${user.name} is already logged in.`);
+                console.log('Clients: ', allClients);
                 client.emit('login_success', { name });
-                client.emit('clients_success', { clients });
+                client.emit('clients_success', { clients: loggedInClients });
             } else {
                 loginUser(name);
+                const allClients = getClients();
+                const loggedInClients = getClients(true);
+                console.log('Clients: ', allClients);
                 client.emit('login_success', { name });
-                client.emit('clients_success', { clients });
+                client.emit('clients_success', { clients: loggedInClients });
             }
         });
 
@@ -153,8 +173,6 @@ module.exports = function (server, config) {
         client.on('invite', ({name}) => {
             console.log(`${client.name}(${client.id}) invites ${name} for a session.`);
 
-            if (!data) return;
-
             const otherClient = io.to(name);
             if (!otherClient) return;
 
@@ -164,8 +182,16 @@ module.exports = function (server, config) {
             });
         });
 
-        client.on('invitation_accept', ({from, to}) => {
-            client.emit('invite_accepted', { from, to })
+        client.on('invitation_accept', ({ name }) => {
+            const fromUser = getUser();
+            const toUser = findUserByName(name);
+            toUser.connection.emit('invite_accepted', { name })
+        });
+
+        client.on('invitation_decline', ({ name }) => {
+            const fromUser = getUser();
+            const toUser = findUserByName(name);
+            toUser.connection.emit('invite_declined', { name });
         });
 
         // pass a message to another id
@@ -188,53 +214,61 @@ module.exports = function (server, config) {
             removeFeed('screen');
         });
 
-        client.on('join', join);
+        client.on('join', joinUser);
 
         client.on('interaction', function (data) {
-            console.log(`${users[client.id]} interacts with all users in room ${client.room}.`, data);
-            io.sockets.in(client.room).emit('interaction_received', data);
+            const user = getUser();
+            const { name, room } = users;
+            if (room) {
+                data.from = name;
+                console.log(`${name} interacts with all users in room ${room}.`, data);
+                io.sockets.in(room).emit('interaction_received', data);
+            } else {
+                console.log(`${name} is in no room yet`);
+            }
         });
 
 
         function removeFeed(type) {
-            if (client.room) {
-                io.sockets.in(client.room).emit('remove', {
-                    id: client.id,
+            const user = getUser();
+            if (user && user.room) {
+                io.sockets.in(user.room).emit('remove', {
+                    id: user.id,
                     type: type
                 });
                 if (!type) {
-                    client.leave(client.room);
-                    client.room = undefined;
+                    client.leave(user.room);
+                    user.room = undefined;
                 }
             }
         }
 
         function joinUser(userName, cb) {
-            client.join('test');
-            safeCb(cb)(null, userName + 'joined test room');
-            /*const user = findUserByName(userName);
+            const otherUser = findUserByName(userName);
 
-            if (user) {
-                const { room, name, connection } = user;
+            if (otherUser) {
+                const user = getUser();
+
+                console.log(`Found user ${otherUser.name}`);
                 removeFeed();
-                if (room) {
-                    console.log(`Client ${client.name} joining room ${room} from user ${name}`);
-                    client.join('test');
-                    safeCb(cb)(null, describeRoom(user.room));
-                    client.room = user.room;
+                if (otherUser.room) {
+                    console.log(`${otherUser.name} is already in room ${otherUser.room}, following`);
+                    console.log(`User ${user.name} joining room ${otherUser.room} from user ${otherUser.name}`);
+                    safeCb(cb)(null, describeRoom(otherUser.room));
+                    client.join(otherUser.room);
+                    user.room = otherUser.room;
                 } else {
                     const roomId = uuid();
-                    console.log(`Client ${client.name} joining room ${roomId}`);
-                    client.room = roomId;
-                    client.join('test');
+                    console.log(`Client ${user.name} joining new room ${roomId}`);
+                    user.room = roomId;
                     safeCb(cb)(null, describeRoom(roomId));
-                    console.log(`Inviting user ${name} to room ${roomId}`);
-                    user.connection && user.connection.emit('invitation_received', { room: roomId, from: client.name });
-                    console.log('user connection', user.connection);
+                    client.join(roomId);
+                    console.log(`Inviting user ${otherUser.name} (${otherUser.id}) to room ${roomId}`);
+                    otherUser.connection && otherUser.connection.emit('invitation_received', { room: roomId, from: user.name });
                 }
             } else {
                 console.log(`User ${userName} not found`);
-            }*/
+            }
         }
 
         function join(name, cb) {
@@ -260,9 +294,10 @@ module.exports = function (server, config) {
         // we don't want to pass "leave" directly because the
         // event type string of "socket end" gets passed too.
         client.on('disconnect', function () {
-            logoutUser(users[client.id]);
+            logoutUser();
             removeFeed();
             console.log(`disconnected ${client.id}`);
+            removeUser();
             client.disconnect();
         });
         client.on('leave', function () {

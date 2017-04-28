@@ -9,7 +9,6 @@ import FaClose from 'react-icons/lib/fa/close';
 import Communication from 'app/services/communication';
 import * as actions from 'app/actions/communication-actions';
 
-
 const closeIcon = <FaClose className={style.icon}/>;
 
 import { closeBook } from 'app/actions/books-actions';
@@ -22,11 +21,18 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 class ReaderLayout extends React.Component {
 
     componentDidMount() {
+        /*const login = prompt('login');
+        this.props.dispatch(actions.createLogin(login));*/
+
         this.communication = Communication.connect({
             localVid: 'local_container',
             remotesContainer: 'remote_container',
             remoteVidElement: VideoCircle
-        });
+        })
+    }
+
+    componentWillUnmount() {
+        Communication.leaveRoom();
     }
 
     connect() {
