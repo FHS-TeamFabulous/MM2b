@@ -131,6 +131,7 @@ function Communication() {
         });
 
         socket.on('clients_success', ({clients}) => {
+            console.log(clients);
             dispatch(actions.createClientsReceived(clients));
         });
 

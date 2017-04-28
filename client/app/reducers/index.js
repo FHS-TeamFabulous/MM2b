@@ -4,6 +4,7 @@ import { communicationReducer, communicationEpics } from './communication-reduce
 import booksReducer from './books-reducer';
 import modalReducer from './modal-reducer';
 import authReducer from './auth-reducer';
+import toolsReducer from './tools-reducer';
 import helloWorldReducer from './hello-world-reducer';
 
 export default combineReducers({
@@ -11,7 +12,8 @@ export default combineReducers({
     communication: communicationReducer,
     booksState: booksReducer,
     modalState: modalReducer,
-    authState: authReducer
+    authState: authReducer,
+    toolsState: toolsReducer
 });
 
 export const rootEpic = combineEpics(

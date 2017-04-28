@@ -1,17 +1,7 @@
 import React from 'react';
 import style from './style.scss';
 
-import { connect }  from 'react-redux';
-
 class Avatar extends React.Component {
-
-    getClientData() {
-        const idx = this.props.clients.find(client => client.id === this.props.selectedItemValue);
-        if (idx) {
-            return this.props.clients[idx].name;
-        }
-    }
-
     render() {
         return (
             <div>
@@ -19,25 +9,36 @@ class Avatar extends React.Component {
             </div>
         );
     }
+    
     displayContent() {
-        if(this.props.selectedItemValue === 0)
-        {
-            return <h4>Bitte wählen sie einen User aus!</h4>;
-        }
-        else {
-            return <div className={style.avatarWrapper}><img className={style.avatarImage} src="/assets/images/oma.jpg"/><p className={style.avatarName}>{getClientData()}</p></div>
-        }
-    }
-}
+        if (!this.props.name) {
+            return (<h4>Bitte wählen Sie einen User aus!</h4>);
+        } else {
+            let loader = '';
 
-function mapStateToProps(state) {
+            if (this.props.isLoading) {
+                loader = (
+                    <div className={style.avatarLoader}>
+                        <div />
+                        <div />
+                        <div />
+                    </div>
+                );
+            }
 
-    return {
-        selectedItemValue: state.modalState.selectedItem,
-        clients: state.communication.clients
+            return (
+                <div className={style.avatarWrapper}>
+                    <div className={style.avatarInner}>
+                        <img className={style.avatarImage} src={this.props.url} />
+                        <p className={style.avatarName}>{this.props.name}</p>
+                        { loader }
+                    </div>
+                </div>
+            );
+        }
     }
 }
 
 //<h2>{this.props.selectedItemValue}</h2>
-export default connect(mapStateToProps)(Avatar);
+export default Avatar;
 

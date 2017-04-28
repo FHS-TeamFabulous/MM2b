@@ -137,7 +137,8 @@ module.exports = function (server, config) {
             }
 
             const user = getUser();
-
+            const clients = getClients(true);
+            
             if (isLoggedIn()) {
                 const allClients = getClients();
                 const loggedInClients = getClients(true);

@@ -14,18 +14,18 @@ class CloseModalContentComponente extends React.Component {
         return (
             <div>
                 <Modal.Body className={style.bodyContent}>
-                    <h1 className={style.message}>Wollen sie das Buch wirklich verlassen?</h1>
+                    <h4 className={style.message}>Wollen sie das Buch wirklich verlassen?</h4>
                 </Modal.Body>
                 <Modal.Footer className={style.footerContent}>
                     <div className="pull-right">
                         <Link to={"/"}>
-                            <CustomButton onClick={this.closeModal.bind(this)} className={'defaultBtn'}>
+                            <CustomButton onClick={this.submit.bind(this)} className={'defaultBtn'}>
                                 Accept
                             </CustomButton>
                         </Link>
                     </div>
                     <div className="pull-right">
-                        <CustomButton onClick={this.closeModal.bind(this)} className={'defaultBtn'}>
+                        <CustomButton onClick={this.close.bind(this)} className={'defaultBtn'}>
                             Cancel
                         </CustomButton>
                     </div>
@@ -34,9 +34,13 @@ class CloseModalContentComponente extends React.Component {
         );
     }
 
-    closeModal() {
-        this.props.dispatch(closeModal());
+    submit() {
         this.props.dispatch(closeBook());
+        this.close();
+    }
+
+    close() {
+        this.props.dispatch(closeModal());
     }
 }
 

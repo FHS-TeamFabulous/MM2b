@@ -17,6 +17,7 @@ export const types = {
     INVITE: '[communication] INVITE',
     INVITE_SENT: '[communication] INVITE SENT',
     INVITE_RECEIVED: '[communication] INVITE RECEIVED',
+    CANCEL_INVITE: '[communication] CANCEL_INVITE',
     INVITATION_ACCEPTED: '[communication] INVITATION ACCEPTED',
     INVITATION_DECLINED: '[communication] INVITATION DECLINED'
 };
@@ -133,6 +134,15 @@ export function createInviteReceived(from, to) {
         payload: {
             from,
             to
+        }
+    };
+}
+
+export function createCancelInvite(name) {
+    return {
+        type: types.CANCEL_INVITE,
+        payload: {
+            name
         }
     };
 }

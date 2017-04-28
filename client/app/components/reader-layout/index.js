@@ -1,23 +1,19 @@
 import React from 'react';
 import style from './style.scss';
-import CustomButton from './../button';
 import BookReader from 'app/components/book-reader';
 import VideoCircle from 'app/components/video-circle';
 import { connect } from 'react-redux';
-
+import CustomButton from 'app/components/button';
 import FaClose from 'react-icons/lib/fa/close';
 import Communication from 'app/services/communication';
-
-const closeIcon = <FaClose className={style.icon}/>;
-
+import * as actions from 'app/actions/communication-actions';
 import { closeBook } from 'app/actions/books-actions';
-
+import { Link } from 'react-router-dom';
+import InteractionTools from 'app/components/interaction-tools';
 import {openCloseModal, closeModal} from 'app/actions/modal-actions';
-
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 class ReaderLayout extends React.Component {
-
     componentDidMount() {
         Communication.connect({
             localVid: 'local_container',
@@ -47,6 +43,7 @@ class ReaderLayout extends React.Component {
                         <FaClose className={style.icon}/>
                     </CustomButton>
                     <BookReader bookId={this.props.match.params.id} />
+                    <InteractionTools />
                     <div>
                         <div className={style.videosWrapper}>
                             <div className={style.videoTagWrapperLeft} >

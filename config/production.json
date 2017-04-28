@@ -1,0 +1,8 @@
+{
+    "server": {
+        "base": "/"
+    },
+    "api": {
+        "base": "/api"
+    }
+}

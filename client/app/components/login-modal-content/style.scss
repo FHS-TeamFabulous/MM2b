@@ -9,14 +9,16 @@
     text-align: right;
 }
 
-.form-wrapper {
-
-}
-
 .input-wrapper {
     margin-left: 20px;
     display: inline-block;
+
+    input {
+        padding: 5px 10px;
+        width: 250px;
+    }
 }
+
 .login-modal-paragraph {
     padding: 0;
     margin-bottom: 10px;

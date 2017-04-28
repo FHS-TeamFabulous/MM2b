@@ -35,12 +35,10 @@ class BookItem extends React.Component {
                             </Link>
                         </div>
                         <div className={style.buttonWrapper}>
-                            <Link to={`/books/${this.props.item.id}`}>
-                                <CustomButton onClick={this.openModal.bind(this)} className={"defaultBtn"} >
-                                    <GroupIcon />
-                                    Vorlesen
-                                </CustomButton>
-                            </Link>
+                            <CustomButton onClick={this.openModal.bind(this)} className={"defaultBtn"} >
+                                <GroupIcon />
+                                Vorlesen
+                            </CustomButton>
                         </div>
                     </div>
                 </div>

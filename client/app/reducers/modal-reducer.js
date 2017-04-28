@@ -2,8 +2,8 @@ import { types } from 'app/actions/modal-actions';
 
 const initialState = {
     show: false,
-    selectedItem: 0,
-    modalType: "",
+    selectedItem: {},
+    modalType: null,
     availabilityOfButton: true
 };
 
@@ -11,23 +11,24 @@ function modalReducer(state = initialState, action) {
     switch (action.type) {
         case types.LOGIN:
             return Object.assign({}, state, {
-                modalType: "loginModal",
+                modalType: 'loginModal',
                 show: true
             });
         case types.INVITE:
             return Object.assign({}, state, {
-                modalType: "inviteModal",
+                modalType: 'inviteModal',
                 show: true
             });
         case types.CLOSEMODAL:
             return Object.assign({}, state, {
                 show: true,
-                modalType: "closeModal"
+                modalType: 'closeModal'
             });
         case types.CLOSE:
             return Object.assign({}, state, {
                 show: false,
-                modalType: ""
+                modalType: null,
+                selectedItem: {}
             });
         case types.SELECT:
             return Object.assign({}, state, {

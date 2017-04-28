@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import style from './style.scss';
 
 class App extends Component {
 
