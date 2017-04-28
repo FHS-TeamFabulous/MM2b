@@ -270,11 +270,11 @@ module.exports = function (server, config) {
                     safeCb(cb)(null, describeRoom(roomId));
                     client.join(roomId);
                     console.log(`Inviting user ${otherUser.name} (${otherUser.id}) to room ${roomId}`);
-                    otherUser.connection && otherUser.connection.emit('invitation_received', {
-                        room: roomId,
-                        from: user.name,
-                        bookId
-                    });
+                    // otherUser.connection && otherUser.connection.emit('invitation_received', {
+                    //     room: roomId,
+                    //     from: user.name,
+                    //     bookId
+                    // });
                 }
             } else {
                 console.log(`User ${userName} not found`);
