@@ -17,9 +17,11 @@ export const types = {
     INVITE: '[communication] INVITE',
     INVITE_SENT: '[communication] INVITE SENT',
     INVITE_RECEIVED: '[communication] INVITE RECEIVED',
-    CANCEL_INVITE: '[communication] CANCEL_INVITE',
+    INVITE_CANCEL: '[communication] INVITE CANCEL',
     INVITATION_ACCEPTED: '[communication] INVITATION ACCEPTED',
-    INVITATION_DECLINED: '[communication] INVITATION DECLINED'
+    INVITATION_ACCEPTED_SENT: '[communication] INVITATION ACCEPTED SENT',
+    INVITATION_DECLINED: '[communication] INVITATION DECLINED',
+    INVITATION_DECLINED_SENT: '[communcation] INVITATION DECLINED SENT'
 };
 
 export function createClientsReceived(clients) {
@@ -120,6 +122,15 @@ export function createInvite(name, bookId) {
     };
 }
 
+export function createCancelInvite(name) {
+    return {
+        type: types.INVITE_CANCEL,
+        payload: {
+            name
+        }
+    };
+}
+
 export function createInviteSent(name) {
     return {
         type: types.INVITE_SENT,
@@ -129,40 +140,39 @@ export function createInviteSent(name) {
     };
 }
 
-export function createInviteReceived(from, to) {
+export function createInviteReceived(from, bookId) {
     return {
         type: types.INVITE_RECEIVED,
         payload: {
             from,
-            to
+            bookId
         }
     };
 }
 
-export function createCancelInvite(name) {
-    return {
-        type: types.CANCEL_INVITE,
-        payload: {
-            name
-        }
-    };
-}
-
-export function createInvitationAccepted(name) {
+export function createInvitationAccepted(name, bookId) {
     return {
         type: types.INVITATION_ACCEPTED,
         payload: {
-            name
+            name,
+            bookId
         }
     };
 }
 
-export function createInvitationDeclined(name) {
+export function createInvitationDeclined(name, bookId) {
     return {
         type: types.INVITATION_DECLINED,
         payload: {
-            name
+            name,
+            bookId
         }
+    };
+}
+
+export function createInvitationDeclinedSent() {
+    return {
+        type: types.INVITATION_DECLINED_SENT
     };
 }
 

@@ -2,7 +2,7 @@ import SimpleWebRTC from 'simplewebrtc';
 import io from 'socket.io-client';
 import config from 'config';
 import * as actions from 'app/actions/communication-actions';
-import { logIn } from 'app/actions/auth-actions';
+import {logIn} from 'app/actions/auth-actions';
 import React from 'react';
 
 function SocketIoConnection(socket) {
@@ -31,7 +31,7 @@ function Communication() {
     const socket = io(server);
     let sessionId;
 
-    const connect = ({ localVid, remotesContainer }) => {
+    const connect = ({localVid, remotesContainer}) => {
         webrtc = new SimpleWebRTC({
             localVideoEl: localVid,
             remoteVideosEl: remotesContainer,
@@ -42,26 +42,6 @@ function Communication() {
         return new Promise(resolve => {
             webrtc.on('connectionReady', function (id) {
                 sessionId = id;
-                // config callbacks
-                /*console.log('connection ready');*/
-
-                webrtc.on('createdPeer', peer => {
-                    /*console.log('createdPeer: ', peer);*/
-                });
-
-                webrtc.on('videoAdded', function (video, peer) {
-                    /*console.log('videoAdded');
-                    console.log('video: ', video);
-                    console.log('peer: ', peer);*/
-                }.bind(this));
-
-                webrtc.on('readyToCall', () => {
-                    /*console.log('readyToCall');*/
-                });
-
-                webrtc.on('joinedRoom', roomDesctiption => {
-                    /*console.log('webrtc event: joinedRoom', roomDesctiption);*/
-                });
 
                 resolve(sessionId);
             });
@@ -90,27 +70,31 @@ function Communication() {
     };
 
     const login = name => {
-        socket.emit('login', { name });
+        socket.emit('login', {name});
     };
 
     const logout = name => {
-        socket.emit('logout', { name });
+        socket.emit('logout', {name});
     };
 
     const loadClients = (loggedIn = true) => {
-        socket.emit('clients', { loggedIn });
+        socket.emit('clients', {loggedIn});
     };
 
-    const invite = name => {
-        socket.emit('invite', ({name}));
+    const invite = (name, bookId) => {
+        socket.emit('invite', ({name, bookId}));
     };
 
-    const acceptInvite = name => {
-        socket.emit('invitation_accept', ({name}))
+    const cancelInvite = (name, bookId) => {
+        socket.emit('invite_cancel', {name, bookId});
     };
 
-    const declineInvite = name => {
-        socket.emit('invitation_declined', ({name}))
+    const acceptInvite = (name, bookId) => {
+        socket.emit('invitation_accept', ({name, bookId}))
+    };
+
+    const declineInvite = (name, bookId) => {
+        socket.emit('invitation_declined', ({name, bookId}))
     };
 
     const interact = data => {
@@ -135,26 +119,17 @@ function Communication() {
             dispatch(actions.createClientsReceived(clients));
         });
 
-        socket.on('invitation_received', ({ from, room }) => {
-            console.log(`${from} sent invitation to ${room}`);
-            dispatch(actions.createInviteReceived(from, room));
-
-            const accept = confirm(`Accept invitatoin from ${from}`);
-
-            if (accept) {
-                dispatch(actions.createInvitationAccepted(from));
-            } else {
-                dispatch(actions.createInvitationDeclined(from));
-            }
-
+        socket.on('invitation_received', ({from, bookId}) => {
+            console.log(`${from} sent invitation to read book with id ${bookId}`);
+            dispatch(actions.createInviteReceived(from, bookId));
         });
 
-        socket.on('invite_accepted', ({name}) => {
-            dispatch(actions.createInvitationAccepted(name));
+        socket.on('invite_accepted', ({name, bookId}) => {
+            dispatch(actions.createInvitationAccepted(name, bookId));
         });
 
-        socket.on('invite_declined', ({name}) => {
-            dispatch(actions.createInvitationDeclined(name));
+        socket.on('invite_declined', ({name, bookId}) => {
+            dispatch(actions.createInvitationDeclined(name, bookId));
         });
 
         socket.on('interaction_received', data => {
@@ -172,6 +147,9 @@ function Communication() {
         logout,
         loadClients,
         invite,
+        cancelInvite,
+        acceptInvite,
+        declineInvite,
         interact,
         addEventListeners
     }

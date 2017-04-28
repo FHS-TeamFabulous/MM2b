@@ -4,21 +4,21 @@ import CustomButton from 'app/components/button';
 import {Modal} from 'react-bootstrap';
 import {closeModal, selectItem, enableButton, disableButton} from 'app/actions/modal-actions';
 import * as actions from 'app/actions/communication-actions';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import Select from 'react-select';
 import Avatar from 'app/components/avatar';
-import { createConnection } from 'app/actions/communication-actions';
+import {createConnection} from 'app/actions/communication-actions';
 import SelectItem from 'app/components/select-item';
 import { Redirect } from 'react-router-dom';
 
 class InviteModalContentComponente extends React.Component {
 
     render() {
-        const options = this.props.clients.map((client) =>{
+        const options = this.props.clients.map((client) => {
             return {
-                value: { 
-                    id: client.id, 
-                    name: client.name, 
+                value: {
+                    id: client.id,
+                    name: client.name,
                     avatar: client.avatar
                 },
                 label: <SelectItem username={client.name} avatar={client.avatar}/>
@@ -30,13 +30,16 @@ class InviteModalContentComponente extends React.Component {
                 <Modal.Body className={style.bodyContent}>
                     <p className={style.loginModalParagraph}>Wählen sie einen User aus mit dem Sie lesen wollen!</p>
                     <div className={style.selectWrapper}>
-                        <Select value={this.props.selectedItemValue.name} name="form-field-name" options={options} onChange={this.changeItem.bind(this)}/>
+                        <Select value={this.props.selectedItemValue.name} name="form-field-name" options={options}
+                                onChange={this.changeItem.bind(this)}/>
                     </div>
-                    <Avatar name={this.props.selectedItemValue.name} url={this.props.selectedItemValue.avatar} isLoading={this.props.isInviting} />
+                    <Avatar name={this.props.selectedItemValue.name} url={this.props.selectedItemValue.avatar}
+                            isLoading={this.props.isInviting}/>
                 </Modal.Body>
                 <Modal.Footer className={style.footerContent}>
                     <div className="pull-right">
-                        <CustomButton onClick={this.submit.bind(this)} className={"defaultBtn"} availability={this.props.availabilityOfButton || this.props.isInviting}>
+                        <CustomButton onClick={this.submit.bind(this)} className={"defaultBtn"}
+                                      availability={this.props.availabilityOfButton || this.props.isInviting}>
                             { (this.props.isInviting) ? 'Verbinde...' : 'Verbinden'}
                         </CustomButton>
                         { this.props.isInviting && this.redirect() }
@@ -71,7 +74,7 @@ class InviteModalContentComponente extends React.Component {
 
     closeModal() {
         this.props.dispatch(closeModal());
-        this.props.dispatch(actions.createCancelInvite(this.props.selectedItemValue.name));
+        this.props.dispatch(actions.createCancelInvite(this.props.selectedItemValue.name, this.props.bookId));
     }
 
     submit() {
