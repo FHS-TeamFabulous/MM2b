@@ -39,9 +39,8 @@ export const inviteEpic = (actions$, state) => actions$
 export const connectOnAcceptedInvitation = (actions$, state) => actions$
     .filter(action => action.type === actions.types.INVITATION_ACCEPTED)
     .map(action => action.payload)
-    .switchMap(({name, bookId}) => Communication.joinRoom(name)
-                .then(() => actions.createConnected(name))
-    );
+    .switchMap(({name, bookId}) => Communication.joinRoom(name, bookId)
+            .then(() => actions.createConnected(name)));
 
 export const declineInvitationEpic = (actions$, state) => actions$
     .filter(action => action.type === actions.types.INVITATION_DECLINED)

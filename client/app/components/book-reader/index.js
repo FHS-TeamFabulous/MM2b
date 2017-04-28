@@ -31,6 +31,8 @@ class BookReaderContainer extends React.Component {
             width: this.props.width
         };
 
+
+        console.log(this.props.isDone);
         return (
             <div style={ containerStyle } className={ style.container }>
                 {
@@ -78,7 +80,7 @@ function calcBookSize(pageWidth, pageHeight, windowWidth, windowHeight) {
     let bookWidth = pageWidth * 2;
     let bookHeight = pageHeight;
     let aspectRatio = bookWidth / bookHeight;
-    let bookVerticalMargin = 100;
+    let bookVerticalMargin = 200;
     let bookHorizontalMargin = 200;
 
     if (bookHeight > (windowHeight - bookVerticalMargin)) {

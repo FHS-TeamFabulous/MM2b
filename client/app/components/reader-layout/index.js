@@ -43,7 +43,6 @@ class ReaderLayout extends React.Component {
                         <FaClose className={style.icon}/>
                     </CustomButton>
                     <BookReader bookId={this.props.match.params.id} />
-                    <InteractionTools />
                     <div>
                         <div className={style.videosWrapper}>
                             <div className={style.videoTagWrapperLeft} >
@@ -62,6 +61,7 @@ class ReaderLayout extends React.Component {
     closeModal() {
         this.props.dispatch(closeModal());
     }
+    
     openModal() {
         this.props.dispatch(openCloseModal());
     }

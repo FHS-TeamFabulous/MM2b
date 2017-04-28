@@ -16,12 +16,6 @@ export default class BookReader extends React.Component {
     componentDidMount() {
         this.$flipbook = $(this.refs.reader);
 
-        this.$flipbook.bind('turned', (event, page) => {
-            this.props.setPage(page);
-        });
-    }
-
-    componentDidUpdate() {
         if (this.props.ready && !this.bookPluginStarted) {
             this.$flipbook.turn({
                 width: this.props.width,
@@ -31,6 +25,10 @@ export default class BookReader extends React.Component {
 
             this.bookPluginStarted = true;
         }
+
+        this.$flipbook.bind('turned', (event, page) => {
+            this.props.setPage(page);
+        });
     }
 
     componentWillReceiveProps(nextProps) {

@@ -17,15 +17,18 @@ class CustomModal extends React.Component {
     render() {
         return (
             <div>
-                <Modal className={style.modalWrapper} show={this.props.show} onHide={this.closeModal.bind(this)} container={this} >
+                <Modal backdrop={(this.props.modalType === 'loginModal') ? 'static' : true} className={style.modalWrapper} show={this.props.show} onHide={this.closeModal.bind(this)} container={this} >
                     <div className={style.contentWrapper}>
                         <Modal.Header className={style.modalHeader}>
                             <div className={style.modalLogoWrapper}>
                                 <img className={style.logo} alt="vorlesen-verbindet-logo" src="/assets/images/vorlesen-verbindet_logo.jpg"/>
                             </div>
-                            <CustomButton onClick={this.closeModal.bind(this)} className={"modalCloseButton"}>
-                                <FaClose className={style.icon}/>
-                            </CustomButton>
+                            {
+                                !(this.props.modalType === 'loginModal') &&
+                                <CustomButton onClick={this.closeModal.bind(this)} className={"modalCloseButton"}>
+                                    <FaClose className={style.icon}/>
+                                </CustomButton>
+                            }
                         </Modal.Header>
                     </div>
                     {this.displayModal(this.props.modalType)}
