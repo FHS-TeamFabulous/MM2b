@@ -15,9 +15,9 @@ class InviteModalContentComponente extends React.Component {
     render() {
         const options = this.props.clients.map((client) =>{
             return {
-                value: { 
-                    id: client.id, 
-                    name: client.name, 
+                value: {
+                    id: client.id,
+                    name: client.name,
                     avatar: client.avatar
                 },
                 label: <SelectItem username={client.name} avatar={client.avatar}/>

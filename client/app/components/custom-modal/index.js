@@ -1,7 +1,7 @@
 import React from 'react';
 import style from './style.scss';
 import CustomButton from './../button';
-import { Link } from 'react-router-dom';
+
 import { connect } from 'react-redux';
 import {Modal} from 'react-bootstrap';
 import {closeModal} from 'app/actions/modal-actions';
@@ -11,6 +11,7 @@ import FaClose from 'react-icons/lib/fa/close';
 import LoginModalContent from 'app/components/login-modal-content';
 import InviteModalContent from 'app/components/invite-modal-content';
 import CloseModalContent from 'app/components/close-modal-content';
+import ReceiveInviteModalContent from 'app/components/receive-invite-modal-content';
 
 class CustomModal extends React.Component {
     render() {
@@ -45,6 +46,8 @@ class CustomModal extends React.Component {
                 return <InviteModalContent/>;
             case "closeModal":
                 return <CloseModalContent/>;
+            case "receiveInviteModal":
+                return <ReceiveInviteModalContent/>;
         }
     }
 }

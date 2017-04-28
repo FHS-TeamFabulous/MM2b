@@ -1,4 +1,5 @@
 import { types } from 'app/actions/modal-actions';
+import { types as communicationTypes} from 'app/actions/communication-actions';
 
 const initialState = {
     show: false,
@@ -41,6 +42,11 @@ function modalReducer(state = initialState, action) {
         case types.AVAILABILITYBUTTONTRUE:
             return Object.assign({}, state, {
                 availabilityOfButton: false
+            });
+        case communicationTypes.INVITE_RECEIVED:
+            return Object.assign({}, state, {
+                modalType: 'receiveInviteModal',
+                show: true
             });
     }
 
