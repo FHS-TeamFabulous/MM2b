@@ -2,9 +2,10 @@ import React from 'react';
 import style from './style.scss';
 import CustomButton from './../button';
 import {Modal} from 'react-bootstrap';
-import {closeModal} from './../../actions/modal-actions';
-import {logIn} from './../../actions/auth-actions';
+import {closeModal, openInviteModal, disableButton} from './../../actions/modal-actions';
 import { connect } from 'react-redux';
+import { logIn } from 'app/actions/auth-actions';
+import * as actions from 'app/actions/communication-actions';
 
 
 class LoginModalContentComponente extends React.Component {
@@ -38,7 +39,11 @@ class LoginModalContentComponente extends React.Component {
 
     logIn() {
         let username = document.getElementById('username').value;
+        console.log(username);
         this.props.dispatch(logIn(username));
+        this.props.dispatch(actions.createLogin(username));
+        this.props.dispatch(disableButton());
+        this.props.dispatch(openInviteModal());
     }
 
     closeModal() {

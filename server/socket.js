@@ -74,7 +74,7 @@ module.exports = function (server, config) {
         const getClients = (loggedIn) => {
             return Object.keys(users).filter(id => {
                 if (loggedIn) {
-                    return users[id] && users[id].name !== client.name && users[id].loggedIn;
+                    return users[id] && id !== client.id && users[id].loggedIn;
                 } else {
                     return users[id];
                 }
@@ -124,7 +124,7 @@ module.exports = function (server, config) {
             const { name } = data;
             const user = getUser();
             const clients = getClients(true);
-
+            
             if (isLoggedIn()) {
                 client.emit('login_success', { name });
                 client.emit('clients_success', { clients });

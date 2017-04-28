@@ -9,14 +9,14 @@ import Communication from 'app/services/communication';
 import * as actions from 'app/actions/communication-actions';
 import { closeBook } from 'app/actions/books-actions';
 import { Link } from 'react-router-dom';
+import InteractionTools from 'app/components/interaction-tools';
+
+import {openCloseModal, closeModal} from 'app/actions/modal-actions';
+
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 class ReaderLayout extends React.Component {
-
     componentDidMount() {
-        const login = prompt('login');
-        this.props.dispatch(actions.createLogin(login));
-
         this.communication = Communication.connect({
             localVid: 'local_container',
             remotesContainer: 'remote_container',
@@ -47,12 +47,11 @@ class ReaderLayout extends React.Component {
                 transitionLeave={false}
             >
                 <div className={style.readerLayoutWrapper}>
-                    <Link to="/">
-                        <CustomButton onClick={this.closeHandler.bind(this)} className="closeButton">
-                            <FaClose className={style.icon}/>
-                        </CustomButton>
-                    </Link>
+                    <CustomButton onClick={this.openModal.bind(this)} className="closeButton">
+                        <FaClose className={style.icon}/>
+                    </CustomButton>
                     <BookReader bookId={this.props.match.params.id} />
+                    <InteractionTools />
                     <div>
                         <div className={style.videosWrapper}>
                             <div className={style.videoTagWrapperLeft} >
@@ -69,9 +68,20 @@ class ReaderLayout extends React.Component {
         );
     }
 
-    closeHandler() {
-        this.props.dispatch(closeBook());
+    closeModal() {
+        this.props.dispatch(closeModal());
+    }
+    openModal() {
+        this.props.dispatch(openCloseModal());
     }
 }
 
-export default connect()(ReaderLayout);
+function mapStateToProps(state) {
+
+    return {
+        show: state.modalState.show,
+        modalType: state.modalState.modalType
+    }
+}
+
+export default connect(mapStateToProps)(ReaderLayout);

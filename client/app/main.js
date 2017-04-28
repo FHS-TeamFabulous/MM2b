@@ -16,9 +16,9 @@ const root = document.getElementById('main');
 ReactDOM.render(
     <Provider store={ store }>
         <App>
-            <CustomModal />
             <Router>
                 <MainLayout>
+                    <CustomModal/>
                     <Route path="/" component={ Library } />
                     <Route path="/books/:id" component={ ReaderLayout } />
                 </MainLayout>

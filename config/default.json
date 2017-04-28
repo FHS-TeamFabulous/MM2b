@@ -7,10 +7,10 @@
         "port": 3000
     },
     "server": {
-        "base": "/"
+        "base": "http://localhost:3000/"
     },
     "api": {
-        "base": "/api"
+        "base": "http://localhost:3000/api"
     },
     "rooms": {
         "maxClients": 0
