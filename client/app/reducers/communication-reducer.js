@@ -5,7 +5,10 @@ import {
     loginEpic,
     logoutEpic,
     connectEpic,
-    connectOnInvitation,
+    inviteEpic,
+    connectOnAcceptedInvitation,
+    declineInvitationEpic,
+    acceptInvitationEpic,
     interactEpic
 } from 'app/epics/communication-epics';
 
@@ -46,7 +49,10 @@ export const communicationEpics = combineEpics(
     loginEpic,
     logoutEpic,
     connectEpic,
-    connectOnInvitation,
+    inviteEpic,
+    connectOnAcceptedInvitation,
+    declineInvitationEpic,
+    acceptInvitationEpic,
     interactEpic
 );
 
