@@ -28,7 +28,11 @@ class ReaderLayout extends React.Component {
             localVid: 'local_container',
             remotesContainer: 'remote_container',
             remoteVidElement: VideoCircle
-        });
+        })
+    }
+
+    componentWillUnmount() {
+        Communication.leaveRoom();
     }
 
     connect() {

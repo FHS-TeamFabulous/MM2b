@@ -78,6 +78,7 @@ function Communication() {
                 if (err) {
                     reject(err);
                 }
+                webrtc.roomName = roomDescription;
                 resolve(roomDescription);
             });
         });
@@ -85,6 +86,7 @@ function Communication() {
 
     const leaveRoom = () => {
         webrtc.leaveRoom();
+        webrtc.webrtc.stopLocalMedia();
     };
 
     const login = name => {
@@ -104,11 +106,11 @@ function Communication() {
     };
 
     const acceptInvite = name => {
-        socket.emit('invitation_accept')
+        socket.emit('invitation_accept', ({name}))
     };
 
     const declineInvite = name => {
-
+        socket.emit('invitation_declined', ({name}))
     };
 
     const interact = data => {
