@@ -1,19 +1,17 @@
 import React from 'react';
 import style from './style.scss';
 
-import { connect }  from 'react-redux';
-
 class Avatar extends React.Component {
     render() {
         return (
             <div>
-                {this.displayContent()}
+                {this.displayContent.bind(this)}
             </div>
         );
     }
     
     displayContent() {
-        if (!this.props.selectedItemValue.id) {
+        if (!this.props.name) {
             return (<h4>Bitte wählen Sie einen User aus!</h4>);
         } else {
             let loader = '';
@@ -41,12 +39,6 @@ class Avatar extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        selectedItemValue: state.modalState.selectedItem
-    }
-}
-
 //<h2>{this.props.selectedItemValue}</h2>
-export default connect(mapStateToProps)(Avatar);
+export default Avatar;
 

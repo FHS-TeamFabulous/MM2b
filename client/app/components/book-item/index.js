@@ -8,6 +8,7 @@ import config from 'config';
 
 import {openLoginModal, openInviteModal} from './../../actions/modal-actions';
 import { connect } from 'react-redux';
+import {selectBook} from 'app/actions/books-actions';
 
 
 class BookItem extends React.Component {
@@ -27,14 +28,14 @@ class BookItem extends React.Component {
                     <div className={style.buttonGroupWrapper}>
                         <div className={style.buttonWrapper}>
                             <Link to={`/books/${this.props.item.id}`}>
-                                <CustomButton className={"defaultBtn"}>
+                                <CustomButton className={"defaultBtn"} onClick={() => this.props.dispatch(selectBook(this.props.item.id))}>
                                     <BookIcon />
                                     Lesen
                                 </CustomButton>
                             </Link>
                         </div>
                         <div className={style.buttonWrapper}>
-                            <CustomButton onClick={this.openModal.bind(this)} className={"defaultBtn"}>
+                            <CustomButton onClick={this.openModal.bind(this)} className={"defaultBtn"} >
                                 <GroupIcon />
                                 Vorlesen
                             </CustomButton>
@@ -49,6 +50,7 @@ class BookItem extends React.Component {
         this.props.dispatch(openCloseModal());
     }*/
     openModal() {
+        this.props.dispatch(selectBook(this.props.item.id));
         switch (this.props.loggingStatus) {
             case false:
                 return this.props.dispatch(openLoginModal());

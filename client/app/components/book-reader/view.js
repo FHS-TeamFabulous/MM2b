@@ -40,13 +40,16 @@ export default class BookReader extends React.Component {
     }
 
     componentWillUnmount() {
-        this.$flipbook.turn('destroy');
+        try {
+            this.$flipbook.turn('destroy').bind(this.refs.reader);
+        } catch (e) {}
+
     }
 
     render() {
         return (
             <div ref="zoomViewPort">
-                <div ref="reader" className={ style.book }>  
+                <div ref="reader" className={ style.book }>
                     {
                         this.props.pages.map(page => {
                             return (

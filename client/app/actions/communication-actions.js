@@ -4,6 +4,7 @@ export const types = {
     LOGIN: '[communication] LOGIN',
     LOGIN_SENT: '[communication] LOGIN SENT',
     LOGIN_SUCCESS: '[communication] LOGIN SUCCESS',
+    LOGIN_FAILED: '[communication] LOGIN FAILED',
     LOGOUT: '[communication] LOGOUT',
     LOGOUT_SENT: '[communication] LOGOUT SENT',
     LOGOUT_SUCCESS: '[communication] LOGOUT SUCCESS',
@@ -51,6 +52,15 @@ export function createLoginSuccess(name) {
         type: types.LOGIN_SUCCESS,
         payload: {
             name
+        }
+    };
+}
+
+export function createLoginFailed(message) {
+    return {
+        type: types.LOGIN_FAILED,
+        payload: {
+            message
         }
     };
 }

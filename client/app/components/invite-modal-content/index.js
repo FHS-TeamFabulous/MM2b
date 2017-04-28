@@ -7,9 +7,11 @@ import * as actions from 'app/actions/communication-actions';
 import { connect } from 'react-redux';
 import Select from 'react-select';
 import Avatar from 'app/components/avatar';
+import { createConnection } from 'app/actions/communication-actions';
 import SelectItem from 'app/components/select-item';
 
 class InviteModalContentComponente extends React.Component {
+
     render() {
         const options = this.props.clients.map((client) =>{
             return {
@@ -48,10 +50,9 @@ class InviteModalContentComponente extends React.Component {
     }
 
     changeItem(selectedObject) {
-        //console.log(value.value);
         if (selectedObject !== null) {
             this.props.dispatch(enableButton());
-            this.props.dispatch(selectItem(selectedObject.value));
+            this.props.dispatch(selectItem(selectedObject[0].value));
         } else {
             this.props.dispatch(selectItem());
             this.props.dispatch(disableButton());
@@ -73,7 +74,8 @@ function mapStateToProps(state) {
         selectedItemValue: state.modalState.selectedItem,
         clients: state.communication.clients,
         availabilityOfButton: state.modalState.availabilityOfButton,
-        isInviting: state.communication.isInviting
+        isInviting: state.communication.isInviting,
+        bookId: state.booksState.selectedBookId
     }
 }
 

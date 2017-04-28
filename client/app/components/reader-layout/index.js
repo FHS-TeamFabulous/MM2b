@@ -10,28 +10,20 @@ import * as actions from 'app/actions/communication-actions';
 import { closeBook } from 'app/actions/books-actions';
 import { Link } from 'react-router-dom';
 import InteractionTools from 'app/components/interaction-tools';
-
 import {openCloseModal, closeModal} from 'app/actions/modal-actions';
-
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 class ReaderLayout extends React.Component {
     componentDidMount() {
-        this.communication = Communication.connect({
+        Communication.connect({
             localVid: 'local_container',
             remotesContainer: 'remote_container',
             remoteVidElement: VideoCircle
         });
     }
 
-    connect() {
-        const name = prompt('name');
-        this.props.dispatch(actions.createConnection(name));
-    }
-
-    interact(event) {
-        console.log('interaction event: ', event);
-        this.props.dispatch(actions.createInteraction({ test: 'testdata'}))
+    componentWillUnmount() {
+        Communication.leaveRoom();
     }
 
     render() {
@@ -62,7 +54,6 @@ class ReaderLayout extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <CustomButton onClick={this.connect.bind(this)}>Connect</CustomButton>
                 </div>
             </ReactCSSTransitionGroup>
         );
