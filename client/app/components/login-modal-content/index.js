@@ -36,9 +36,9 @@ class LoginModalContentComponente extends React.Component {
 
     logIn() {
         let username = document.getElementById('username').value;
-        
+
         this.props.dispatch(logIn(username));
-        this.props.dispatch(actions.createLogin(username));
+        this.props.dispatch(actions.login(username));
         this.props.dispatch(disableButton());
 
         this.closeModal();
