@@ -4,10 +4,10 @@ import { types } from 'app/actions/communication-actions';
 import {
     loginEpic,
     logoutEpic,
-    connectEpic,
     inviteEpic,
     declineInvitationEpic,
     acceptInvitationEpic,
+    sendAcceptInvitationEpic,
     interactEpic
 } from 'app/epics/communication-epics';
 
@@ -17,10 +17,7 @@ const initialState = {
     clients: [],
     connected: false,
     isInviting: false,
-    hasPendingInvite: { 
-        name: null,
-        bookId: null
-    }
+    hasPendingInvite: null
 };
 
 export const communicationReducer = (state = initialState, action) => {
@@ -31,8 +28,10 @@ export const communicationReducer = (state = initialState, action) => {
             return Object.assign({}, state, { isInviting: true });
         case types.CANCEL_INVITE:
             return Object.assign({}, state, { isInviting: false });
-        case types.INVITE_RECEIVED: 
+        case types.INVITE_RECEIVED:
             return Object.assign({}, state, { hasPendingInvite: action.payload });
+        case types.ROOM_ENTERED:
+            return Object.assign({}, state, { hasPendingInvite: null });
         default:
             return state;
     }
@@ -52,8 +51,9 @@ function clientDecorator(clients = []) {
 export const communicationEpics = combineEpics(
     loginEpic,
     logoutEpic,
-    connectEpic,
     inviteEpic,
+    sendAcceptInvitationEpic,
+    acceptInvitationEpic,
     declineInvitationEpic,
     acceptInvitationEpic,
     interactEpic
