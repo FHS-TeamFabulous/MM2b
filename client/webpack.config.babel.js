@@ -49,7 +49,7 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                 },
-                exclude: /node_modules/
+                exclude: path.join(__dirname, '../node_modules'),
             }
         ]
     },
