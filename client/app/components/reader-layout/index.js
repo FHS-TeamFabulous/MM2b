@@ -21,7 +21,7 @@ class ReaderLayout extends React.Component {
             remoteVidElement: VideoCircle
         });
 
-        if (this.props.hasPendingInvite.name) {
+        if (this.props.hasPendingInvite) {
             const { name, bookId } = this.props.hasPendingInvite;
             Communication.joinRoom(name, bookId);
         }
