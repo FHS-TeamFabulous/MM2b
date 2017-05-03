@@ -4,11 +4,44 @@ const socketIO = require('socket.io'),
     Users = require('./users'),
     User = require('./user');
 
+const serverEvents = {
+    LOGIN: 'login',
+    LOGOUT: 'logout',
+    CLIENTS: 'clients',
+    INVITE: 'invite',
+    INVITE_ACCEPT: 'invitationAccept',
+    INVITE_DECLINE: 'invitationDecline',
+    MESSAGE: 'message',
+    SHARE_SCREEN: 'shareScreen',
+    UNSHARE_SCREEN: 'unshareScreen',
+    JOIN: 'join',
+    INTERACT: 'interact',
+    CONNECTION: 'connection',
+    DISCONNECT: 'disconnect',
+    LEAVE: 'leave',
+    TRACE: 'trace',
+    STUNSERVERS: 'stunservers',
+    TURNSERVERS: 'turnservers'
+};
+
+const clientEvents = {
+    LOGIN_SUCCESS: 'loginSuccess',
+    LOGIN_FAILED: 'loginFailed',
+    LOGOUT_SUCCESS: 'logoutSuccess',
+    CLIENTS_RECEIVED: 'clientsReceived',
+    INVITATION_RECEIVED: 'invitationReceived',
+    INVITATION_ACCEPTED: 'invitationAccepted',
+    INVITATION_DECLINED: 'invitationDeclined',
+    MESSAGE: 'message',
+    INTERACTION_RECEIVED: 'interactionReceived',
+
+};
+
 module.exports = function (server, config) {
     const io = socketIO.listen(server),
         users = new Users();
 
-    io.on('connection', function (client) {
+    io.on(serverEvents.CONNECTION, function (client) {
         console.log('connected: ' + client.id);
         const user = new User(client.id);
 
@@ -69,11 +102,31 @@ module.exports = function (server, config) {
             return result;
         };
 
+        const clientEmitter = {
+            login: {
+                success: name => client.emit(clientEvents.LOGIN_SUCCESS, {name}),
+                failed: message => client.emit(clientEvents.LOGIN_FAILED, {message})
+            },
+            logout: {
+                success: name => client.emit(clientEvents.LOGOUT_SUCCESS, {name})
+            },
+            clients: () => io.emit(clientEvents.CLIENTS_RECEIVED, {clients: getClients(true)}),
+            invitation: {
+                send: (id, name, bookId) => io.to(id).emit(clientEvents.INVITATION_RECEIVED, {
+                    name,
+                    bookId
+                }),
+                accept: (id, name, bookId) => io.to(id).emit(clientEvents.INVITATION_ACCEPTED, {name, bookId}),
+                decline: (id, name, bookId) => io.to(id).emit('invite_declined', {name, bookId})
+            },
+            interation: (room, data) => io.broadcast.in(room).emit('interaction_received', data)
+        };
+
         users.add(new User(client.id));
 
         console.log('Clients logged in: ', getClients(true));
 
-        client.on('login', data => {
+        client.on(serverEvents.LOGIN, data => {
             const {name} = data;
 
             if (!name) {
@@ -85,30 +138,36 @@ module.exports = function (server, config) {
             if (isLoggedIn()) {
                 console.log(`${user.name} is already logged in.`);
                 console.log('Clients: ', getClients());
-                client.emit('login_success', {name});
-                client.emit('clients_success', {clients: getClients(true)});
+                clientEmitter.login.success(name);
+                clientEmitter.clients();
+                /*client.emit('login_success', {name});
+                client.emit('clients_success', {clients: getClients(true)});*/
             } else {
                 loginUser(name);
                 console.log('Clients: ', getClients());
-                client.emit('login_success', {name});
-                client.emit('clients_success', {clients: getClients(true)});
+                clientEmitter.login.success(name);
+                clientEmitter.clients();
+                /*client.emit('login_success', {name});
+                client.emit('clients_success', {clients: getClients(true)});*/
             }
         });
 
-        client.on('logout', ({name}) => {
+        client.on(serverEvents.LOGOUT, ({name}) => {
             const user = users.findById(client.id);
             if (user && user.name === name) {
                 logoutUser(user);
                 console.log(`User ${name} logged out.`);
-                client.emit('logout_success', {name});
+                clientEmitter.logout.success(name);
+                // client.emit('logout_success', {name});
             }
         });
 
-        client.on('clients', ({loggedIn}) => {
-            client.emit('clients_success', {clients: getClients(loggedIn)});
+        client.on(serverEvents.CLIENTS, ({loggedIn}) => {
+            clientEmitter.clients();
+            // io.emit('clients_success', {clients: getClients(loggedIn)});
         });
 
-        client.on('invite', ({name, bookId}) => {
+        client.on(serverEvents.INVITE, ({name, bookId}) => {
             const user = users.findById(client.id);
             console.log(`${user.name}(${user.id}) invites ${name} for a session to read book with id ${bookId}.`);
 
@@ -117,57 +176,87 @@ module.exports = function (server, config) {
 
             console.log(`Found other client ${otherClient.name}, emitting invite`);
 
-            io.to(otherClient.id).emit('invitation_received', {
+            clientEmitter.invitation.send(otherClient.id, user.name, bookId);
+
+            /*io.to(otherClient.id).emit('invitation_received', {
                 name: user.name,
                 bookId
-            });
+            });*/
         });
 
-        client.on('invitation_accept', ({name, bookId}) => {
+        client.on(serverEvents.INVITE_ACCEPT, ({name, bookId}) => {
             const fromUser = users.findById(client.id);
             const toUser = users.findByName(name);
-            toUser && io.to(toUser.id).emit('invite_accepted', {name: fromUser.name, bookId})
+            toUser && clientEmitter.invitation.accept(toUser.id, fromUser.name, bookId);
+            // toUser && io.to(toUser.id).emit('invite_accepted', {name: fromUser.name, bookId})
         });
 
-        client.on('invitation_decline', ({name, bookId}) => {
+        client.on(serverEvents.INVITE_DECLINE, ({name, bookId}) => {
             const fromUser = users.findById(client.id);
             const toUser = users.findByName(name);
-            toUser && io.to(toUser.id).emit('invite_declined', {name: fromUser.name, bookId});
+            toUser && clientEmitter.invitation.decline(toUser.id, fromUser.name, bookId);
+            // toUser && io.to(toUser.id).emit('invite_declined', {name: fromUser.name, bookId});
         });
 
         // pass a message to another id
-        client.on('message', function (details) {
+        client.on(serverEvents.MESSAGE, function (details) {
             if (!details) return;
 
             const otherClient = io.to(details.to);
             if (!otherClient) return;
 
             details.from = client.id;
-            otherClient.emit('message', details);
+            otherClient.emit(clientEvents.MESSAGE, details);
         });
 
-        client.on('shareScreen', function () {
+        client.on(serverEvents.SHARE_SCREEN, function () {
             client.resources.screen = true;
         });
 
-        client.on('unshareScreen', function (type) {
+        client.on(serverEvents.UNSHARE_SCREEN, function (type) {
             client.resources.screen = false;
             removeFeed('screen');
         });
 
-        client.on('join', joinUser);
+        client.on(serverEvents.JOIN, joinUser);
 
-        client.on('interaction', function (data) {
+        client.on(serverEvents.INTERACT, function (data) {
             const {name, room} = users.findById(client.id);
             if (room) {
                 data.from = name;
                 console.log(`${name} interacts with all users in room ${room}.`, data);
-                io.broadcast.in(room).emit('interaction_received', data);
+                clientEmitter.interaction(room, data);
+                // io.broadcast.in(room).emit('interaction_received', data);
             } else {
                 console.log(`${name} is in no room yet`);
             }
         });
 
+        // we don't want to pass "leave" directly because the
+        // event type string of "socket end" gets passed too.
+        client.on(serverEvents.DISCONNECT, function () {
+            const user = users.findById(client.id);
+            if (user) {
+                logoutUser(user);
+                removeFeed();
+                console.log(`disconnected ${client.id}`);
+                users.removeUser(user.id);
+            }
+        });
+
+        client.on(serverEvents.LEAVE, function () {
+            const user = users.findById(client.id);
+            user.room = null;
+            removeFeed();
+        });
+
+        // support for logging full webrtc traces to stdout
+        // useful for large-scale error monitoring
+        client.on(serverEvents.TRACE, function (data) {
+            console.log('trace', JSON.stringify(
+                [data.type, data.session, data.prefix, data.peer, data.time, data.value]
+            ));
+        });
 
         function removeFeed(type) {
             const user = users.findById(client.id);
@@ -204,47 +293,21 @@ module.exports = function (server, config) {
                     safeCb(cb)(null, describeRoom(roomId));
                     client.join(roomId);
                     console.log(`Inviting user ${otherUser.name} (${otherUser.id}) to room ${roomId}`);
-                    
-                    io.to(otherUser.id).emit('invitation_received', {
+
+                    clientEmitter.invitation.send(otherUser.id, user.name, bookId);
+                    /*io.to(otherUser.id).emit('invitation_received', {
                         room: roomId,
                         name: user.name,
                         bookId
-                    });
+                    });*/
                 }
             } else {
                 console.log(`User ${name} not found`);
             }
         }
 
-        // we don't want to pass "leave" directly because the
-        // event type string of "socket end" gets passed too.
-        client.on('disconnect', function () {
-            const user = users.findById(client.id);
-            if (user) {
-                logoutUser(user);
-                removeFeed();
-                console.log(`disconnected ${client.id}`);
-                users.removeUser(user.id);
-            }
-        });
-
-        client.on('leave', function () {
-            const user = users.findById(client.id);
-            user.room = null;
-            removeFeed();
-        });
-
-        // support for logging full webrtc traces to stdout
-        // useful for large-scale error monitoring
-        client.on('trace', function (data) {
-            console.log('trace', JSON.stringify(
-                [data.type, data.session, data.prefix, data.peer, data.time, data.value]
-            ));
-        });
-
-
         // tell client about stun and turn servers and generate nonces
-        client.emit('stunservers', config.stunservers || []);
+        client.emit(serverEvents.STUNSERVERS, config.stunservers || []);
 
         // create shared secret nonces for TURN authentication
         // the process is described in draft-uberti-behave-turn-rest
@@ -264,7 +327,7 @@ module.exports = function (server, config) {
                 });
             });
         }
-        client.emit('turnservers', credentials);
+        client.emit(serverEvents.TURNSERVERS, credentials);
     });
 };
 

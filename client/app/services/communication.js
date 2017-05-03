@@ -6,6 +6,40 @@ import {logIn} from 'app/actions/auth-actions';
 import React from 'react';
 import SocketIoConnection from './socketIoConnection';
 
+const serverEvents = {
+    LOGIN: 'login',
+    LOGOUT: 'logout',
+    CLIENTS: 'clients',
+    INVITE: 'invite',
+    INVITATION_ACCEPT: 'invitationAccept',
+    INVITATION_DECLINE: 'invitationDecline',
+    MESSAGE: 'message',
+    SHARE_SCREEN: 'shareScreen',
+    UNSHARE_SCREEN: 'unshareScreen',
+    JOIN: 'join',
+    INTERACT: 'interact',
+    CONNECTION: 'connection',
+    DISCONNECT: 'disconnect',
+    LEAVE: 'leave',
+    TRACE: 'trace',
+    STUNSERVERS: 'stunservers',
+    TURNSERVERS: 'turnservers'
+};
+
+const clientEvents = {
+    LOGIN_SUCCESS: 'loginSuccess',
+    LOGIN_FAILED: 'loginFailed',
+    LOGOUT_SUCCESS: 'logoutSuccess',
+    CLIENTS_RECEIVED: 'clientsReceived',
+    INVITATION_RECEIVED: 'invitationReceived',
+    INVITATION_ACCEPTED: 'invitationAccepted',
+    INVITATION_DECLINED: 'invitationDeclined',
+    MESSAGE: 'message',
+    INTERACTION_RECEIVED: 'interactionReceived',
+
+};
+
+
 function Communication(conf) {
 
 
