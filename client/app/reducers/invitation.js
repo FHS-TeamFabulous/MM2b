@@ -21,7 +21,8 @@ function invitationReducer(state = initialState, action) {
             return Object.assign({}, state, {
                 receivedPending: {
                     sender: action.sender,
-                    bookId: action.bookId
+                    bookId: action.bookId,
+                    roomId: action.roomId
                 }
             });
         
@@ -41,7 +42,8 @@ function invitationReducer(state = initialState, action) {
                 receivedPending: null,
                 accepted: {
                     opponent: action.receiver,
-                    bookId: action.bookId
+                    bookId: action.bookId,
+                    roomId: action.roomId
                 }
             });
 
@@ -51,7 +53,8 @@ function invitationReducer(state = initialState, action) {
                 receivedPending: null,
                 accepted: {
                     opponent: action.sender,
-                    bookId: action.bookId
+                    bookId: action.bookId,
+                    roomId: action.roomId
                 }
             });
 

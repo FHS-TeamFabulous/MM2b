@@ -9,24 +9,25 @@ let socket;
 
 export function connect() {
     return (dispatch, getState) => {
-        const state = getState();
-
         socket = io();
 
         socket.on(messageTypes.LOGIN_SUCCESS, (authData) => 
             dispatch(authActions.setAuthData(authData.user, authData.clients)));
 
-        socket.on(messageTypes.CLIENTS_UPDATE, (clientsData) => 
-            dispatch(authActions.updateClients(clientsData.clients.filter((client) => client.id !== state.auth.user.id))));
+        socket.on(messageTypes.CLIENTS_UPDATE, (clientsData) => {
+            const state = getState();
+            
+            dispatch(authActions.updateClients(clientsData.clients.filter((client) => client.id !== state.auth.user.id)));
+        });
 
         socket.on(messageTypes.INVITATION_RECEIVED, (senderData) => 
-            dispatch(invitationActions.receivedInvitation(senderData.sender, senderData.bookId)));
+            dispatch(invitationActions.receivedInvitation(senderData.sender, senderData.bookId, senderData.roomId)));
 
         socket.on(messageTypes.INVITATION_CANCELED, (senderData) => 
             dispatch(invitationActions.canceledInvitation(senderData.sender)));
 
         socket.on(messageTypes.INVITATION_ACCEPTED, (senderData) => {
-            dispatch(invitationActions.acceptedInvitation(senderData.sender, senderData.bookId));
+            dispatch(invitationActions.acceptedInvitation(senderData.sender, senderData.bookId, senderData.roomId));
             dispatch(readerActions.openReader(senderData.bookId));
         });
 
@@ -62,9 +63,13 @@ export function cancelInvitation(receiver) {
     }
 }
 
-export function acceptInvitation(receiver, bookId) {
+export function acceptInvitation(receiver, bookId, roomId) {
     return () => {
-        socket.emit(messageTypes.INVITATION_ACCEPT, { receiverId: receiver.id, bookId });
+        socket.emit(messageTypes.INVITATION_ACCEPT, { 
+            receiverId: receiver.id, 
+            bookId,
+            roomId
+        });
     }
 }
 

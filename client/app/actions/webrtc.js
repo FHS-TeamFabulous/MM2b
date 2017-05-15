@@ -6,21 +6,20 @@ let webrtc;
 
 export function connect(localVideoId, remoteVideoId) {
     return (dispatch, getState) => {
+        const state = getState();
+
         if (!webrtc) {
             webrtc = new SimpleWebRTC({
                 localVideoEl: localVideoId,
-                remoteVideosEl: remoteVideoId,
-                autoRequestMedia: true
+                remoteVideosEl: remoteVideoId
             });
 
-            webrtc.on('connectionReady', function () {
-                // you can name it anything
-                webrtc.joinRoom(getState().reader.book.id);
+            webrtc.on('readyToCall', function () {
+                webrtc.joinRoom(state.invitation.accepted.roomId);
             });
-        } else {
-            webrtc.joinRoom(getState().reader.book.id);
-            webrtc.startLocalVideo();
         }
+
+        webrtc.startLocalVideo();
     };
 }
 

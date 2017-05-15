@@ -78,12 +78,14 @@ class InviteModal extends React.Component {
     }
 
     render() {
-        const options = this.props.clients.map((client) => {
-            return Object.assign({}, client, {
-                value: client,
-                label: client.name
+        const options = this.props.clients
+            .filter((client) => client.isFree)
+            .map((client) => {
+                return Object.assign({}, client, {
+                    value: client,
+                    label: client.name
+                });
             });
-        });
 
         const loader = (
             <div className={style.loader}>
@@ -94,7 +96,9 @@ class InviteModal extends React.Component {
         );
 
         const { id, name, avatar } = this.state.selectedUser || {};
-        const showDeclineMsg = !this.props.invitation.sentPending && this.state.invited
+        const showDeclineMsg =  !this.props.invitation.sentPending && 
+                                !this.props.invitation.accepted &&
+                                this.state.invited
 
         return (
             <CoreModal

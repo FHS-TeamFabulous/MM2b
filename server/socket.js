@@ -23,7 +23,7 @@ module.exports = function (http) {
 
             if (user) {
                 Users.remove(user.id);
-                broadCastClientsUpdate();
+                sendClientsUpdate();
             }
 
             console.log('a user disconnected', socket.id);
@@ -39,16 +39,17 @@ module.exports = function (http) {
             const user = Users.create(userData);
             
             sendLoginSuccess(user);
-            broadCastClientsUpdate();
+            sendClientsUpdate();
         });
 
         socket.on(messageTypes.INVITATION_SEND, (invitationData) => {
             const receiver = Users.get(invitationData.receiverId);
             const sender = Users.get(socket.id);
             const bookId = invitationData.bookId;
+            const roomId = uuid();
 
             if (receiver) {
-                forwardInvitation(sender, receiver, bookId);
+                forwardInvitation(sender, receiver, bookId, roomId);
             }
         });
 
@@ -65,9 +66,13 @@ module.exports = function (http) {
             const receiver = Users.get(acceptInvData.receiverId);
             const sender = Users.get(socket.id);
             const bookId = acceptInvData.bookId;
+            const roomId = acceptInvData.roomId;
 
             if (receiver) {
-                forwardInvitationAccept(sender, receiver, bookId);
+                sender.isBusy();
+                receiver.isBusy();
+                sendClientsUpdate();
+                forwardInvitationAccept(sender, receiver, bookId, roomId);
             }
         });
 
@@ -85,6 +90,9 @@ module.exports = function (http) {
             const receiver = Users.get(leavingData.receiverId);
 
             if (receiver) {
+                sender.isFree();
+                receiver.isFree();
+                sendClientsUpdate();
                 forwardReaderLeave(sender, receiver);
             }
         });
@@ -99,16 +107,17 @@ module.exports = function (http) {
             });
         }
 
-        function broadCastClientsUpdate() {
-            socket.broadcast.emit(messageTypes.CLIENTS_UPDATE, { 
+        function sendClientsUpdate() {
+            io.emit(messageTypes.CLIENTS_UPDATE, { 
                 clients: Users.toJSON()
             });
         }
 
-        function forwardInvitation(sender, receiver, bookId) {
+        function forwardInvitation(sender, receiver, bookId, roomId) {
             receiver.socket.emit(messageTypes.INVITATION_RECEIVED, { 
                 sender: sender.toJSON(), 
-                bookId 
+                bookId,
+                roomId
             });
         }
 
@@ -118,10 +127,11 @@ module.exports = function (http) {
             });
         }
 
-        function forwardInvitationAccept(sender, receiver, bookId) {
+        function forwardInvitationAccept(sender, receiver, bookId, roomId) {
             receiver.socket.emit(messageTypes.INVITATION_ACCEPTED, { 
                 sender: sender.toJSON(), 
-                bookId 
+                bookId,
+                roomId
             });
         }
 

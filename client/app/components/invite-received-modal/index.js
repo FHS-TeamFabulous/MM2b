@@ -13,9 +13,9 @@ class InviteReceivedModal extends React.Component {
     }
 
     acceptInvitation() {
-        const { sender, bookId } = this.props.invitation.receivedPending;
+        const { sender, bookId, roomId } = this.props.invitation.receivedPending;
 
-        this.props.dispatch(invitationActions.acceptInvitation(sender, bookId));
+        this.props.dispatch(invitationActions.acceptInvitation(sender, bookId, roomId));
         this.props.dispatch(readerActions.openReader(bookId));
     }
     

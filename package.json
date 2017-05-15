@@ -4,7 +4,6 @@
   "description": "Our MMP2b Project for the 4th term at FH-Salzburg",
   "main": "server/index.js",
   "scripts": {
-    "heroku-preinstall": "NODE_ENV=development",
     "test": "jshint || true",
     "build": "webpack --config ./client/webpack.config.babel.js --progress --colors && cp -R client/images client/dist/ && cp client/index.html client/dist/index.html",
     "start": "cp -R client/images client/dist/ && cp client/index.html client/dist/index.html && webpack-dev-server --config ./client/webpack.config.babel.js",
@@ -22,7 +21,16 @@
     "url": "https://github.com/FHS-TeamFabulous/MMP2b/issues"
   },
   "homepage": "https://github.com/FHS-TeamFabulous/MMP2b#readme",
-  "devDependencies": {
+  "dependencies": {
+    "config": "^1.25.1",
+    "cors": "^2.8.3",
+    "crypto": "0.0.3",
+    "dir-to-json": "0.0.3",
+    "directory-tree": "^1.2.1",
+    "express": "^4.15.2",
+    "image-size": "^0.5.1",
+    "socketio": "^1.0.0",
+    "uuid": "^3.0.1",
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
     "babel-preset-es2015": "^6.24.1",
@@ -54,16 +62,5 @@
     "socket.io-client": "^1.7.3",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.4"
-  },
-  "dependencies": {
-    "config": "^1.25.1",
-    "cors": "^2.8.3",
-    "crypto": "0.0.3",
-    "dir-to-json": "0.0.3",
-    "directory-tree": "^1.2.1",
-    "express": "^4.15.2",
-    "image-size": "^0.5.1",
-    "socketio": "^1.0.0",
-    "uuid": "^3.0.1"
   }
 }

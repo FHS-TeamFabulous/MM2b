@@ -39,17 +39,18 @@ export function setInvitationCancelSend() {
     };
 }
 
-export function receivedInvitation(sender, bookId) {
+export function receivedInvitation(sender, bookId, roomId) {
     return (dispatch) => {
-        dispatch(setInvitationReceived(sender, bookId));
+        dispatch(setInvitationReceived(sender, bookId, roomId));
     };
 }
 
-export function setInvitationReceived(sender, bookId) {
+export function setInvitationReceived(sender, bookId, roomId) {
     return {
         type: types.INVITATION_RECEIVED,
         sender,
-        bookId
+        bookId,
+        roomId
     };
 }
 
@@ -65,32 +66,34 @@ export function setInvitationCancelReceived() {
     };
 }
 
-export function acceptInvitation(receiver, bookId) {
+export function acceptInvitation(receiver, bookId, roomId) {
     return (dispatch) => {
-        dispatch(socketActions.acceptInvitation(receiver, bookId));
-        dispatch(setInvitationAccept(receiver, bookId));
+        dispatch(socketActions.acceptInvitation(receiver, bookId, roomId));
+        dispatch(setInvitationAccept(receiver, bookId, roomId));
     }
 }
 
-export function setInvitationAccept(receiver, bookId) {
+export function setInvitationAccept(receiver, bookId, roomId) {
     return {
         type: types.INVITATION_ACCEPT_SEND,
         receiver,
-        bookId
+        bookId,
+        roomId
     };
 }
 
-export function acceptedInvitation(sender, bookId) {
+export function acceptedInvitation(sender, bookId, roomId) {
     return (dispatch) => {
-        dispatch(setInvitationAccepted(sender, bookId));
+        dispatch(setInvitationAccepted(sender, bookId, roomId));
     }
 }
 
-export function setInvitationAccepted(sender, bookId) {
+export function setInvitationAccepted(sender, bookId, roomId) {
     return {
         type: types.INVITATION_ACCEPT_RECEIVED,
         sender,
-        bookId
+        bookId,
+        roomId
     }
 }
 
