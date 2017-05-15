@@ -1,13 +1,18 @@
-function User(id, name = '', room = null) {
-    this.id = id;
-    this.name = name;
-    this.room = room;
-    this.resources = { audio: true, video: true, screen: false };
-    this.loggedIn = false;
-}
+'use strict';
 
-User.prototype.equals = user => {
-    return user.name === this.name; // extend if necessary
-};
+class User  {
+    constructor(data) {
+        this.id = data.id;
+        this.name = data.name;
+        this.socket = data.socket;
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            name: this.name
+        }
+    }
+}
 
 module.exports = User;

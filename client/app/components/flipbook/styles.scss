@@ -1,0 +1,63 @@
+.container {
+    margin: 0 auto;
+    position: relative;
+}
+
+.page {
+    img {
+        width: 100%;
+    }
+}
+
+.book {
+    transition: margin-left .25s linear;
+    position: relative;
+    z-index: 1;
+
+    :global .shadow {
+        box-shadow: 0 0 10px #999;
+    }
+}
+
+.btn-prev,
+.btn-next {
+    position: absolute;
+    top: 50%;
+    z-index: 5;
+    margin-top: -30px;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    color: #fff;
+    background-color: #e77929;
+    border: 3px solid #fff !important;
+    font-size: 50px;
+
+    svg {
+        position: relative;
+        top: -25px;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+        border-color: #fff !important;
+        background-color: #e77929;
+    }
+}
+
+.btn-next {
+    right: -30px;
+
+    svg {
+        left: -10px;
+    }
+}
+
+.btn-prev {
+    left: -30px;
+
+    svg {
+        right: 15px;
+    }
+}

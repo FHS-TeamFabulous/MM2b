@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import style from './style.scss';
-import {openLoginModal} from 'app/actions/modal-actions';
+import * as socketActions from 'app/actions/socket';
+import './global.scss';
 
-class App extends Component {
+class App extends React.Component {
     componentDidMount() {
-        this.openLoginModal();
+        this.props.dispatch(socketActions.connect());
     }
 
     render() {
@@ -15,14 +15,6 @@ class App extends Component {
             </div>
         )
     }
-
-    openLoginModal() {
-        this.props.dispatch(openLoginModal());
-    }
 }
 
-const mapStateToProps = state => {
-    return {}
-};
-
-export default connect(mapStateToProps)(App);
+export default connect()(App);

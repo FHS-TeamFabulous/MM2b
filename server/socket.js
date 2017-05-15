@@ -1,256 +1,147 @@
-const socketIO = require('socket.io'),
-    uuid = require('uuid'),
-    crypto = require('crypto'),
-    Users = require('./users'),
-    User = require('./user');
+const socketIO = require('socket.io');
+const messageTypes = require('../shared/message-types');
+const Users = require('./users');
+const config = require('config');
+const crypto = require('crypto');
+const uuid = require('uuid');
 
-module.exports = function (server, config) {
-    const io = socketIO.listen(server),
-        users = new Users();
+module.exports = function (http) {
+    const io = socketIO(http);
 
-    io.on('connection', function (client) {
-        console.log('connected: ' + client.id);
-        const user = new User(client.id);
+    io.on('connection', (socket) => {
+        console.log('a user connected', socket.id);
 
-        const loginUser = name => {
-            const user = users.findById(client.id);
-            const oldUser = users.findByName(name);
+        bindListeners(socket);
+    });
 
-            if (oldUser && oldUser.id !== user.id) {
-                console.log(`Found user with name ${name} and changed id from ${oldUser.id} to ${user.id}`);
-                users.updateUserId(oldUser.id, user.id).loggedIn = true;
-            } else {
-                user.name = name;
-                user.loggedIn = true;
-                console.log(`User ${user.name} logged in.`);
-            }
-        };
+    function bindListeners(socket) {
+        /**
+         * Incoming messages
+         */
+        socket.on('disconnect', () => {
+            const user = Users.get(socket.id);
 
-        const isLoggedIn = () => {
-            const user = users.findById(client.id);
-            return user && user.name && user.isLoggedIn;
-        };
-
-        const logoutUser = user => {
             if (user) {
-                console.log(`Logging out user ${user.name}`);
-                user.loggedIn = false;
+                Users.remove(user.id);
+                broadCastClientsUpdate();
             }
-        };
 
-        const getClients = (loggedIn) => {
-            const user = users.findById(client.id);
+            console.log('a user disconnected', socket.id);
+        });
 
-            return users.getUsers()
-                .filter(client => {
-                    if (loggedIn) {
-                        return client && client.name !== user.name && client.loggedIn;
-                    }
-
-                    return client;
-                });
-        };
-
-        const clientsInRoom = name => {
-            return users.getUsers()
-                .filter(user => user.room === name);
-        };
-
-        const describeRoom = name => {
-            const clients = clientsInRoom(name);
-            const result = {
-                clients: clients.reduce((acc, c) => {
-                    if (c.id) {
-                        acc[c.id] = c.resources;
-                    }
-                    return acc;
-                }, {})
+        socket.on(messageTypes.LOGIN, (loginData) => {
+            const userData = {
+                socket, 
+                id: socket.id,
+                name: loginData.userName,
             };
-            return result;
-        };
 
-        users.add(new User(client.id));
+            const user = Users.create(userData);
+            
+            sendLoginSuccess(user);
+            broadCastClientsUpdate();
+        });
 
-        console.log('Clients logged in: ', getClients(true));
+        socket.on(messageTypes.INVITATION_SEND, (invitationData) => {
+            const receiver = Users.get(invitationData.receiverId);
+            const sender = Users.get(socket.id);
+            const bookId = invitationData.bookId;
 
-        client.on('login', data => {
-            const {name} = data;
-
-            if (!name) {
-                client.emit('login_failed', {message: 'no username'});
-            }
-
-            const user = users.findById(client.id);
-
-            if (isLoggedIn()) {
-                console.log(`${user.name} is already logged in.`);
-                console.log('Clients: ', getClients());
-                client.emit('login_success', {name});
-                client.emit('clients_success', {clients: getClients(true)});
-            } else {
-                loginUser(name);
-                console.log('Clients: ', getClients());
-                client.emit('login_success', {name});
-                client.emit('clients_success', {clients: getClients(true)});
+            if (receiver) {
+                forwardInvitation(sender, receiver, bookId);
             }
         });
 
-        client.on('logout', ({name}) => {
-            const user = users.findById(client.id);
-            if (user && user.name === name) {
-                logoutUser(user);
-                console.log(`User ${name} logged out.`);
-                client.emit('logout_success', {name});
+        socket.on(messageTypes.INVITATION_CANCEL, (cancelInvData) => {
+            const receiver = Users.get(cancelInvData.receiverId);
+            const sender = Users.get(socket.id);
+
+            if (receiver) {
+                forwardInvitationCancel(sender, receiver);
             }
         });
 
-        client.on('clients', ({loggedIn}) => {
-            client.emit('clients_success', {clients: getClients(loggedIn)});
+        socket.on(messageTypes.INVITATION_ACCEPT, (acceptInvData) => {
+            const receiver = Users.get(acceptInvData.receiverId);
+            const sender = Users.get(socket.id);
+            const bookId = acceptInvData.bookId;
+
+            if (receiver) {
+                forwardInvitationAccept(sender, receiver, bookId);
+            }
         });
 
-        client.on('invite', ({name, bookId}) => {
-            const user = users.findById(client.id);
-            console.log(`${user.name}(${user.id}) invites ${name} for a session to read book with id ${bookId}.`);
+        socket.on(messageTypes.INVITATION_DECLINE, (declineInvData) => {
+            const receiver = Users.get(declineInvData.receiverId);
+            const sender = Users.get(socket.id);
 
-            const otherClient = users.findByName(name);
-            if (!otherClient) return;
+            if (receiver) {
+                forwardInvitationDecline(sender, receiver);
+            }
+        });
 
-            console.log(`Found other client ${otherClient.name}, emitting invite`);
+        socket.on(messageTypes.READER_LEAVE, (leavingData) => {
+            const sender = Users.get(socket.id);
+            const receiver = Users.get(leavingData.receiverId);
 
-            io.to(otherClient.id).emit('invitation_received', {
-                name: user.name,
-                bookId
+            if (receiver) {
+                forwardReaderLeave(sender, receiver);
+            }
+        });
+
+        /**
+         * Outgoing messages
+         */
+        function sendLoginSuccess(user) {
+            socket.emit(messageTypes.LOGIN_SUCCESS, {
+                user: user.toJSON(),
+                clients: Users.toJSON().filter(user => (user.id !== socket.id))
             });
-        });
-
-        client.on('invitation_accept', ({name, bookId}) => {
-            const fromUser = users.findById(client.id);
-            const toUser = users.findByName(name);
-            toUser && io.to(toUser.id).emit('invite_accepted', {name: fromUser.name, bookId})
-        });
-
-        client.on('invitation_decline', ({name, bookId}) => {
-            const fromUser = users.findById(client.id);
-            const toUser = users.findByName(name);
-            toUser && io.to(toUser.id).emit('invite_declined', {name: fromUser.name, bookId});
-        });
-
-        // pass a message to another id
-        client.on('message', function (details) {
-            if (!details) return;
-
-            const otherClient = io.to(details.to);
-            if (!otherClient) return;
-
-            details.from = client.id;
-            otherClient.emit('message', details);
-        });
-
-        client.on('shareScreen', function () {
-            client.resources.screen = true;
-        });
-
-        client.on('unshareScreen', function (type) {
-            client.resources.screen = false;
-            removeFeed('screen');
-        });
-
-        client.on('join', joinUser);
-
-        client.on('interaction', function (data) {
-            const {name, room} = users.findById(client.id);
-            if (room) {
-                data.from = name;
-                console.log(`${name} interacts with all users in room ${room}.`, data);
-                io.broadcast.in(room).emit('interaction_received', data);
-            } else {
-                console.log(`${name} is in no room yet`);
-            }
-        });
-
-
-        function removeFeed(type) {
-            const user = users.findById(client.id);
-            if (user && user.room) {
-                io.in(user.room).emit('remove', {
-                    id: user.id,
-                    type: type
-                });
-                if (!type) {
-                    client.leave(user.room);
-                    user.room = undefined;
-                }
-            }
         }
 
-        function joinUser({name, bookId}, cb) {
-            const otherUser = users.findByName(name);
-
-            if (otherUser) {
-                const user = users.findById(client.id);
-
-                console.log(`Found user ${otherUser.name}`);
-                removeFeed();
-                if (otherUser.room) {
-                    console.log(`${otherUser.name} is already in room ${otherUser.room}.`);
-                    console.log(`User ${user.name} joining user ${otherUser.name} in room ${otherUser.room}.`);
-                    safeCb(cb)(null, describeRoom(otherUser.room));
-                    client.join(otherUser.room);
-                    user.room = otherUser.room;
-                } else {
-                    const roomId = uuid();
-                    console.log(`Client ${user.name} joining new room ${roomId}`);
-                    user.room = roomId;
-                    safeCb(cb)(null, describeRoom(roomId));
-                    client.join(roomId);
-                    console.log(`Inviting user ${otherUser.name} (${otherUser.id}) to room ${roomId}`);
-                    
-                    io.to(otherUser.id).emit('invitation_received', {
-                        room: roomId,
-                        name: user.name,
-                        bookId
-                    });
-                }
-            } else {
-                console.log(`User ${name} not found`);
-            }
+        function broadCastClientsUpdate() {
+            socket.broadcast.emit(messageTypes.CLIENTS_UPDATE, { 
+                clients: Users.toJSON()
+            });
         }
 
-        // we don't want to pass "leave" directly because the
-        // event type string of "socket end" gets passed too.
-        client.on('disconnect', function () {
-            const user = users.findById(client.id);
-            if (user) {
-                logoutUser(user);
-                removeFeed();
-                console.log(`disconnected ${client.id}`);
-                users.removeUser(user.id);
-            }
-        });
+        function forwardInvitation(sender, receiver, bookId) {
+            receiver.socket.emit(messageTypes.INVITATION_RECEIVED, { 
+                sender: sender.toJSON(), 
+                bookId 
+            });
+        }
 
-        client.on('leave', function () {
-            const user = users.findById(client.id);
-            user.room = null;
-            removeFeed();
-        });
+        function forwardInvitationCancel(sender, receiver) {
+            receiver.socket.emit(messageTypes.INVITATION_CANCELED, { 
+                sender: sender.toJSON()
+            });
+        }
 
-        // support for logging full webrtc traces to stdout
-        // useful for large-scale error monitoring
-        client.on('trace', function (data) {
-            console.log('trace', JSON.stringify(
-                [data.type, data.session, data.prefix, data.peer, data.time, data.value]
-            ));
-        });
+        function forwardInvitationAccept(sender, receiver, bookId) {
+            receiver.socket.emit(messageTypes.INVITATION_ACCEPTED, { 
+                sender: sender.toJSON(), 
+                bookId 
+            });
+        }
 
+        function forwardInvitationDecline(sender, receiver) {
+            receiver.socket.emit(messageTypes.INVITATION_DECLINED, { 
+                sender: sender.toJSON()
+            });
+        }
 
-        // tell client about stun and turn servers and generate nonces
-        client.emit('stunservers', config.stunservers || []);
+        function forwardReaderLeave(sender, receiver) {
+            receiver.socket.emit(messageTypes.READER_LEFT, { 
+                sender: sender.toJSON()
+            });
+        }
 
         // create shared secret nonces for TURN authentication
         // the process is described in draft-uberti-behave-turn-rest
         const credentials = [];
         // allow selectively vending turn credentials based on origin.
-        const origin = client.handshake.headers.origin;
+        const origin = socket.handshake.headers.origin;
         if (!config.turnorigins || config.turnorigins.indexOf(origin) !== -1) {
             config.turnservers.forEach(function (server) {
                 const hmac = crypto.createHmac('sha1', server.secret);
@@ -264,15 +155,6 @@ module.exports = function (server, config) {
                 });
             });
         }
-        client.emit('turnservers', credentials);
-    });
-};
-
-function safeCb(cb) {
-    if (typeof cb === 'function') {
-        return cb;
-    } else {
-        return function () {
-        };
+        socket.emit('turnservers', credentials);
     }
-}
+};

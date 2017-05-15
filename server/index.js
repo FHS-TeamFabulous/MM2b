@@ -24,6 +24,6 @@ app.get('/*', function(req, res) {
 
 http.listen(process.env.PORT || config.get('http.port'));
 
-socket(http, config);
+socket(http);
 
 console.log('Server listening on port: ', process.env.PORT || config.get('http.port'));

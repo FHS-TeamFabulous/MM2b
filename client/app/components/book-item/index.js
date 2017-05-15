@@ -1,60 +1,41 @@
 import React from 'react';
-import style from './style.scss';
-import CustomButton from 'app/components/button';
-import { Link } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 import BookIcon from 'react-icons/lib/fa/book';
 import GroupIcon from 'react-icons/lib/fa/group';
-import config from 'config';
-import {openInviteModal} from 'app/actions/modal-actions';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import {selectBook} from 'app/actions/books-actions';
+import style from './style.scss';
 
-
-class BookItem extends React.Component {
+export default class BookItem extends React.Component {
     render() {
+        const { id, title } = this.props.item;
         const coverUrl = this.props.item.pages[0].url;
 
         return (
-            <div className={style.bookItem}>
-                <div className={style.itemWrapper}>
-                    <div className={style.coverContainer}>
-                        <img
-                            className={style.bookItemCover}
-                            alt={this.props.item.title}
-                            src={`${config.server.base}${coverUrl}`}
-                        />
-                    </div>
-                    <div className={style.buttonGroupWrapper}>
-                        <div className={style.buttonWrapper}>
-                            <Link to={`/books/${this.props.item.id}`}>
-                                <CustomButton className={"defaultBtn"} onClick={() => this.props.dispatch(selectBook(this.props.item.id))}>
-                                    <BookIcon />
-                                    Lesen
-                                </CustomButton>
-                            </Link>
-                        </div>
-                        <div className={style.buttonWrapper}>
-                            <CustomButton onClick={this.openModal.bind(this)} className={"defaultBtn"} >
-                                <GroupIcon />
-                                Vorlesen
-                            </CustomButton>
-                        </div>
-                    </div>
+            <div className={style.container}>
+                <div className={style.coverContainer}>
+                    <img
+                        className={style.cover}
+                        alt={title}
+                        src={`${coverUrl}`}
+                    />
+                </div>
+                <div className={style.buttonGroupWrapper}>
+                    <Button className='btn-block' onClick={() => this.props.onReadBook(id)}>
+                        <BookIcon/>
+                        Lesen
+                    </Button>
+                    <Button className='btn-block' onClick={() => this.props.onReadBookTogether(id)}>
+                        <GroupIcon/>
+                        Vorlesen
+                    </Button>
                 </div>
             </div>
         );
     }
-
-    openModal() {
-        this.props.dispatch(selectBook(this.props.item.id));
-        this.props.dispatch(openInviteModal());
-    }
-}
-function mapStateToProps(state) {
-    return {
-        loggingStatus: state.authState.isLoggedIn
-    }
 }
 
-export default connect(mapStateToProps)(BookItem);
-
+BookItem.defaultProps = {
+    onReadBook: () => {},
+    onReadBookTogether: () => {}
+};

@@ -1,0 +1,49 @@
+* {
+    &:focus {
+        outline: 0 !important;
+    }
+}
+
+:global .util-text-highlighted {
+    color: #00b0de;
+}
+
+:global .btn-default,
+:global .btn-default:visited,
+:global .btn-default:focus {
+    padding: 10px 15px;
+    background-color: #00b0de;
+    border: 0;
+    color: #fff;
+
+    &:active,
+    &:hover {
+        box-shadow: none;
+        color: #fff;
+        background-color: #e77929;
+    }
+
+    svg {
+        margin-right: 10px;
+    }
+}
+
+:global .btn-default:disabled {
+    background-color: #ccc;
+    color: #fff;
+    
+    &:hover,
+    &:active,
+    &:visited,
+    &:focus {
+        background-color: #ccc;
+        color: #fff;
+    }
+}
+
+:global .alert-simple {
+    padding-left: 0;
+    padding-right: 0;
+    border: 0;
+    background-color: transparent;;
+}

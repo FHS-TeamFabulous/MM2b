@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MainLayout from 'app/components/main-layout';
-import ReaderLayout from 'app/components/reader-layout';
-import Library from 'app/components/library';
-import CustomModal from 'app/components/custom-modal';
+import Reader from 'app/components/reader';
+import Home from 'app/components/home';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import App from './components/app';
@@ -18,9 +17,12 @@ ReactDOM.render(
         <App>
             <Router>
                 <MainLayout>
-                    <CustomModal/>
-                    <Route path="/" component={ Library } />
-                    <Route path="/books/:id" component={ ReaderLayout } />
+                    <Route path="/" render={({history}) => 
+                        <Home history={history}/>
+                    }/>
+                    <Route path="/books/:id" render={({history}) => 
+                        <Reader history={history}/>
+                    }/>
                 </MainLayout>
             </Router>
         </App>

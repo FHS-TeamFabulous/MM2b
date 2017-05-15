@@ -1,0 +1,57 @@
+.wrapper {
+    margin-top: 10%;
+}
+
+:global .modal-content {
+    border-radius: 0;
+}
+
+:global .modal-body {
+    padding: 0 50px;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+:global .modal-footer button {
+    margin-left: 15px;
+}
+
+.content-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.header {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 20px;
+}
+
+.logo-container {
+    text-align: center;
+}
+
+.logo {
+    width: 40%;
+}
+
+.footer-content {
+    text-align: right;
+}
+
+.close-btn {
+    border-radius: 50%;
+    padding: 0;
+    width: 150px;
+    height: 150px;
+    position: absolute;
+    top: -90px;
+    right: -90px;
+}
+
+.close-icon {
+    position: absolute;
+    left: 25px;
+    bottom: 26px;
+    font-size: 24px;
+}

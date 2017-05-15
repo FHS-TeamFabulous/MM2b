@@ -34,7 +34,7 @@ module.exports = {
     parse(data) {
         let parsedBooks = [];
         let books = data.children;
-        let basePath = 'assets/books';
+        let basePath = '/assets/books';
 
         return books.filter(book => book.children).map(book => {
             let pages = book.children.map(page => {

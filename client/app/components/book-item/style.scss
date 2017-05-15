@@ -1,27 +1,17 @@
-.book-item {
+.container {
     display: inline-block;
     margin-right: 20px;
     margin-top: 20px;
+    border: 4px solid #00b0de;
+    padding: 6px;
+
+    button {
+        text-align: left;
+    }
 }
 
-.item-wrapper {
-    width: 200px;
-    height: 308px;
-    border: solid 3px;
-    border-color: grey;
-    padding: 10px;
-}
-
-.item-wrapper:hover {
-    border-color: #00b0de;
-}
-
-.book-item-cover {
+.cover {
     width: 100%;
-}
-
-.button-group-wrapper {
-    text-align: center;
 }
 
 .cover-container {
@@ -29,19 +19,5 @@
     height: 175px;
     overflow: hidden;
     margin-bottom: 15px;
-}
-
-.button-wrapper {
-    margin-bottom: 10px;
-
-    button {
-        width: 100%;
-        text-align: left;
-
-        svg {
-            font-size: 20px;
-            margin-right: 10px;
-        }
-    }
 }
 

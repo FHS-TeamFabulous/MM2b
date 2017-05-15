@@ -21,6 +21,21 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.css$/,
+                use: extractTextPlugin.extract({
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                sourceMap: true,
+                                minimize: true
+                            }
+                        }
+                     ]
+                })
+            },
+            {
+
                 test: /\.scss$/,
                 use: extractTextPlugin.extract({
                     use: [
@@ -60,21 +75,23 @@ module.exports = {
         new webpack.NamedModulesPlugin()
     ],
 
-    externals: {
-        'config': JSON.stringify(require('config'))
-    },
-
     devServer: {
         hot: true,
         port: 3001,
         contentBase: path.resolve(__dirname, 'dist'),
         publicPath: '/',
-        historyApiFallback: true
+        historyApiFallback: true,
+        proxy: {
+            '/api': 'http://localhost:3000',
+            '/assets': 'http://localhost:3000',
+            '/socket.io': 'http://localhost:3000'
+        }
     },
 
     resolve: {
         alias: {
-            app: path.resolve(__dirname, './app')
+            app: path.resolve(__dirname, './app'),
+            shared: path.resolve(__dirname, '../shared')
         }
     },
 
