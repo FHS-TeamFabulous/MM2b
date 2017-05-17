@@ -1,10 +1,13 @@
 import React from 'react';
 import $ from 'jquery';
+import _ from 'lodash';
 import turn from 'app/vendors/turn';
 import style from './styles.scss';
 import { Button } from 'react-bootstrap';
 import AngleRightIcon from 'react-icons/lib/fa/angle-right';
 import AngleLeftIcon from 'react-icons/lib/fa/angle-left';
+
+const DEBOUNCE_PAGE_TIME = 200;
 
 export default class BookReader extends React.Component {
     shouldComponentUpdate() {
@@ -83,7 +86,7 @@ export default class BookReader extends React.Component {
         return (
             <div style={containerStyle} className={style.container}>
                 <div ref='prevBtn'>
-                    <Button onClick={this.pagePrev.bind(this)} className={ style.btnPrev }>
+                    <Button onClick={_.debounce(this.pagePrev.bind(this), DEBOUNCE_PAGE_TIME, true)} className={ style.btnPrev }>
                         <AngleLeftIcon />
                     </Button>
                 </div>
@@ -99,7 +102,7 @@ export default class BookReader extends React.Component {
                     }
                 </div>
                 <div ref='nextBtn'>
-                    <Button ref='nextBtn' onClick={this.pageNext.bind(this)} className={ style.btnNext }>
+                    <Button ref='nextBtn' onClick={_.debounce(this.pageNext.bind(this), DEBOUNCE_PAGE_TIME, true)} className={ style.btnNext }>
                         <AngleRightIcon />
                     </Button>
                 </div>

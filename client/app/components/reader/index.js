@@ -23,12 +23,17 @@ class Reader extends React.Component {
         document.body.classList.remove('no-scroll');
 
         if (this.props.reader.book) {
-            this.props.dispatch(pointerActions.stopPointer());
+            if (this.props.invitation.accepted) {
+                this.props.dispatch(pointerActions.stopPointer());
+            }
+            
             this.props.dispatch(readerActions.closeReader());
         }
     }
 
     onChangePage(page) {
+        if (!this.props.invitation.accepted) return;
+
         this.props.dispatch(readerActions.sendPageReader(
             this.props.invitation.accepted.opponent,
             page
@@ -36,7 +41,10 @@ class Reader extends React.Component {
     }
 
     closeReader() {
-        this.props.dispatch(pointerActions.stopPointer());
+        if (this.props.invitation.accepted) {
+            this.props.dispatch(pointerActions.stopPointer());
+        }
+
         this.props.dispatch(readerActions.closeReader());
     }
 

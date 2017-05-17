@@ -41,6 +41,7 @@ export function connect() {
         socket.on(messageTypes.READER_LEFT, (leavingData) => {
             dispatch(readerActions.unsetBook());
             dispatch(webRTCActions.disconnect());
+            dispatch(pointerActions.stopPointer());
             dispatch(readerActions.leftReaderReceived(leavingData.sender));
         });
 
