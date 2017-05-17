@@ -97,6 +97,42 @@ module.exports = function (http) {
             }
         });
 
+        socket.on(messageTypes.POINTER_ENABLE, (senderData) => {
+            const sender = Users.get(socket.id);
+            const receiver = Users.get(senderData.receiverId);
+
+            if (receiver) {
+                forwardPointerEnable(sender, receiver, senderData.position);
+            }
+        });
+
+        socket.on(messageTypes.POINTER_DISABLE, (senderData) => {
+            const sender = Users.get(socket.id);
+            const receiver = Users.get(senderData.receiverId);
+
+            if (receiver) {
+                forwardPointerDisable(sender, receiver);
+            }
+        });
+
+        socket.on(messageTypes.POINTER_MOVE, (senderData) => {
+            const sender = Users.get(socket.id);
+            const receiver = Users.get(senderData.receiverId);
+
+            if (receiver) {
+                forwardPointerMove(sender, receiver, senderData.position);
+            }
+        });
+
+        socket.on(messageTypes.READER_PAGE, (senderData) => {
+            const sender = Users.get(socket.id);
+            const receiver = Users.get(senderData.receiverId);
+
+            if (receiver) {
+                forwardReaderPaged(sender, receiver, senderData.page);
+            }
+        });
+
         /**
          * Outgoing messages
          */
@@ -144,6 +180,33 @@ module.exports = function (http) {
         function forwardReaderLeave(sender, receiver) {
             receiver.socket.emit(messageTypes.READER_LEFT, { 
                 sender: sender.toJSON()
+            });
+        }
+
+        function forwardPointerEnable(sender, receiver, position) {
+            receiver.socket.emit(messageTypes.POINTER_ENABLED, {
+                sender: sender.toJSON(),
+                position
+            });
+        }
+
+        function forwardPointerDisable(sender, receiver) {
+            receiver.socket.emit(messageTypes.POINTER_DISABLED, {
+                sender: sender.toJSON()
+            });
+        }
+
+        function forwardPointerMove(sender, receiver, position) {
+            receiver.socket.emit(messageTypes.POINTER_MOVED, {
+                sender: sender.toJSON(),
+                position
+            });
+        }
+
+        function forwardReaderPaged(sender, receiver, page) {
+            receiver.socket.emit(messageTypes.READER_PAGED, {
+                sender: sender.toJSON(),
+                page
             });
         }
 

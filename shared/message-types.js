@@ -10,8 +10,16 @@ module.exports = [
     'INVITATION_ACCEPTED',
     'INVITATION_DECLINE',
     'INVITATION_DECLINED',
+    'READER_PAGE',
+    'READER_PAGED',
     'READER_LEAVE',
-    'READER_LEFT'
+    'READER_LEFT',
+    'POINTER_ENABLE',
+    'POINTER_DISABLE',
+    'POINTER_MOVE',
+    'POINTER_ENABLED',
+    'POINTER_DISABLED',
+    'POINTER_MOVED'
 ].reduce((acc, val) => {
     acc[val] = val;
     return acc;

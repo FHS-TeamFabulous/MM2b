@@ -47,3 +47,7 @@
     border: 0;
     background-color: transparent;;
 }
+
+:global .no-scroll {
+    overflow: hidden;
+}

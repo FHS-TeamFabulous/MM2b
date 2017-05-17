@@ -5,25 +5,38 @@ import FlipBook from 'app/components/flipbook';
 import style from './style.scss';
 import { Button } from 'react-bootstrap';
 import FaClose from 'react-icons/lib/fa/close';
+import Pointer from 'app/components/pointer';
 import * as readerActions from 'app/actions/reader';
+import * as pointerActions from 'app/actions/pointer';
 import * as webRTCActions from 'app/actions/webrtc';
 
 class Reader extends React.Component {
-    componentWillMount() {
-        this.readingTogether = this.props.invitation.accepted;
-    }
-
     componentDidMount() {
-        if (this.readingTogether) {
+        document.body.classList.add('no-scroll');
+
+        if (this.props.invitation.accepted) {
             this.props.dispatch(webRTCActions.connect('local-video', 'remote-video'));
         }
     }
 
-    onChangePage() {
+    componentWillUnmount() {
+        document.body.classList.remove('no-scroll');
 
+        if (this.props.reader.book) {
+            this.props.dispatch(pointerActions.stopPointer());
+            this.props.dispatch(readerActions.closeReader());
+        }
+    }
+
+    onChangePage(page) {
+        this.props.dispatch(readerActions.sendPageReader(
+            this.props.invitation.accepted.opponent,
+            page
+        ));
     }
 
     closeReader() {
+        this.props.dispatch(pointerActions.stopPointer());
         this.props.dispatch(readerActions.closeReader());
     }
 
@@ -44,11 +57,13 @@ class Reader extends React.Component {
                         </Button>
                         <FlipBook 
                             book={this.props.reader.book}
+                            page={this.props.reader.remotePage}
                             onChangePage={this.onChangePage.bind(this)}
                         />
                         {
-                            this.readingTogether &&
+                            this.props.invitation.accepted &&
                             <div>
+                                <Pointer/>
                                 <div 
                                     id='local-video' 
                                     className={[style.videoContainer, style.isLocalVideo].join(' ')}

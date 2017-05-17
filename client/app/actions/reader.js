@@ -5,6 +5,7 @@ export const types = {
     SET_READER_BOOK: 'SET_READER_BOOK',
     UNSET_READER_BOOK: 'UNSET_READER_BOOK',
     READER_LEAVE: 'READER_LEAVE',
+    READER_SET_PAGE: 'READER_SET_PAGE',
     READER_LEFT_RECEIVED: 'READER_LEFT_RECEIVED',
     READER_LEAVER_UNSET: 'READER_LEAVER_UNSET'
 };
@@ -41,6 +42,25 @@ export function setBook(id, state) {
 export function unsetBook() {
     return {
         type: types.UNSET_READER_BOOK
+    };
+}
+
+export function sendPageReader(receiver, page) {
+    return (dispatch) => {
+        dispatch(socketActions.sendPageReader(receiver, page));
+    };
+}
+
+export function receivedReaderPaged(sender, page) {
+    return (dispatch) => {
+        dispatch(setPage(page));
+    };
+}
+
+export function setPage(page) {
+    return {
+        type: types.READER_SET_PAGE,
+        page
     };
 }
 

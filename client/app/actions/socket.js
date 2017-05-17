@@ -4,6 +4,7 @@ import * as authActions from 'app/actions/auth';
 import * as readerActions from 'app/actions/reader';
 import * as webRTCActions from 'app/actions/webrtc';
 import * as invitationActions from 'app/actions/invitation';
+import * as pointerActions from 'app/actions/pointer';
 
 let socket;
 
@@ -34,11 +35,23 @@ export function connect() {
         socket.on(messageTypes.INVITATION_DECLINED, (senderData) => 
             dispatch(invitationActions.declinedInvitation(senderData.sender)));
 
+        socket.on(messageTypes.READER_PAGED, (senderData) => 
+            dispatch(readerActions.receivedReaderPaged(senderData.sender, senderData.page)));
+
         socket.on(messageTypes.READER_LEFT, (leavingData) => {
             dispatch(readerActions.unsetBook());
             dispatch(webRTCActions.disconnect());
             dispatch(readerActions.leftReaderReceived(leavingData.sender));
         });
+
+        socket.on(messageTypes.POINTER_ENABLED, (senderData) => 
+            dispatch(pointerActions.receivedPointerEnabled(senderData.sender, senderData.position)));
+
+        socket.on(messageTypes.POINTER_DISABLED, (senderData) => 
+            dispatch(pointerActions.receivedPointerDisabled(senderData.sender)));
+
+        socket.on(messageTypes.POINTER_MOVED, (senderData) => 
+            dispatch(pointerActions.receivedPointerMoved(senderData.sender, senderData.position)));
     };
 }
 
@@ -79,8 +92,41 @@ export function declineInvitation(receiver) {
     }
 }
 
+export function sendPageReader(receiver, page) {
+    return () => {
+        socket.emit(messageTypes.READER_PAGE, { 
+            receiverId: receiver.id,
+            page: page
+        });
+    }
+}
+
 export function leaveReader(receiver) {
     return () => {
         socket.emit(messageTypes.READER_LEAVE, { receiverId: receiver.id });
     }
+}
+
+export function sendPointerEnable(receiver, x, y) {
+    return () => {
+        socket.emit(messageTypes.POINTER_ENABLE, { 
+            receiverId: receiver.id,
+            position: { x, y }
+        }); 
+    };
+}
+
+export function sendPointerDisable(receiver) {
+    return () => {
+        socket.emit(messageTypes.POINTER_DISABLE, { receiverId: receiver.id }); 
+    };
+}
+
+export function sendPointerPosition(receiver, x, y) {
+    return () => {
+        socket.emit(messageTypes.POINTER_MOVE, { 
+            receiverId: receiver.id,
+            position: { x, y }
+        }); 
+    };
 }

@@ -39,8 +39,8 @@ export default class BookReader extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.currentPage !== nextProps.currentPage) {
-            this.$flipbook.turn('page', nextProps.currentPage);
+        if (this.props.page !== nextProps.page) {
+            this.$flipbook.turn('page', nextProps.page);
         }
     }
 
