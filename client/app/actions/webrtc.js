@@ -11,7 +11,8 @@ export function connect(localVideoId, remoteVideoId) {
         if (!webrtc) {
             webrtc = new SimpleWebRTC({
                 localVideoEl: localVideoId,
-                remoteVideosEl: remoteVideoId
+                remoteVideosEl: remoteVideoId,
+                autoRequestMedia: true
             });
 
             webrtc.on('readyToCall', function () {
