@@ -8,12 +8,14 @@ const app = express();
 const http = require('http').Server(app);
 const socket = require('./socket');
 const apiRoutes = require('./api-routes')(express.Router());
+const sslRedirect = require('heroku-ssl-redirect');
 
 const clientPath = path.join(__dirname, config.get('paths.client'));
 const assetsPath = path.join(__dirname, config.get('paths.assets'));
 
 // middleware
 app.use(express.static(clientPath)); // set the root path to our client folder
+app.use(sslRedirect());
 app.use(cors());
 app.use('/api/', apiRoutes);
 app.use('/assets/', express.static(assetsPath));
