@@ -9,7 +9,7 @@ class User  {
     constructor(data) {
         this.id = data.id;
         this.name = data.name;
-        this.state = STATES.FREE,
+        this.state = STATES.FREE;
         this.socket = data.socket;
     }
 

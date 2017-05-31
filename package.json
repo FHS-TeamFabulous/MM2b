@@ -4,7 +4,7 @@
   "description": "Our MMP2b Project for the 4th term at FH-Salzburg",
   "main": "server/index.js",
   "scripts": {
-    "test": "jshint || true",
+    "test": "mocha test/test.js",
     "build": "webpack --config ./client/webpack.config.babel.js --progress --colors && cp -R client/images client/dist/ && cp client/index.html client/dist/index.html",
     "start": "cp -R client/images client/dist/ && cp client/index.html client/dist/index.html && webpack-dev-server --config ./client/webpack.config.babel.js",
     "server": "npm run build && nodemon ./server/index.js --ignore node_modules --ignore ./client",
@@ -65,5 +65,9 @@
     "uuid": "^3.0.1",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.4"
+  },
+  "devDependencies": {
+    "mocha": "^3.4.2",
+    "should": "^11.2.1"
   }
 }
