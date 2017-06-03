@@ -31,13 +31,13 @@ module.exports = function (http) {
 
         socket.on(messageTypes.LOGIN, (loginData) => {
             const userData = {
-                socket, 
+                socket,
                 id: socket.id,
                 name: loginData.userName,
             };
 
             const user = Users.create(userData);
-            
+
             sendLoginSuccess(user);
             sendClientsUpdate();
         });
@@ -144,46 +144,47 @@ module.exports = function (http) {
         }
 
         function sendClientsUpdate() {
-            io.emit(messageTypes.CLIENTS_UPDATE, { 
+            io.emit(messageTypes.CLIENTS_UPDATE, {
                 clients: Users.toJSON()
             });
         }
 
         function forwardInvitation(sender, receiver, bookId, roomId) {
-            receiver.socket.emit(messageTypes.INVITATION_RECEIVED, { 
-                sender: sender.toJSON(), 
+            receiver.socket.emit(messageTypes.INVITATION_RECEIVED, {
+                sender: sender.toJSON(),
                 bookId,
                 roomId
             });
         }
 
         function forwardInvitationCancel(sender, receiver) {
-            receiver.socket.emit(messageTypes.INVITATION_CANCELED, { 
+            receiver.socket.emit(messageTypes.INVITATION_CANCELED, {
                 sender: sender.toJSON()
             });
         }
 
         function forwardInvitationAccept(sender, receiver, bookId, roomId) {
-            receiver.socket.emit(messageTypes.INVITATION_ACCEPTED, { 
-                sender: sender.toJSON(), 
+            receiver.socket.emit(messageTypes.INVITATION_ACCEPTED, {
+                sender: sender.toJSON(),
                 bookId,
                 roomId
             });
         }
 
         function forwardInvitationDecline(sender, receiver) {
-            receiver.socket.emit(messageTypes.INVITATION_DECLINED, { 
+            receiver.socket.emit(messageTypes.INVITATION_DECLINED, {
                 sender: sender.toJSON()
             });
         }
 
         function forwardReaderLeave(sender, receiver) {
-            receiver.socket.emit(messageTypes.READER_LEFT, { 
+            receiver.socket.emit(messageTypes.READER_LEFT, {
                 sender: sender.toJSON()
             });
         }
 
         function forwardPointerEnable(sender, receiver, position) {
+            console.log(sender.toJSON());
             receiver.socket.emit(messageTypes.POINTER_ENABLED, {
                 sender: sender.toJSON(),
                 position
