@@ -40,7 +40,7 @@ describe('test pointer', function () {
 
     it('pointer should enable', function (done) {
         const data = {
-            position: 2,
+            position: {x: 5, y: 5},
             receiverId: userB.id
         };
 
@@ -49,7 +49,8 @@ describe('test pointer', function () {
         clientB.on(messageTypes.POINTER_ENABLED, response => {
             const {sender, position} = response;
             sender.id.should.equal(userA.id);
-            position.should.equal(2);
+            position.x.should.equal(5);
+            position.y.should.equal(5);
             done();
         });
 
@@ -73,7 +74,7 @@ describe('test pointer', function () {
 
     it('pointer should move', function (done) {
         const data = {
-            position: 2,
+            position: {x: 5, y: 5},
             receiverId: userB.id
         };
 
@@ -82,7 +83,8 @@ describe('test pointer', function () {
         clientB.on(messageTypes.POINTER_MOVED, response => {
             const {sender, position} = response;
             sender.id.should.equal(userA.id);
-            position.should.equal(2);
+            position.x.should.equal(5);
+            position.y.should.equal(5);
             done();
         });
 

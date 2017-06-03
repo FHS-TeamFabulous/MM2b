@@ -184,7 +184,6 @@ module.exports = function (http) {
         }
 
         function forwardPointerEnable(sender, receiver, position) {
-            console.log(sender.toJSON());
             receiver.socket.emit(messageTypes.POINTER_ENABLED, {
                 sender: sender.toJSON(),
                 position
