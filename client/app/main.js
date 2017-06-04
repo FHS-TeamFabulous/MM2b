@@ -13,31 +13,33 @@ const store = configureStore();
 const root = document.getElementById('main');
 
 ReactDOM.render(
-    <Provider store={ store }>
-        <App>
-            <Router>
-                <MainLayout>
-                    <Route path="/" render={({history}) => 
-                        <Home history={history}/>
-                    }/>
-                    <Route path="/books/:id" render={({history}) => 
-                        <Reader history={history}/>
-                    }/>
-                </MainLayout>
-            </Router>
-        </App>
-    </Provider>,
+  <Provider store={store}>
+    <App>
+      <Router>
+        <MainLayout>
+          <Route
+            path="/"
+            render={({ history }) =>
+              <Home history={history} />
+                        }
+          />
+          <Route
+            path="/books/:id"
+            render={({ history }) =>
+              <Reader history={history} />
+                        }
+          />
+        </MainLayout>
+      </Router>
+    </App>
+  </Provider>,
     root
 );
 
 // Hot Module Replacement API
 if (module.hot) {
     module.hot.accept('./components/main-layout', () => {
-        render(<MainLayout/>, root);
+        render(<MainLayout />, root);
     });
 }
-
-
-
-
 

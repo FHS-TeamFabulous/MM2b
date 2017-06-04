@@ -9,28 +9,28 @@ const initialStateState = {
 
 function pointerStateReducer(state = initialStateState, action) {
     switch (action.type) {
-        case pointerActions.types.LOCAL_POINTER_ENABLE:
-            return Object.assign({}, state, {
-                localOn: true
-            });
+    case pointerActions.types.LOCAL_POINTER_ENABLE:
+        return Object.assign({}, state, {
+            localOn: true
+        });
 
-        case pointerActions.types.LOCAL_POINTER_DISABLE:
-            return Object.assign({}, state, {
-                localOn: false
-            });
+    case pointerActions.types.LOCAL_POINTER_DISABLE:
+        return Object.assign({}, state, {
+            localOn: false
+        });
 
-        case pointerActions.types.REMOTE_POINTER_ENABLED:
-            return Object.assign({}, state, {
-                remoteOn: true
-            });
+    case pointerActions.types.REMOTE_POINTER_ENABLED:
+        return Object.assign({}, state, {
+            remoteOn: true
+        });
 
-        case pointerActions.types.REMOTE_POINTER_DISABLED:
-            return Object.assign({}, state, {
-                remoteOn: false
-            });
+    case pointerActions.types.REMOTE_POINTER_DISABLED:
+        return Object.assign({}, state, {
+            remoteOn: false
+        });
+    default:
+        return state;
     }
-
-    return state;
 }
 
 const initialPositionState = {
@@ -42,16 +42,16 @@ const initialPositionState = {
 
 function remotePointerPositionReducer(state = initialPositionState, action) {
     switch (action.type) {
-        case pointerActions.types.REMOTE_POINTER_MOVED:
-            return {
-                position: {
-                    x: action.position.x,
-                    y: action.position.y
-                }
-            };
+    case pointerActions.types.REMOTE_POINTER_MOVED:
+        return {
+            position: {
+                x: action.position.x,
+                y: action.position.y
+            }
+        };
+    default:
+        return state;
     }
-
-    return state;
 }
 
 export default combineReducers({

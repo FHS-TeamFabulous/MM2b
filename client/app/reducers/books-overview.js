@@ -6,16 +6,16 @@ const initialState = {
 
 function booksReducer(state = initialState, action) {
     switch (action.type) {
-        case booksOverviewActions.types.RECEIVE:
-            return Object.assign({}, state, {
-                books: action.data.data.reduce((acc, book) => {
-                    acc[book.id] = book;
-                    return acc;
-                }, {})
-            });
+    case booksOverviewActions.types.RECEIVE:
+        return Object.assign({}, state, {
+            books: action.data.data.reduce((acc, book) => {
+                acc[book.id] = book;
+                return acc;
+            }, {})
+        });
+    default:
+        return state;
     }
-
-    return state;
 }
 
 export default booksReducer;

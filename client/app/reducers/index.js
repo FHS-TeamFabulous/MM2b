@@ -10,5 +10,5 @@ export default combineReducers({
     reader: readerReducer,
     booksOverview: booksOverviewReducer,
     invitation: invitationReducer,
-    pointer: pointerReducer 
+    pointer: pointerReducer
 });
