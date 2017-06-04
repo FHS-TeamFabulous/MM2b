@@ -1,12 +1,10 @@
-'use strict';
-
 const Books = require('./books');
 
 module.exports = (api) => {
     api.get('/books/', (req, res) => {
         Books.provide()
-            .then(data => {
-                res.json({ data })
+            .then((data) => {
+                res.json({ data });
             });
     });
 

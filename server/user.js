@@ -1,11 +1,9 @@
-'use strict';
-
 const STATES = {
     FREE: 'FREE',
-    BUSY: 'BUSY'
+    BUSY: 'BUSY',
 };
 
-class User  {
+class User {
     constructor(data) {
         this.id = data.id;
         this.name = data.name;
@@ -26,8 +24,8 @@ class User  {
             id: this.id,
             name: this.name,
             state: this.state,
-            isFree: this.state === STATES.FREE
-        }
+            isFree: this.state === STATES.FREE,
+        };
     }
 }
 

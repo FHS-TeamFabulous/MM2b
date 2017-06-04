@@ -1,6 +1,6 @@
 {
-    "extends": "airbnb-base-hf",
-    "plugins": [
-        "import"
-    ]
+    "extends": "airbnb",
+    "rules": {
+      "indent": ["error", 4]
+    }
 }

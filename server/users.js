@@ -1,5 +1,3 @@
-'use strict';
-
 const User = require('./user');
 
 const Users = {
@@ -11,7 +9,7 @@ const Users = {
         const user = new User(userData);
 
         this.add(user);
-        
+
         return user;
     },
 
@@ -32,8 +30,8 @@ const Users = {
     },
 
     toJSON() {
-        return this.users.map((user) => user.toJSON());
-    }
+        return this.users.map(user => user.toJSON());
+    },
 };
 
 module.exports = Users;
