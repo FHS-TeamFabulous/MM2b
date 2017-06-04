@@ -7,8 +7,48 @@ export const types = {
     READER_LEAVE: 'READER_LEAVE',
     READER_SET_PAGE: 'READER_SET_PAGE',
     READER_LEFT_RECEIVED: 'READER_LEFT_RECEIVED',
-    READER_LEAVER_UNSET: 'READER_LEAVER_UNSET'
+    READER_LEAVER_UNSET: 'READER_LEAVER_UNSET',
 };
+
+export function setBook(id, state) {
+    return {
+        type: types.SET_READER_BOOK,
+        book: state.booksOverview.books[id],
+    };
+}
+
+export function unsetBook() {
+    return {
+        type: types.UNSET_READER_BOOK,
+    };
+}
+
+export function leaveReader(receiver) {
+    return {
+        type: types.READER_LEAVE,
+        receiver,
+    };
+}
+
+export function leftReaderReceived(leaver) {
+    return {
+        type: types.READER_LEFT_RECEIVED,
+        leaver,
+    };
+}
+
+export function unsetLeaver() {
+    return {
+        type: types.READER_LEAVER_UNSET,
+    };
+}
+
+export function setPage(page) {
+    return {
+        type: types.READER_SET_PAGE,
+        page,
+    };
+}
 
 export function openReader(id) {
     return (dispatch, getState) => {
@@ -32,19 +72,6 @@ export function closeReader() {
     };
 }
 
-export function setBook(id, state) {
-    return {
-        type: types.SET_READER_BOOK,
-        book: state.booksOverview.books[id]
-    };
-}
-
-export function unsetBook() {
-    return {
-        type: types.UNSET_READER_BOOK
-    };
-}
-
 export function sendPageReader(receiver, page) {
     return (dispatch) => {
         dispatch(socketActions.sendPageReader(receiver, page));
@@ -55,31 +82,4 @@ export function receivedReaderPaged(sender, page) {
     return (dispatch) => {
         dispatch(setPage(page));
     };
-}
-
-export function setPage(page) {
-    return {
-        type: types.READER_SET_PAGE,
-        page
-    };
-}
-
-export function leaveReader(receiver) {
-    return {
-        type: types.READER_LEAVE,
-        receiver
-    }
-}
-
-export function leftReaderReceived(leaver) {
-    return {
-        type: types.READER_LEFT_RECEIVED,
-        leaver
-    }
-}
-
-export function unsetLeaver() {
-    return {
-        type: types.READER_LEAVER_UNSET
-    }
 }

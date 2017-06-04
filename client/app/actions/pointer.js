@@ -5,61 +5,19 @@ export const types = {
     LOCAL_POINTER_DISABLE: 'LOCAL_POINTER_DISABLE',
     REMOTE_POINTER_ENABLED: 'REMOTE_POINTER_ENABLED',
     REMOTE_POINTER_DISABLED: 'REMOTE_POINTER_DISABLED',
-    REMOTE_POINTER_MOVED: 'REMOTE_POINTER_MOVED'
+    REMOTE_POINTER_MOVED: 'REMOTE_POINTER_MOVED',
 };
 
 export function enablePointer() {
     return {
-        type: types.LOCAL_POINTER_ENABLE
+        type: types.LOCAL_POINTER_ENABLE,
     };
 }
 
 export function disablePointer() {
     return {
-        type: types.LOCAL_POINTER_DISABLE
+        type: types.LOCAL_POINTER_DISABLE,
     };
-}
-
-export function sendPointerPosition(x, y) {
-    return (dispatch, getState) => {
-        const state = getState();
-        const relScreenPos = calcAbsToRelPos(x, y);
-
-        dispatch(socketActions.sendPointerPosition(
-            state.invitation.accepted.opponent,
-            relScreenPos.x, 
-            relScreenPos.y
-        ));
-    };
-}
-
-export function startPointer(startX, startY, cb) {
-    return (dispatch, getState) => {
-        const state = getState();
-        const onMouseMove = (event) => {
-            const { clientX, clientY } = event;
-
-            if (typeof cb === 'function') {
-                cb(clientX, clientY);
-            }
-
-            dispatch(sendPointerPosition(
-                clientX, 
-                clientY
-            ));
-        };
-
-        dispatch(enablePointer());
-        dispatch(socketActions.sendPointerEnable(
-            state.invitation.accepted.opponent,
-            startX, 
-            startY
-        ));
-
-        window.addEventListener('mousemove', onMouseMove);
-
-        return () => window.removeEventListener('mousemove', onMouseMove);
-    }
 }
 
 export function stopPointer() {
@@ -68,9 +26,37 @@ export function stopPointer() {
 
         dispatch(disablePointer());
         dispatch(socketActions.sendPointerDisable(
-            state.invitation.accepted.opponent
+            state.invitation.accepted.opponent,
         ));
-    }
+    };
+}
+
+function calcRelToAbsPos(x, y) {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    return {
+        x: windowWidth * x,
+        y: windowHeight * y,
+    };
+}
+
+export function receivedPointerMoved(sender, pos) {
+    return {
+        type: types.REMOTE_POINTER_MOVED,
+        position: calcRelToAbsPos(pos.x, pos.y),
+        sender,
+    };
+}
+
+function calcAbsToRelPos(x, y) {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    return {
+        x: x / windowWidth,
+        y: y / windowHeight,
+    };
 }
 
 export function receivedPointerEnabled(sender, pos) {
@@ -88,30 +74,44 @@ export function receivedPointerDisabled(sender) {
     };
 }
 
-export function receivedPointerMoved(sender, pos) {
-    return {
-        type: types.REMOTE_POINTER_MOVED,
-        position: calcRelToAbsPos(pos.x, pos.y),
-        sender,
+export function sendPointerPosition(x, y) {
+    return (dispatch, getState) => {
+        const state = getState();
+        const relScreenPos = calcAbsToRelPos(x, y);
+
+        dispatch(socketActions.sendPointerPosition(
+            state.invitation.accepted.opponent,
+            relScreenPos.x,
+            relScreenPos.y,
+        ));
     };
 }
 
-function calcAbsToRelPos(x, y) {
-    let windowWidth = window.innerWidth;
-    let windowHeight = window.innerHeight;
+export function startPointer(startX, startY, cb) {
+    return (dispatch, getState) => {
+        const state = getState();
+        const onMouseMove = (event) => {
+            const { clientX, clientY } = event;
 
-    return {
-        x: x / windowWidth,
-        y: y / windowHeight
-    }
-}
+            if (typeof cb === 'function') {
+                cb(clientX, clientY);
+            }
 
-function calcRelToAbsPos(x, y) {
-    let windowWidth = window.innerWidth;
-    let windowHeight = window.innerHeight;
+            dispatch(sendPointerPosition(
+                clientX,
+                clientY,
+            ));
+        };
 
-    return {
-        x: windowWidth * x,
-        y: windowHeight * y
-    }
+        dispatch(enablePointer());
+        dispatch(socketActions.sendPointerEnable(
+            state.invitation.accepted.opponent,
+            startX,
+            startY,
+        ));
+
+        window.addEventListener('mousemove', onMouseMove);
+
+        return () => window.removeEventListener('mousemove', onMouseMove);
+    };
 }

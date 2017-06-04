@@ -1,5 +1,3 @@
-import io from 'socket.io-client';
-import messageTypes from 'shared/message-types';
 import SimpleWebRTC from 'simplewebrtc';
 
 let webrtc;
@@ -15,7 +13,7 @@ export function connect(localVideoId, remoteVideoId) {
                 autoRequestMedia: true
             });
 
-            webrtc.on('readyToCall', function () {
+            webrtc.on('readyToCall', () => {
                 webrtc.joinRoom(state.invitation.accepted.roomId);
             });
         }
@@ -28,6 +26,5 @@ export function disconnect() {
     return () => {
         webrtc.stopLocalVideo();
         webrtc.leaveRoom();
-    }
+    };
 }
-

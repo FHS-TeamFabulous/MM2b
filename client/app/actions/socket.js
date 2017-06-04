@@ -12,30 +12,51 @@ export function connect() {
     return (dispatch, getState) => {
         socket = io();
 
-        socket.on(messageTypes.LOGIN_SUCCESS, (authData) => 
+        socket.on(messageTypes.LOGIN_SUCCESS, authData =>
             dispatch(authActions.setAuthData(authData.user, authData.clients)));
 
         socket.on(messageTypes.CLIENTS_UPDATE, (clientsData) => {
             const state = getState();
-            
-            dispatch(authActions.updateClients(clientsData.clients.filter((client) => client.id !== state.auth.user.id)));
+
+            dispatch(authActions
+                .updateClients(
+                    clientsData
+                        .clients
+                        .filter(client => client.id !== state.auth.user.id)
+                )
+            );
         });
 
-        socket.on(messageTypes.INVITATION_RECEIVED, (senderData) => 
-            dispatch(invitationActions.receivedInvitation(senderData.sender, senderData.bookId, senderData.roomId)));
+        socket.on(messageTypes.INVITATION_RECEIVED, senderData =>
+            dispatch(
+                invitationActions
+                    .receivedInvitation(
+                        senderData.sender,
+                        senderData.bookId,
+                        senderData.roomId
+                    )
+            )
+        );
 
-        socket.on(messageTypes.INVITATION_CANCELED, (senderData) => 
+        socket.on(messageTypes.INVITATION_CANCELED, senderData =>
             dispatch(invitationActions.canceledInvitation(senderData.sender)));
 
         socket.on(messageTypes.INVITATION_ACCEPTED, (senderData) => {
-            dispatch(invitationActions.acceptedInvitation(senderData.sender, senderData.bookId, senderData.roomId));
+            dispatch(
+                invitationActions
+                    .acceptedInvitation(
+                        senderData.sender,
+                        senderData.bookId,
+                        senderData.roomId
+                    )
+            );
             dispatch(readerActions.openReader(senderData.bookId));
         });
 
-        socket.on(messageTypes.INVITATION_DECLINED, (senderData) => 
+        socket.on(messageTypes.INVITATION_DECLINED, senderData =>
             dispatch(invitationActions.declinedInvitation(senderData.sender)));
 
-        socket.on(messageTypes.READER_PAGED, (senderData) => 
+        socket.on(messageTypes.READER_PAGED, senderData =>
             dispatch(readerActions.receivedReaderPaged(senderData.sender, senderData.page)));
 
         socket.on(messageTypes.READER_LEFT, (leavingData) => {
@@ -45,13 +66,20 @@ export function connect() {
             dispatch(readerActions.leftReaderReceived(leavingData.sender));
         });
 
-        socket.on(messageTypes.POINTER_ENABLED, (senderData) => 
-            dispatch(pointerActions.receivedPointerEnabled(senderData.sender, senderData.position)));
+        socket.on(messageTypes.POINTER_ENABLED, senderData =>
+            dispatch(
+                pointerActions
+                    .receivedPointerEnabled(
+                        senderData.sender,
+                        senderData.position
+                    )
+            )
+        );
 
-        socket.on(messageTypes.POINTER_DISABLED, (senderData) => 
+        socket.on(messageTypes.POINTER_DISABLED, senderData =>
             dispatch(pointerActions.receivedPointerDisabled(senderData.sender)));
 
-        socket.on(messageTypes.POINTER_MOVED, (senderData) => 
+        socket.on(messageTypes.POINTER_MOVED, senderData =>
             dispatch(pointerActions.receivedPointerMoved(senderData.sender, senderData.position)));
     };
 }
@@ -59,75 +87,75 @@ export function connect() {
 export function login(userName) {
     return () => {
         socket.emit(messageTypes.LOGIN, { userName });
-    }
+    };
 }
 
 export function sendInvitation(receiver, bookId) {
     return () => {
-        socket.emit(messageTypes.INVITATION_SEND, { 
+        socket.emit(messageTypes.INVITATION_SEND, {
             receiverId: receiver.id,
-            bookId
+            bookId,
         });
-    }
+    };
 }
 
 export function cancelInvitation(receiver) {
     return () => {
         socket.emit(messageTypes.INVITATION_CANCEL, { receiverId: receiver.id });
-    }
+    };
 }
 
 export function acceptInvitation(receiver, bookId, roomId) {
     return () => {
-        socket.emit(messageTypes.INVITATION_ACCEPT, { 
-            receiverId: receiver.id, 
+        socket.emit(messageTypes.INVITATION_ACCEPT, {
+            receiverId: receiver.id,
             bookId,
-            roomId
+            roomId,
         });
-    }
+    };
 }
 
 export function declineInvitation(receiver) {
     return () => {
         socket.emit(messageTypes.INVITATION_DECLINE, { receiverId: receiver.id });
-    }
+    };
 }
 
 export function sendPageReader(receiver, page) {
     return () => {
-        socket.emit(messageTypes.READER_PAGE, { 
+        socket.emit(messageTypes.READER_PAGE, {
             receiverId: receiver.id,
-            page: page
+            page,
         });
-    }
+    };
 }
 
 export function leaveReader(receiver) {
     return () => {
         socket.emit(messageTypes.READER_LEAVE, { receiverId: receiver.id });
-    }
+    };
 }
 
 export function sendPointerEnable(receiver, x, y) {
     return () => {
-        socket.emit(messageTypes.POINTER_ENABLE, { 
+        socket.emit(messageTypes.POINTER_ENABLE, {
             receiverId: receiver.id,
-            position: { x, y }
-        }); 
+            position: { x, y },
+        });
     };
 }
 
 export function sendPointerDisable(receiver) {
     return () => {
-        socket.emit(messageTypes.POINTER_DISABLE, { receiverId: receiver.id }); 
+        socket.emit(messageTypes.POINTER_DISABLE, { receiverId: receiver.id });
     };
 }
 
 export function sendPointerPosition(receiver, x, y) {
     return () => {
-        socket.emit(messageTypes.POINTER_MOVE, { 
+        socket.emit(messageTypes.POINTER_MOVE, {
             receiverId: receiver.id,
-            position: { x, y }
-        }); 
+            position: { x, y },
+        });
     };
 }
