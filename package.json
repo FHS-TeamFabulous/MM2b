@@ -4,7 +4,7 @@
   "description": "Our MMP2b Project for the 4th term at FH-Salzburg",
   "main": "server/index.js",
   "scripts": {
-    "test": "mocha test/*.js",
+    "test": "mocha test/*.spec.js",
     "build": "webpack --config ./client/webpack.config.babel.js --progress --colors && cp -R client/images client/dist/ && cp client/index.html client/dist/index.html",
     "start": "cp -R client/images client/dist/ && cp client/index.html client/dist/index.html && webpack-dev-server --config ./client/webpack.config.babel.js",
     "server": "npm run build && nodemon ./server/index.js --ignore node_modules --ignore ./client",
